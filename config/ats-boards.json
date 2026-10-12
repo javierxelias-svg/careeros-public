@@ -1,0 +1,2339 @@
+{
+ "_comment": "Public employer job-board feeds, discovered 2026-08-17 by probing every company in config/companies.json against Ashby, Greenhouse and Lever. 40 of 108 resolved. Slug and platform are verified live; jobs is the count at discovery time. WIRED as a source since 2026-08-17 via sources._fetch_ats(); this file is its board list. Contributed 2,773 of 3,190 postings on the 2026-08-17 run.",
+ "_endpoints": {
+  "ashby": "https://api.ashbyhq.com/posting-api/job-board/{slug}?includeCompensation=true",
+  "greenhouse": "https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true",
+  "lever": "https://api.lever.co/v0/postings/{slug}?mode=json"
+ },
+ "_why": "Small companies mostly do not post to job boards \u2014 a sub-100-person team was measured at 3/10 findability that way. These feeds come straight from the employer, so there is no aggregator rail, no injected salary estimate, and no feed category masquerading as a location.",
+ "discovered_at": "2026-08-17",
+ "boards": [
+  {
+   "company": "databricks",
+   "category": "data",
+   "platform": "greenhouse",
+   "slug": "databricks",
+   "jobs": 827,
+   "verified_at": "2026-08-24",
+   "why": "Biggest single board. Data/AI solutions roles in the core lane."
+  },
+  {
+   "company": "stripe",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "slug": "stripe",
+   "jobs": 582,
+   "verified_at": "2026-08-24",
+   "why": "Largest board added; remote hubs, heavy solutions-architect surface."
+  },
+  {
+   "company": "anthropic",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "anthropic",
+   "jobs": 535,
+   "verified_at": "2026-08-24",
+   "why": "The operator's own build practice runs on Claude. prefilter gives +3 for naming Anthropic; the old -3 that cancelled it was removed 2026-08-24."
+  },
+  {
+   "company": "datadog",
+   "category": "devtools",
+   "platform": "greenhouse",
+   "slug": "datadog",
+   "jobs": 452,
+   "verified_at": "2026-08-24",
+   "why": "Observability; large solutions-engineering surface."
+  },
+  {
+   "company": "mongodb",
+   "category": "data",
+   "platform": "greenhouse",
+   "slug": "mongodb",
+   "jobs": 404,
+   "verified_at": "2026-08-24",
+   "why": "Database; large support-engineering surface."
+  },
+  {
+   "company": "okta",
+   "category": "devtools",
+   "platform": "greenhouse",
+   "slug": "okta",
+   "jobs": 351,
+   "verified_at": "2026-08-24",
+   "why": "Identity; support and solutions roles."
+  },
+  {
+   "company": "toast",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "toast",
+   "jobs": 0,
+   "disabled_jobs": 313
+  },
+  {
+   "company": "cloudflare",
+   "platform": "greenhouse",
+   "slug": "cloudflare",
+   "jobs": 304,
+   "category": "infra",
+   "pinned": true
+  },
+  {
+   "company": "Canonical",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "canonical",
+   "slug": "canonical",
+   "jobs": 303,
+   "team_size": 1200,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Home-based worldwide since 2004. $2,000/yr learning budget. Names Spanish among the languages it wants. Pay is geography-adjusted - verify before moving.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "Elastic",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "elastic",
+   "slug": "elastic",
+   "jobs": 264,
+   "team_size": 3000,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Distributed by design, source-available, hires in dozens of countries.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "Braze",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "braze",
+   "slug": "braze",
+   "jobs": 253,
+   "team_size": 1500,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Work-from-anywhere postings, flexible PTO, ESPP. Requires English AND Spanish on several customer roles.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "fivetran",
+   "platform": "greenhouse",
+   "slug": "fivetran",
+   "jobs": 243,
+   "category": "data",
+   "pinned": true
+  },
+  {
+   "company": "remote.com",
+   "category": "latam_bilingual",
+   "platform": "greenhouse",
+   "slug": "remotecom",
+   "jobs": 228
+  },
+  {
+   "company": "scale ai",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "scaleai",
+   "jobs": 209
+  },
+  {
+   "company": "GitLab",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "gitlab",
+   "slug": "gitlab",
+   "jobs": 199,
+   "team_size": 2100,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "All-remote by design, handbook-first, no offices anywhere.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "airbnb",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "airbnb",
+   "jobs": 0,
+   "verified_at": "2026-08-24",
+   "why": "Hospitality at planetary scale, and 'Live and Work Anywhere' is their own written policy. Hospitality domain knowledge counts here.",
+   "disabled_jobs": 195
+  },
+  {
+   "company": "block",
+   "category": "fintech",
+   "platform": "greenhouse",
+   "slug": "block",
+   "jobs": 186,
+   "verified_at": "2026-08-24",
+   "why": "Square/Cash App; distributed by default."
+  },
+  {
+   "company": "ClickHouse",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "clickhouse",
+   "slug": "clickhouse",
+   "jobs": 174,
+   "team_size": 400,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Remote-first, open source, distributed across many countries.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "coinbase",
+   "category": "fintech",
+   "platform": "greenhouse",
+   "slug": "coinbase",
+   "jobs": 174,
+   "verified_at": "2026-08-24",
+   "why": "Remote-first by policy."
+  },
+  {
+   "company": "Legion Health",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "legionhealth",
+   "slug": "legionhealth",
+   "jobs": 154,
+   "team_size": 11,
+   "batch": "Summer 2021",
+   "one_liner": "Autonomous medical care"
+  },
+  {
+   "company": "Grafana Labs",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "grafanalabs",
+   "slug": "grafanalabs",
+   "jobs": 143,
+   "team_size": 1200,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Remote-first, open source, hires across many countries.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "twilio",
+   "category": "devtools",
+   "platform": "greenhouse",
+   "slug": "twilio",
+   "jobs": 143,
+   "verified_at": "2026-08-24",
+   "why": "Remote-first officially; developer-facing support and solutions."
+  },
+  {
+   "company": "ramp",
+   "platform": "ashby",
+   "slug": "ramp",
+   "jobs": 137,
+   "category": "fintech",
+   "pinned": true
+  },
+  {
+   "company": "clara",
+   "category": "latam",
+   "platform": "greenhouse",
+   "slug": "clara",
+   "jobs": 136
+  },
+  {
+   "company": "intercom",
+   "platform": "greenhouse",
+   "slug": "intercom",
+   "jobs": 122,
+   "category": "support_tools",
+   "pinned": true
+  },
+  {
+   "company": "payoneer",
+   "category": "latam_bilingual",
+   "platform": "greenhouse",
+   "slug": "payoneer",
+   "jobs": 121
+  },
+  {
+   "company": "nubank",
+   "category": "latam_bilingual",
+   "platform": "ashby",
+   "slug": "nubank",
+   "jobs": 113
+  },
+  {
+   "company": "langchain",
+   "category": "ai_evals",
+   "platform": "ashby",
+   "slug": "langchain",
+   "jobs": 107
+  },
+  {
+   "company": "Vanta",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "vanta",
+   "slug": "vanta",
+   "jobs": 96,
+   "team_size": 700,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Compliance automation, remote-friendly, customer-facing technical roles.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "spotify",
+   "category": "remote_first_scale",
+   "platform": "lever",
+   "slug": "spotify",
+   "jobs": 92,
+   "verified_at": "2026-08-24",
+   "why": "'Work From Anywhere' programme."
+  },
+  {
+   "company": "opentable",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "opentable",
+   "jobs": 0,
+   "disabled_jobs": 91
+  },
+  {
+   "company": "quintoandar",
+   "category": "latam",
+   "platform": "greenhouse",
+   "slug": "quintoandar",
+   "jobs": 91
+  },
+  {
+   "company": "mercor",
+   "category": "ai_evals",
+   "platform": "ashby",
+   "slug": "mercor",
+   "jobs": 85
+  },
+  {
+   "company": "vercel",
+   "platform": "greenhouse",
+   "slug": "vercel",
+   "jobs": 85,
+   "category": "devtools",
+   "pinned": true
+  },
+  {
+   "company": "wellhub",
+   "category": "latam",
+   "platform": "greenhouse",
+   "slug": "gympass",
+   "jobs": 84
+  },
+  {
+   "company": "replit",
+   "platform": "ashby",
+   "slug": "replit",
+   "jobs": 74,
+   "category": "devtools",
+   "pinned": true
+  },
+  {
+   "company": "baseten",
+   "platform": "ashby",
+   "slug": "baseten",
+   "jobs": 72,
+   "category": "ai_infra",
+   "pinned": true
+  },
+  {
+   "company": "mixpanel",
+   "platform": "greenhouse",
+   "slug": "mixpanel",
+   "jobs": 69,
+   "category": "data",
+   "pinned": true
+  },
+  {
+   "company": "Ashby",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "ashby",
+   "slug": "ashby",
+   "jobs": 64,
+   "team_size": 100,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Publishes a pay range on every single posting, which almost nobody does.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "jeeves",
+   "category": "latam",
+   "platform": "lever",
+   "slug": "tryjeeves",
+   "jobs": 63
+  },
+  {
+   "company": "dlocal",
+   "category": "latam_bilingual",
+   "platform": "lever",
+   "slug": "dlocal",
+   "jobs": 55
+  },
+  {
+   "company": "tailscale",
+   "category": "dev_tools",
+   "platform": "greenhouse",
+   "slug": "tailscale",
+   "jobs": 54
+  },
+  {
+   "company": "Supabase",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "supabase",
+   "slug": "supabase",
+   "jobs": 52,
+   "team_size": 400,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "No offices at all. Hires globally, WeWork allowance anywhere, 100% employee health cover, ESOP for everyone.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "cloudbeds",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "cloudbeds",
+   "jobs": 0,
+   "disabled_jobs": 46
+  },
+  {
+   "company": "PermitFlow",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "permitflow",
+   "slug": "permitflow",
+   "jobs": 43,
+   "team_size": 80,
+   "batch": "Winter 2022",
+   "one_liner": "Construction's AI Platform"
+  },
+  {
+   "company": "Axle",
+   "category": "yc_small_ai",
+   "platform": "greenhouse",
+   "ats_slug": "axle",
+   "slug": "axle",
+   "jobs": 43,
+   "team_size": 20,
+   "batch": "Summer 2022",
+   "one_liner": "AI-native clearinghouse for insurance"
+  },
+  {
+   "company": "dropbox",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "slug": "dropbox",
+   "jobs": 41,
+   "verified_at": "2026-08-24",
+   "why": "'Virtual First' is their written policy, one of the strongest remote commitments at scale."
+  },
+  {
+   "company": "ebanx",
+   "category": "latam_bilingual",
+   "platform": "greenhouse",
+   "slug": "ebanx",
+   "jobs": 39
+  },
+  {
+   "company": "canary technologies",
+   "category": "hospitality_tech",
+   "platform": "lever",
+   "slug": "canarytechnologies",
+   "jobs": 0,
+   "disabled_jobs": 36
+  },
+  {
+   "company": "Reducto",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "reducto",
+   "slug": "reducto",
+   "jobs": 36,
+   "team_size": 30,
+   "batch": "Winter 2024",
+   "one_liner": "The complete agentic document platform"
+  },
+  {
+   "company": "n8n",
+   "category": "automation",
+   "platform": "ashby",
+   "slug": "n8n",
+   "jobs": 35
+  },
+  {
+   "company": "Adaptyv",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "adaptyv",
+   "slug": "adaptyv",
+   "jobs": 34,
+   "team_size": 25,
+   "batch": "Summer 2021",
+   "one_liner": "We're building fully automated labs for protein engineering"
+  },
+  {
+   "company": "Render",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "render",
+   "slug": "render",
+   "jobs": 34,
+   "team_size": 100,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Remote-first dev infrastructure.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "plane",
+   "category": "global_employment",
+   "platform": "ashby",
+   "slug": "plane",
+   "jobs": 33
+  },
+  {
+   "company": "Linear",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "linear",
+   "slug": "linear",
+   "jobs": 32,
+   "team_size": 60,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Remote-first, no commuting, daily meal stipend, paid co-working desk.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "amplitude",
+   "platform": "greenhouse",
+   "slug": "amplitude",
+   "jobs": 32,
+   "category": "data",
+   "pinned": true
+  },
+  {
+   "company": "globalization partners",
+   "category": "latam_bilingual",
+   "platform": "greenhouse",
+   "slug": "globalizationpartners",
+   "jobs": 31
+  },
+  {
+   "company": "Vapi",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "vapi",
+   "slug": "vapi",
+   "jobs": 31,
+   "team_size": 50,
+   "batch": "Winter 2021",
+   "one_liner": "Voice AI for developers."
+  },
+  {
+   "company": "Retell AI",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "retell-ai",
+   "slug": "retell-ai",
+   "jobs": 31,
+   "team_size": 50,
+   "batch": "Winter 2024",
+   "one_liner": "Supercharge Your Contact Center Operations with AI Phone Agents"
+  },
+  {
+   "company": "modal",
+   "platform": "ashby",
+   "slug": "modal",
+   "jobs": 31,
+   "category": "ai_infra",
+   "pinned": true
+  },
+  {
+   "company": "goodfire",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "goodfire",
+   "jobs": 30
+  },
+  {
+   "company": "surge ai",
+   "category": "ai_evals",
+   "platform": "ashby",
+   "slug": "surge-ai",
+   "jobs": 29
+  },
+  {
+   "company": "Confido",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "confido",
+   "slug": "confido",
+   "jobs": 28,
+   "team_size": 65,
+   "batch": "Summer 2021",
+   "one_liner": "AI-enabled financial automation and intelligence for CPG Brands"
+  },
+  {
+   "company": "AfterQuery",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "afterquery",
+   "slug": "afterquery",
+   "jobs": 28,
+   "team_size": 30,
+   "batch": "Winter 2025",
+   "one_liner": "Applied research lab curating data solutions for foundation model\u2026"
+  },
+  {
+   "company": "Customer.io",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "customerio",
+   "slug": "customerio",
+   "jobs": 28,
+   "team_size": 200,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Fully remote, publishes its remote-work philosophy.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "Weave",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "weave",
+   "slug": "weave",
+   "jobs": 27,
+   "team_size": 14,
+   "batch": "Winter 2025",
+   "one_liner": "AI to understand and then route engineering work"
+  },
+  {
+   "company": "Nash",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "nash",
+   "slug": "nash",
+   "jobs": 26,
+   "team_size": 40,
+   "batch": "Summer 2021",
+   "one_liner": "Nash is the digital logistics infrastructure for commerce"
+  },
+  {
+   "company": "cockroachlabs",
+   "platform": "greenhouse",
+   "slug": "cockroachlabs",
+   "jobs": 26,
+   "category": "data",
+   "pinned": true
+  },
+  {
+   "company": "fingerprint",
+   "category": "dev_tools",
+   "platform": "greenhouse",
+   "slug": "fingerprint",
+   "jobs": 26
+  },
+  {
+   "company": "braintrust",
+   "category": "ai_evals",
+   "platform": "ashby",
+   "slug": "braintrust",
+   "jobs": 23
+  },
+  {
+   "company": "turing",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "turing",
+   "jobs": 21
+  },
+  {
+   "company": "oyster",
+   "category": "latam_bilingual",
+   "platform": "ashby",
+   "slug": "oyster",
+   "jobs": 21
+  },
+  {
+   "company": "Juicebox",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "juicebox",
+   "slug": "juicebox",
+   "jobs": 21,
+   "team_size": 65,
+   "batch": "Summer 2022",
+   "one_liner": "AI-powered talent sourcing for recruiters"
+  },
+  {
+   "company": "Latent",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "latent",
+   "slug": "latent",
+   "jobs": 21,
+   "team_size": 50,
+   "batch": "Winter 2023",
+   "one_liner": "Medical language models to automate healthcare operations"
+  },
+  {
+   "company": "paddle",
+   "category": "creator_economy",
+   "platform": "ashby",
+   "slug": "paddle",
+   "jobs": 19
+  },
+  {
+   "company": "Oneleet",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "oneleet",
+   "slug": "oneleet",
+   "jobs": 19,
+   "team_size": 65,
+   "batch": "Summer 2022",
+   "one_liner": "YC's most popular security compliance platform (SOC 2, ISO 27001,\u2026"
+  },
+  {
+   "company": "Langdock",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "langdock",
+   "slug": "langdock",
+   "jobs": 19,
+   "team_size": 55,
+   "batch": "Summer 2023",
+   "one_liner": "The all-in-one AI platform for companies."
+  },
+  {
+   "company": "invisible",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "invisibletech",
+   "jobs": 18
+  },
+  {
+   "company": "lodgify",
+   "category": "hospitality_tech",
+   "platform": "lever",
+   "slug": "lodgify",
+   "jobs": 0,
+   "disabled_jobs": 17
+  },
+  {
+   "company": "Metriport",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "metriport",
+   "slug": "metriport",
+   "jobs": 17,
+   "team_size": 26,
+   "batch": "Summer 2022",
+   "one_liner": "Open-Source Platform for Healthcare Data Intelligence"
+  },
+  {
+   "company": "Humaans",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "humaans",
+   "slug": "humaans",
+   "jobs": 16,
+   "team_size": 48,
+   "batch": "Winter 2021",
+   "one_liner": "AI-Powered HRIS for high performing teams"
+  },
+  {
+   "company": "Outset",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "outset",
+   "slug": "outset",
+   "jobs": 16,
+   "team_size": 30,
+   "batch": "Summer 2023",
+   "one_liner": "AI-powered user interviews"
+  },
+  {
+   "company": "Conveo",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "conveo",
+   "slug": "conveo",
+   "jobs": 16,
+   "team_size": 75,
+   "batch": "Summer 2024",
+   "one_liner": "Confident decisions in days with AI-led interviews."
+  },
+  {
+   "company": "Airtable",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "airtable",
+   "slug": "airtable",
+   "jobs": 16,
+   "team_size": 1000,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Solutions-architect roles that fit the build-and-explain combination.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "Tavus",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "tavus",
+   "slug": "tavus",
+   "jobs": 15,
+   "team_size": 75,
+   "batch": "Summer 2021",
+   "one_liner": "Building the human layer of AI"
+  },
+  {
+   "company": "andela",
+   "category": "global_employment",
+   "platform": "ashby",
+   "slug": "andela",
+   "jobs": 15
+  },
+  {
+   "company": "substack",
+   "category": "creator_economy",
+   "platform": "ashby",
+   "slug": "substack",
+   "jobs": 13
+  },
+  {
+   "company": "Odys Aviation",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "odys-aviation",
+   "slug": "odys-aviation",
+   "jobs": 13,
+   "team_size": 11,
+   "batch": "Summer 2021",
+   "one_liner": "Vertical takeoff and landing aircraft for major airlines"
+  },
+  {
+   "company": "Aurelian",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "aurelian",
+   "slug": "aurelian",
+   "jobs": 13,
+   "team_size": 45,
+   "batch": "Summer 2022",
+   "one_liner": "Automating non-emergency calls for 911 centers"
+  },
+  {
+   "company": "PointOne",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "pointone",
+   "slug": "pointone",
+   "jobs": 13,
+   "team_size": 35,
+   "batch": "Winter 2024",
+   "one_liner": "AI Time Platform for Law Firms"
+  },
+  {
+   "company": "Codes Health",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "codes-health",
+   "slug": "codes-health",
+   "jobs": 13,
+   "team_size": 25,
+   "batch": "Summer 2024",
+   "one_liner": "Medical Record Retrieval with Zero Human Error"
+  },
+  {
+   "company": "Fleek",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "fleek",
+   "slug": "fleek",
+   "jobs": 12,
+   "team_size": 100,
+   "batch": "Winter 2022",
+   "one_liner": "A B2B marketplace for wholesale second hand fashion"
+  },
+  {
+   "company": "Salient",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "salient",
+   "slug": "salient",
+   "jobs": 12,
+   "team_size": 40,
+   "batch": "Winter 2023",
+   "one_liner": "AI Servicing for Auto Lenders"
+  },
+  {
+   "company": "Auctor",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "auctor",
+   "slug": "auctor",
+   "jobs": 12,
+   "team_size": 30,
+   "batch": "Spring 2025",
+   "one_liner": "The agentic operating system for modern system integrators."
+  },
+  {
+   "company": "Typeform",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "ats_slug": "typeform",
+   "slug": "typeform",
+   "jobs": 12,
+   "team_size": 250,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Remote-friendly, customer-facing technical roles.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "pylon",
+   "platform": "ashby",
+   "slug": "pylon",
+   "jobs": 12,
+   "category": "support_tools",
+   "pinned": true
+  },
+  {
+   "company": "apollo research",
+   "category": "ai_evals",
+   "platform": "lever",
+   "slug": "apolloresearch",
+   "jobs": 11
+  },
+  {
+   "company": "Mach9",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "mach9",
+   "slug": "mach9",
+   "jobs": 11,
+   "team_size": 25,
+   "batch": "Summer 2021",
+   "one_liner": "AI CAD Software for Civil Engineering"
+  },
+  {
+   "company": "Vooma",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "vooma",
+   "slug": "vooma",
+   "jobs": 11,
+   "team_size": 30,
+   "batch": "Winter 2023",
+   "one_liner": "Automation platform for logistics"
+  },
+  {
+   "company": "Clarion",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "clarion",
+   "slug": "clarion",
+   "jobs": 11,
+   "team_size": 16,
+   "batch": "Winter 2024",
+   "one_liner": "The AI communication layer for healthcare"
+  },
+  {
+   "company": "HUD",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "hud",
+   "slug": "hud",
+   "jobs": 11,
+   "team_size": 15,
+   "batch": "Winter 2025",
+   "one_liner": "Platform for building RL environments and evals "
+  },
+  {
+   "company": "PostHog",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "posthog",
+   "slug": "posthog",
+   "jobs": 11,
+   "team_size": 80,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Dev tools. Async by default, meeting-free Tuesdays and Thursdays, public compensation calculator and handbook.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "resend",
+   "platform": "ashby",
+   "slug": "resend",
+   "jobs": 11,
+   "category": "devtools",
+   "pinned": true
+  },
+  {
+   "company": "plain",
+   "platform": "ashby",
+   "slug": "plain",
+   "jobs": 11,
+   "category": "support_tools",
+   "pinned": true
+  },
+  {
+   "company": "galileo",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "galileo",
+   "jobs": 10
+  },
+  {
+   "company": "descript",
+   "category": "creator_economy",
+   "platform": "greenhouse",
+   "slug": "descript",
+   "jobs": 10
+  },
+  {
+   "company": "Sieve",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "sieve",
+   "slug": "sieve",
+   "jobs": 10,
+   "team_size": 18,
+   "batch": "Winter 2022",
+   "one_liner": "Video datasets for frontier AI"
+  },
+  {
+   "company": "Lucis",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "lucis",
+   "slug": "lucis",
+   "jobs": 10,
+   "team_size": 17,
+   "batch": "Spring 2025",
+   "one_liner": "Function Health for Europe "
+  },
+  {
+   "company": "zapier",
+   "platform": "ashby",
+   "slug": "zapier",
+   "jobs": 10,
+   "category": "remote_first",
+   "pinned": true
+  },
+  {
+   "company": "planetscale",
+   "platform": "greenhouse",
+   "slug": "planetscale",
+   "jobs": 10,
+   "category": "data",
+   "pinned": true
+  },
+  {
+   "company": "lemlist",
+   "category": "creator_tools",
+   "platform": "ashby",
+   "slug": "lemlist",
+   "jobs": 10
+  },
+  {
+   "company": "labelbox",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "labelbox",
+   "jobs": 9
+  },
+  {
+   "company": "opus clip",
+   "category": "creator_economy",
+   "platform": "ashby",
+   "slug": "opusclip",
+   "jobs": 9
+  },
+  {
+   "company": "bitso",
+   "category": "latam_bilingual",
+   "platform": "greenhouse",
+   "slug": "bitso",
+   "jobs": 9
+  },
+  {
+   "company": "terminal",
+   "category": "latam_bilingual",
+   "platform": "ashby",
+   "slug": "terminal",
+   "jobs": 9
+  },
+  {
+   "company": "Bretton AI",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "brettonai",
+   "slug": "brettonai",
+   "jobs": 9,
+   "team_size": 34,
+   "batch": "Summer 2023",
+   "one_liner": "AI-native operations for the banks"
+  },
+  {
+   "company": "Flint",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "flint",
+   "slug": "flint",
+   "jobs": 9,
+   "team_size": 18,
+   "batch": "Summer 2023",
+   "one_liner": "Personalized learning built for schools"
+  },
+  {
+   "company": "browserbase",
+   "platform": "ashby",
+   "slug": "browserbase",
+   "jobs": 9,
+   "category": "ai_infra",
+   "pinned": true
+  },
+  {
+   "company": "apaleo",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "apaleo",
+   "jobs": 0,
+   "disabled_jobs": 8
+  },
+  {
+   "company": "railway",
+   "platform": "ashby",
+   "slug": "railway",
+   "jobs": 8,
+   "category": "devtools",
+   "pinned": true
+  },
+  {
+   "company": "Cinder",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "cinder",
+   "slug": "cinder",
+   "jobs": 7,
+   "team_size": 30,
+   "batch": "Winter 2022",
+   "one_liner": "Infrastructure to protect companies from AI abuse"
+  },
+  {
+   "company": "GovDash",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "govdash",
+   "slug": "govdash",
+   "jobs": 7,
+   "team_size": 56,
+   "batch": "Winter 2022",
+   "one_liner": "AI platform to win and run government contracts"
+  },
+  {
+   "company": "Vector",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "vector",
+   "slug": "vector",
+   "jobs": 7,
+   "team_size": 20,
+   "batch": "Winter 2023",
+   "one_liner": "Advertising for the new internet"
+  },
+  {
+   "company": "FleetWorks",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "fleetworks",
+   "slug": "fleetworks",
+   "jobs": 7,
+   "team_size": 20,
+   "batch": "Summer 2023",
+   "one_liner": "AI enabled marketplace matching trucks with jobs"
+  },
+  {
+   "company": "Tamarind Bio",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "tamarindbio",
+   "slug": "tamarindbio",
+   "jobs": 7,
+   "team_size": 20,
+   "batch": "Winter 2024",
+   "one_liner": "AI Inference Platform for Drug Discovery"
+  },
+  {
+   "company": "Saturn",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "saturn",
+   "slug": "saturn",
+   "jobs": 7,
+   "team_size": 18,
+   "batch": "Summer 2024",
+   "one_liner": "Compliance and back office workflows for Wealth Managers."
+  },
+  {
+   "company": "Simple AI",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "simple-ai",
+   "slug": "simple-ai",
+   "jobs": 7,
+   "team_size": 11,
+   "batch": "Summer 2024",
+   "one_liner": "AI voice that sells"
+  },
+  {
+   "company": "Uplane",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "uplane",
+   "slug": "uplane",
+   "jobs": 7,
+   "team_size": 22,
+   "batch": "Fall 2025",
+   "one_liner": "Replace marketing agencies with AI"
+  },
+  {
+   "company": "close",
+   "category": "creator_tools",
+   "platform": "ashby",
+   "slug": "close",
+   "jobs": 7
+  },
+  {
+   "company": "haize labs",
+   "category": "ai_evals",
+   "platform": "greenhouse",
+   "slug": "haizelabs",
+   "jobs": 6
+  },
+  {
+   "company": "patreon",
+   "category": "creator_economy",
+   "platform": "ashby",
+   "slug": "patreon",
+   "jobs": 6
+  },
+  {
+   "company": "kavak",
+   "category": "latam_bilingual",
+   "platform": "lever",
+   "slug": "kavak",
+   "jobs": 6
+  },
+  {
+   "company": "Invert",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "invert",
+   "slug": "invert",
+   "jobs": 6,
+   "team_size": 25,
+   "batch": "Winter 2022",
+   "one_liner": "Data analytics software for biomanufacturing."
+  },
+  {
+   "company": "Reality Defender",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "realitydefender",
+   "slug": "realitydefender",
+   "jobs": 6,
+   "team_size": 54,
+   "batch": "Winter 2022",
+   "one_liner": "Enterprise Deepfake Detection"
+  },
+  {
+   "company": "Blee",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "blee",
+   "slug": "blee",
+   "jobs": 6,
+   "team_size": 15,
+   "batch": "Summer 2022",
+   "one_liner": "Smart, fast, and collaborative compliance reviews "
+  },
+  {
+   "company": "Thera",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "thera",
+   "slug": "thera",
+   "jobs": 6,
+   "team_size": 15,
+   "batch": "Summer 2022",
+   "one_liner": "AI-Native Finance OS"
+  },
+  {
+   "company": "Cambio",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "cambio",
+   "slug": "cambio",
+   "jobs": 6,
+   "team_size": 60,
+   "batch": "Summer 2022",
+   "one_liner": "AI-native commercial real estate operations"
+  },
+  {
+   "company": "Decoda Health",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "decodahealth",
+   "slug": "decodahealth",
+   "jobs": 6,
+   "team_size": 15,
+   "batch": "Summer 2023",
+   "one_liner": "The all-in-one EMR built for med spas and elective care"
+  },
+  {
+   "company": "Usul",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "usul",
+   "slug": "usul",
+   "jobs": 6,
+   "team_size": 15,
+   "batch": "Summer 2024",
+   "one_liner": "AI Platform for Winning Defense & Government Contracts"
+  },
+  {
+   "company": "Complir",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "complir",
+   "slug": "complir",
+   "jobs": 6,
+   "team_size": 13,
+   "batch": "Spring 2026",
+   "one_liner": "Vanta for physical products"
+  },
+  {
+   "company": "lightspeed",
+   "category": "hospitality_tech",
+   "platform": "ashby",
+   "slug": "lightspeed",
+   "jobs": 0,
+   "disabled_jobs": 5
+  },
+  {
+   "company": "belvo",
+   "category": "latam_bilingual",
+   "platform": "ashby",
+   "slug": "belvo",
+   "jobs": 5
+  },
+  {
+   "company": "Popl",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "popl",
+   "slug": "popl",
+   "jobs": 5,
+   "team_size": 60,
+   "batch": "Winter 2021",
+   "one_liner": "Your AI GTM platform for In-Person Events"
+  },
+  {
+   "company": "Zensors",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "zensors",
+   "slug": "zensors",
+   "jobs": 5,
+   "team_size": 12,
+   "batch": "Summer 2021",
+   "one_liner": "AI to understand and automates the physical world"
+  },
+  {
+   "company": "Casca",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "casca",
+   "slug": "casca",
+   "jobs": 5,
+   "team_size": 40,
+   "batch": "Summer 2023",
+   "one_liner": "Make Banking Magical"
+  },
+  {
+   "company": "OffDeal",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "offdeal",
+   "slug": "offdeal",
+   "jobs": 5,
+   "team_size": 15,
+   "batch": "Winter 2024",
+   "one_liner": "AI-native investment bank for small businesses"
+  },
+  {
+   "company": "flodesk",
+   "category": "creator_economy",
+   "platform": "greenhouse",
+   "slug": "flodesk",
+   "jobs": 4
+  },
+  {
+   "company": "LiveFlow",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "liveflow",
+   "slug": "liveflow",
+   "jobs": 4,
+   "team_size": 51,
+   "batch": "Winter 2021",
+   "one_liner": "The Unified AI-ERP & FP&A Platform"
+  },
+  {
+   "company": "Parallel Bio",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "parallel-bio",
+   "slug": "parallel-bio",
+   "jobs": 4,
+   "team_size": 20,
+   "batch": "Summer 2021",
+   "one_liner": "Using the immune system to cure disease"
+  },
+  {
+   "company": "Spade",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "spade",
+   "slug": "spade",
+   "jobs": 4,
+   "team_size": 30,
+   "batch": "Winter 2022",
+   "one_liner": "Spade is the data and AI platform for modern finance."
+  },
+  {
+   "company": "Two Dots",
+   "category": "yc_small_ai",
+   "platform": "lever",
+   "ats_slug": "twodots",
+   "slug": "twodots",
+   "jobs": 4,
+   "team_size": 28,
+   "batch": "Summer 2022",
+   "one_liner": "AI fraud prevention and underwriting agent"
+  },
+  {
+   "company": "Hyperbound",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "hyperbound",
+   "slug": "hyperbound",
+   "jobs": 4,
+   "team_size": 30,
+   "batch": "Summer 2023",
+   "one_liner": "Revenue Activation Platform"
+  },
+  {
+   "company": "Onyx",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "onyx",
+   "slug": "onyx",
+   "jobs": 4,
+   "team_size": 20,
+   "batch": "Winter 2024",
+   "one_liner": "Open Source AI Chat"
+  },
+  {
+   "company": "Greenboard",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "greenboard",
+   "slug": "greenboard",
+   "jobs": 4,
+   "team_size": 26,
+   "batch": "Winter 2024",
+   "one_liner": "Modern OS for the financial back office. "
+  },
+  {
+   "company": "SalesPatriot",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "salespatriot",
+   "slug": "salespatriot",
+   "jobs": 4,
+   "team_size": 15,
+   "batch": "Winter 2025",
+   "one_liner": "AI powered operating system for distributors and OEMs"
+  },
+  {
+   "company": "ghost",
+   "platform": "greenhouse",
+   "slug": "ghost",
+   "jobs": 4,
+   "category": "creator_economy",
+   "pinned": true
+  },
+  {
+   "company": "kit",
+   "category": "creator_economy",
+   "platform": "ashby",
+   "slug": "kit",
+   "jobs": 3
+  },
+  {
+   "company": "buffer",
+   "category": "creator_economy",
+   "platform": "ashby",
+   "slug": "buffer",
+   "jobs": 3
+  },
+  {
+   "company": "Ekho",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "ekho",
+   "slug": "ekho",
+   "jobs": 3,
+   "team_size": 30,
+   "batch": "Summer 2022",
+   "one_liner": "Shopify for vehicles"
+  },
+  {
+   "company": "Rollstack",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "rollstack",
+   "slug": "rollstack",
+   "jobs": 3,
+   "team_size": 30,
+   "batch": "Winter 2023",
+   "one_liner": "Automate data-driven slide decks and documents with AI"
+  },
+  {
+   "company": "Cosine",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "cosine",
+   "slug": "cosine",
+   "jobs": 3,
+   "team_size": 12,
+   "batch": "Winter 2023",
+   "one_liner": "Fully Agentic SWE"
+  },
+  {
+   "company": "Inkeep",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "inkeep",
+   "slug": "inkeep",
+   "jobs": 3,
+   "team_size": 18,
+   "batch": "Winter 2023",
+   "one_liner": "Build AI Agent teammates and automations in code or no-code"
+  },
+  {
+   "company": "Momentic",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "momentic",
+   "slug": "momentic",
+   "jobs": 3,
+   "team_size": 15,
+   "batch": "Winter 2024",
+   "one_liner": "The agentic quality platform for web and mobile"
+  },
+  {
+   "company": "Artisan",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "artisan",
+   "slug": "artisan",
+   "jobs": 3,
+   "team_size": 50,
+   "batch": "Winter 2024",
+   "one_liner": "The AI BDR for enterprise revenue teams, plus a full AI sales team"
+  },
+  {
+   "company": "Fleetline",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "fleetline",
+   "slug": "fleetline",
+   "jobs": 3,
+   "team_size": 11,
+   "batch": "Summer 2025",
+   "one_liner": "Optimizing fleet planning with data driven algorithms"
+  },
+  {
+   "company": "revinate",
+   "category": "hospitality_tech",
+   "platform": "lever",
+   "slug": "revinate",
+   "jobs": 0,
+   "disabled_jobs": 2
+  },
+  {
+   "company": "remote",
+   "category": "latam_bilingual",
+   "platform": "greenhouse",
+   "slug": "remote",
+   "jobs": 2
+  },
+  {
+   "company": "authzed",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "authzed",
+   "slug": "authzed",
+   "jobs": 2,
+   "team_size": 31,
+   "batch": "Winter 2021",
+   "one_liner": "Authorization Infrastructure securing AI at OpenAI, Zoom, & more"
+  },
+  {
+   "company": "Replo",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "replo",
+   "slug": "replo",
+   "jobs": 2,
+   "team_size": 20,
+   "batch": "Summer 2021",
+   "one_liner": "Sell anything"
+  },
+  {
+   "company": "OneSchema",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "oneschema",
+   "slug": "oneschema",
+   "jobs": 2,
+   "team_size": 20,
+   "batch": "Summer 2021",
+   "one_liner": "AI Agents for Data Operations"
+  },
+  {
+   "company": "Conduit",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "conduit",
+   "slug": "conduit",
+   "jobs": 2,
+   "team_size": 15,
+   "batch": "Winter 2023",
+   "one_liner": "The operating system for shipping and receiving."
+  },
+  {
+   "company": "Conduit",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "conduit",
+   "slug": "conduit",
+   "jobs": 2,
+   "team_size": 15,
+   "batch": "Winter 2024",
+   "one_liner": "AI Agents for Hospitality"
+  },
+  {
+   "company": "chili piper",
+   "category": "dev_tools",
+   "platform": "ashby",
+   "slug": "chilipiper",
+   "jobs": 2
+  },
+  {
+   "company": "ghost",
+   "category": "creator_economy",
+   "platform": "ashby",
+   "slug": "ghost",
+   "jobs": 1
+  },
+  {
+   "company": "Jiga",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "jiga",
+   "slug": "jiga",
+   "jobs": 1,
+   "team_size": 25,
+   "batch": "Winter 2021",
+   "one_liner": "Source better parts by partnering directly with vetted manufacturers"
+  },
+  {
+   "company": "Metal",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "metal",
+   "slug": "metal",
+   "jobs": 1,
+   "team_size": 17,
+   "batch": "Winter 2023",
+   "one_liner": "The AI context platform for private capital. Everything your firm\u2026"
+  },
+  {
+   "company": "Arini",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "arini",
+   "slug": "arini",
+   "jobs": 1,
+   "team_size": 17,
+   "batch": "Winter 2024",
+   "one_liner": "AI receptionist for dentists"
+  },
+  {
+   "company": "Clearly AI",
+   "category": "yc_small_ai",
+   "platform": "ashby",
+   "ats_slug": "clearly-ai",
+   "slug": "clearly-ai",
+   "jobs": 1,
+   "team_size": 17,
+   "batch": "Summer 2024",
+   "one_liner": "Automate security and privacy reviews"
+  },
+  {
+   "company": "Hightouch",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "ats_slug": "hightouch",
+   "slug": "hightouch",
+   "jobs": 1,
+   "team_size": 594,
+   "pinned": true,
+   "size_is_approximate": true,
+   "why": "Publishes location-independent pay - the only company in the pool that writes that down.",
+   "verified_at": "2026-08-18"
+  },
+  {
+   "company": "four seasons",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "fourseasons",
+   "jobs": 0,
+   "verified_at": "2026-09-30",
+   "why": "Luxury hospitality at the top of the market; matches the operator's prior hospitality background.",
+   "disabled_jobs": 2
+  },
+  {
+   "company": "sonder",
+   "category": "hospitality_tech",
+   "platform": "ashby",
+   "slug": "sonder",
+   "jobs": 0,
+   "verified_at": "2026-09-30",
+   "why": "Hospitality tech with a guest-experience surface; premium-member lane.",
+   "disabled_jobs": 4
+  },
+  {
+   "company": "hopper",
+   "category": "hospitality_tech",
+   "platform": "ashby",
+   "slug": "hopper",
+   "jobs": 0,
+   "verified_at": "2026-09-30",
+   "why": "Travel tech, large customer-experience surface, remote-first.",
+   "disabled_jobs": 19
+  },
+  {
+   "company": "getyourguide",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "getyourguide",
+   "jobs": 0,
+   "verified_at": "2026-09-30",
+   "why": "Travel experiences marketplace; guest-experience and onboarding roles.",
+   "disabled_jobs": 52
+  },
+  {
+   "company": "lighthouse",
+   "category": "hospitality_tech",
+   "platform": "greenhouse",
+   "slug": "lighthouse",
+   "jobs": 0,
+   "verified_at": "2026-09-30",
+   "why": "Hotel commercial-intelligence platform. Its customers are hotels, so hospitality domain knowledge is the qualification.",
+   "disabled_jobs": 41
+  },
+  {
+   "company": "arta finance",
+   "category": "hospitality_tech",
+   "platform": "ashby",
+   "slug": "artafinance",
+   "jobs": 0,
+   "verified_at": "2026-09-30",
+   "why": "Private-client wealth platform. Same named-relationship shape as a membership book.",
+   "disabled_jobs": 8
+  },
+  {
+   "company": "gong",
+   "category": "remote_first_scale",
+   "platform": "greenhouse",
+   "slug": "gongio",
+   "jobs": 96,
+   "verified_at": "2026-10-06",
+   "why": "Revenue-AI platform. Professional Services Consultant role ($100-145k) found by hand 2026-10-05; board was missing from the feed."
+  },
+  {
+   "company": "Thatch",
+   "category": "health_benefits_tech",
+   "platform": "greenhouse",
+   "slug": "thatch",
+   "jobs": 32,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Nayya",
+   "category": "health_benefits_tech",
+   "platform": "greenhouse",
+   "slug": "nayya",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 5
+  },
+  {
+   "company": "Healthie",
+   "category": "health_benefits_tech",
+   "platform": "greenhouse",
+   "slug": "healthie",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 24
+  },
+  {
+   "company": "Candid Health",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "candidhealth",
+   "jobs": 36,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Sana Benefits",
+   "category": "health_benefits_tech",
+   "platform": "lever",
+   "slug": "sanabenefits",
+   "jobs": 4,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Garner Health",
+   "category": "health_benefits_tech",
+   "platform": "greenhouse",
+   "slug": "garnerhealth",
+   "jobs": 76,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Centivo",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "centivo",
+   "jobs": 9,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "HealthSherpa",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "healthsherpa",
+   "jobs": 3,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Nomi Health",
+   "category": "health_benefits_tech",
+   "platform": "lever",
+   "slug": "nomihealth",
+   "jobs": 6,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Modern Health",
+   "category": "health_benefits_tech",
+   "platform": "greenhouse",
+   "slug": "modernhealth",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 8
+  },
+  {
+   "company": "Elation Health",
+   "category": "health_benefits_tech",
+   "platform": "greenhouse",
+   "slug": "elationhealth",
+   "jobs": 17,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Canvas Medical",
+   "category": "health_benefits_tech",
+   "platform": "lever",
+   "slug": "canvasmedical",
+   "jobs": 6,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Zus Health",
+   "category": "health_benefits_tech",
+   "platform": "lever",
+   "slug": "zushealth",
+   "jobs": 6,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Abridge",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "abridge",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 47
+  },
+  {
+   "company": "Suki",
+   "category": "health_benefits_tech",
+   "platform": "greenhouse",
+   "slug": "suki",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 12
+  },
+  {
+   "company": "Tennr",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "tennr",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 26
+  },
+  {
+   "company": "Infinitus",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "infinitus",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 6
+  },
+  {
+   "company": "Assort Health",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "assorthealth",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 29
+  },
+  {
+   "company": "HelloPatient",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "hellopatient",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 17
+  },
+  {
+   "company": "Rula",
+   "category": "health_benefits_tech",
+   "platform": "ashby",
+   "slug": "rula",
+   "jobs": 36,
+   "verified_at": "2026-10-08",
+   "why": "Health/benefits tech lane opened 2026-10-08: matched to the operator's prior customer-support background.",
+   "pinned": true
+  },
+  {
+   "company": "Decagon",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "decagon",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 145
+  },
+  {
+   "company": "Sierra",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "sierra",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 195
+  },
+  {
+   "company": "Cresta",
+   "category": "ai_customer_service",
+   "platform": "greenhouse",
+   "slug": "cresta",
+   "jobs": 87,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification.",
+   "pinned": true
+  },
+  {
+   "company": "Observe.AI",
+   "category": "ai_customer_service",
+   "platform": "greenhouse",
+   "slug": "observeai",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 10
+  },
+  {
+   "company": "Parloa",
+   "category": "ai_customer_service",
+   "platform": "greenhouse",
+   "slug": "parloa",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 51
+  },
+  {
+   "company": "Lorikeet",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "lorikeet",
+   "jobs": 8,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification.",
+   "pinned": true
+  },
+  {
+   "company": "Siena AI",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "siena",
+   "jobs": 13,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification.",
+   "pinned": true
+  },
+  {
+   "company": "Giga",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "gigaml",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 32
+  },
+  {
+   "company": "Assembled",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "assembledhq",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 17
+  },
+  {
+   "company": "Help Scout",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "helpscout",
+   "jobs": 7,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification.",
+   "pinned": true
+  },
+  {
+   "company": "Gorgias",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "gorgias",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 17
+  },
+  {
+   "company": "Replicant",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "replicant",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "pinned": true,
+   "disabled_jobs": 12
+  },
+  {
+   "company": "Level AI",
+   "category": "ai_customer_service",
+   "platform": "ashby",
+   "slug": "level-ai",
+   "jobs": 17,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification.",
+   "pinned": true
+  },
+  {
+   "company": "Netomi",
+   "category": "ai_customer_service",
+   "platform": "lever",
+   "slug": "netomi",
+   "jobs": 23,
+   "verified_at": "2026-10-08",
+   "why": "AI customer-service lane opened 2026-10-08: these companies build the AI agents that replace support queues; customer-support experience plus agent-building is the qualification.",
+   "pinned": true
+  },
+  {
+   "company": "Four Seasons",
+   "category": "hospitality_tech",
+   "platform": "workday",
+   "slug": "fourseasons/wd3/Search",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 1952
+  },
+  {
+   "company": "Expedia",
+   "category": "hospitality_tech",
+   "platform": "workday",
+   "slug": "expedia/wd108/Search",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 175
+  },
+  {
+   "company": "Norwegian Cruise Line Holdings",
+   "category": "hospitality_tech",
+   "platform": "workday",
+   "slug": "nclh/wd108/NCLH_Careers",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 17
+  },
+  {
+   "company": "Marriott Vacations Worldwide",
+   "category": "hospitality_tech",
+   "platform": "workday",
+   "slug": "mymvw/wd5/MVW",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 530
+  },
+  {
+   "company": "Travel + Leisure Co.",
+   "category": "hospitality_tech",
+   "platform": "workday",
+   "slug": "wynd/wd5/External",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 860
+  },
+  {
+   "company": "Marriott International",
+   "category": "hospitality_tech",
+   "platform": "oracle",
+   "slug": "ejwl.fa.us2.oraclecloud.com/CX",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 70
+  },
+  {
+   "company": "Hilton",
+   "category": "hospitality_tech",
+   "platform": "oracle",
+   "slug": "efet.fa.us2.oraclecloud.com/CX_1",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 25
+  },
+  {
+   "company": "Hilton Grand Vacations",
+   "category": "hospitality_tech",
+   "platform": "oracle",
+   "slug": "efuq.fa.us6.oraclecloud.com/HiltonGrandVacations",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "why": "Hospitality/luxury lane. Workday/Oracle reader added 2026-10-08; only remote requisitions in the configured lanes are read in full.",
+   "pinned": true,
+   "disabled_jobs": 29
+  },
+  {
+   "company": "ElevenLabs",
+   "category": "human_ai",
+   "platform": "ashby",
+   "slug": "elevenlabs",
+   "jobs": 145,
+   "verified_at": "2026-10-08",
+   "pinned": true,
+   "why": "Human-AI lane opened 2026-10-08: voice, character and wellbeing AI where reading people is the qualification."
+  },
+  {
+   "company": "Synthesia",
+   "category": "human_ai",
+   "platform": "ashby",
+   "slug": "synthesia",
+   "jobs": 45,
+   "verified_at": "2026-10-08",
+   "pinned": true,
+   "why": "Human-AI lane opened 2026-10-08: voice, character and wellbeing AI where reading people is the qualification."
+  },
+  {
+   "company": "Hume AI",
+   "category": "human_ai",
+   "platform": "greenhouse",
+   "slug": "humeai",
+   "jobs": 5,
+   "verified_at": "2026-10-08",
+   "pinned": true,
+   "why": "Human-AI lane opened 2026-10-08: voice, character and wellbeing AI where reading people is the qualification."
+  },
+  {
+   "company": "Character.AI",
+   "category": "human_ai",
+   "platform": "ashby",
+   "slug": "character",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "pinned": true,
+   "why": "Human-AI lane opened 2026-10-08: voice, character and wellbeing AI where reading people is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "disabled_jobs": 13
+  },
+  {
+   "company": "HeyGen",
+   "category": "human_ai",
+   "platform": "greenhouse",
+   "slug": "heygen",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "pinned": true,
+   "why": "Human-AI lane opened 2026-10-08: voice, character and wellbeing AI where reading people is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "disabled_jobs": 21
+  },
+  {
+   "company": "Rosebud",
+   "category": "human_ai",
+   "platform": "greenhouse",
+   "slug": "rosebud",
+   "jobs": 0,
+   "verified_at": "2026-10-08",
+   "pinned": true,
+   "why": "Human-AI lane opened 2026-10-08: voice, character and wellbeing AI where reading people is the qualification. | PAUSED 2026-10-08: postings audit failed the operator's terms (mostly in-office, on-call/24-7, or fast-paced+quota).",
+   "disabled_jobs": 14
+  },
+  {
+   "company": "Talkspace",
+   "category": "human_ai",
+   "platform": "greenhouse",
+   "slug": "talkspace",
+   "jobs": 26,
+   "verified_at": "2026-10-08",
+   "pinned": true,
+   "why": "Human-AI lane opened 2026-10-08: voice, character and wellbeing AI where reading people is the qualification."
+  },
+  {
+   "company": "Nango",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "slug": "Nango",
+   "jobs": 10,
+   "verified_at": "2026-10-12",
+   "pinned": true,
+   "why": "From a public curated list of tech employers (2026-10-12); passed the terms audit before adding."
+  },
+  {
+   "company": "Sanity",
+   "category": "remote_first_scale",
+   "platform": "ashby",
+   "slug": "sanity",
+   "jobs": 36,
+   "verified_at": "2026-10-12",
+   "pinned": true,
+   "why": "From a public curated list of tech employers (2026-10-12); passed the terms audit before adding."
+  }
+ ],
+ "_yc_channel": "YC directory (yc-oss.github.io/api/companies/all.json, no auth) filtered to status=Active AND isHiring AND team_size 11-100 AND AI-tagged AND batch>=2021, then probed for an ATS board. This is the hidden-gem channel: companies this small mostly do not post to job boards at all, which is the 3/10 findability measured earlier.",
+ "_why_remote_first_scale": "Added by hand 2026-08-18. The 119 discovered boards were overwhelmingly YC companies under 100 people, and measurement showed only 2% of their in-lane roles could be worked from abroad - small companies mostly hire in one city. The freedom the operator is optimising for lives at companies that already run global payroll. These sixteen are the remote-first ones worth reading daily. Marked pinned so a discovery run cannot drop them; team_size is approximate and only feeds a 4-point tiebreaker.",
+ "_expansion_note": "2026-08-18: 23 boards added after probing 75 candidates live. Chosen for global-employment (Oyster), remote-first culture (Zapier), LATAM presence (Bitso, Belvo), creator economy (Kit, Ghost), and support tooling where a service background is the qualification (Intercom, Plain, Pylon). Marked pinned so discover.py cannot drop them. | 2026-09-30: probed 45 luxury, membership and hospitality employers after the operator asked about member-manager roles. Only 6 expose a Greenhouse/Lever/Ashby feed and are added here. American Express, Marriott, Hyatt, Accor, Inspirato, Quintessentially, Virtuoso, Internova, Mr & Mrs Smith, Soho House, NetJets and 28 others answer on none of the three platforms ats.py speaks \u2014 they run Workday, iCIMS or custom. companies.json has paid +3 for hospitality_tech since August for employers the pipeline could never fetch. Reaching that lane needs a Workday adapter, not more slugs."
+}

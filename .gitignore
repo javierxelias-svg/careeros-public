@@ -1,0 +1,35 @@
+# OS junk
+.DS_Store
+
+# Tool state — never travels
+.claude-flow/
+.gstack/
+
+# Secrets — never tracked
+.env
+.env.*
+*.key
+*.pem
+credentials*.json
+
+# Node
+node_modules/
+
+# CareerOS runtime state. In a private deployment, state/seen.jsonl and
+# state/sent/ are deliberately TRACKED: the GitHub Actions run is stateless, so
+# the dedupe ledger and the delivery archive have to live in the repo or every
+# run would re-send the whole board. Everything else here is a disposable cache
+# and is rebuilt on each run.
+state/raw/
+state/pages/
+state/ALERT-*.txt
+logs/
+__pycache__/
+*.pyc
+*.bak
+
+# Personal files — the operator's profile and application history. Never
+# committed to a public copy.
+context/
+state/applied.jsonl
+outputs/

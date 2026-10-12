@@ -1,0 +1,157 @@
+name: careeros-daily
+
+# Why this exists: on 2026-08-31 a power outage killed the Mac mini that ran
+# this on launchd. `pmset autorestart` was 0, so the machine stayed off for 27
+# days and no digest was sent. A schedule that lives on a machine you own is a
+# hope, not a schedule. This runs on GitHub's hardware instead.
+
+on:
+  # schedule:
+    # Cron here is UTC. Delivery hour is decided in Python against the TZ set
+    # below (the operator's local zone), not by this line.
+    #
+    # Hourly, widened from '0 10,11,13,16,20,23 * * *' on 2026-09-29 after the
+    # first unattended morning produced no digest at all. The six-slot version
+    # was written knowing GitHub delays scheduled runs; it turned out to
+    # understate the problem. What actually happened: the 23:00 UTC slot fired
+    # at 02:28 UTC, three and a half hours late, and then 10:00, 11:00 and
+    # 13:00 were dropped outright. Three consecutive misses across the whole
+    # delivery window.
+    #
+    # GitHub documents schedule as best-effort and drops events under load.
+    # Twenty-four chances beat six, and --if-due makes twenty-three of them
+    # exit in about fifteen seconds. Cost is roughly 240 minutes a month
+    # against the 2,000 free, which is the right trade for a digest whose
+    # entire purpose is arriving without being asked.
+    #
+    # This raises the odds. It does NOT make the schedule reliable, and it
+    # cannot: every one of these slots comes from the same scheduler that just
+    # dropped three. The independent check is the watchdog, not this line.
+    # Switched off in this public copy (no Telegram secrets here, so every
+    # hourly run would fail). The private copy runs it. To use it yourself,
+    # add the secrets and uncomment the next line.
+    # - cron: '0 * * * *'
+
+  # The real trigger, added 2026-09-30. Everything above this is now a backstop.
+  #
+  # Why: a Claude routine pushes a file here at 10:00 UTC and this fires on the
+  # push. A push is a webhook — delivered immediately, never throttled, never
+  # dropped. `schedule` is best-effort and GitHub fired 4 of 22 hourly slots on
+  # 2026-09-29/30, 18%, none of them inside the delivery window two mornings
+  # running.
+  #
+  # The pattern is lifted from an earlier project, which had not missed a run: 14 for 14
+  # weekly Mondays from 2026-06-29 to 2026-09-28, including 2026-08-31, the day
+  # the Mac died. Its routine could not reach api.telegram.org from the sandbox,
+  # so it pushed a file and let a push-triggered Action do the send. The lesson
+  # was not the workaround — it was that the routine held the clock and GitHub
+  # only ever did the work.
+  #
+  # The routine deliberately makes NO decision about whether to send. It pushes
+  # unconditionally and run_daily.py --if-due decides, in Python, against the
+  # ledger. A model with a reliable clock is worth having; a model deciding
+  # whether you already got your digest is not.
+  push:
+    paths:
+      - 'state/trigger/**'
+
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Send even if today already went out (skips --if-due)'
+        type: boolean
+        default: false
+
+# Two runs must never interleave: both write state/seen.jsonl and both push.
+concurrency:
+  group: careeros-daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # the run commits the ledger back to the repo
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # The code calls datetime.now() throughout and compares against a local
+      # delivery hour. Setting the container to the operator's zone makes those
+      # comparisons mean on Linux exactly what they meant on the Mac.
+      TZ: America/New_York   # EXAMPLE: set to the operator's own time zone
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      # No pip install step on purpose: CareerOS imports nothing outside the
+      # standard library. If that ever changes, this is where it breaks first.
+      - name: Assert stdlib-only
+        run: |
+          if [ -f requirements.txt ]; then
+            echo "requirements.txt appeared — add a pip install step"; exit 1
+          fi
+          python3 -c "import sys; print(sys.version)"
+
+      - name: Run digest
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            python3 careeros/run_daily.py
+          else
+            python3 careeros/run_daily.py --if-due
+          fi
+
+      - name: Commit ledger
+        run: |
+          git config user.name  "careeros-bot"
+          git config user.email "careeros-bot@users.noreply.github.com"
+          git add -A state/seen.jsonl state/sent
+          if git diff --staged --quiet; then
+            echo "no ledger change (run was not due)"; exit 0
+          fi
+          git commit -m "state: digest ledger $(date +%F)"
+          # A catch-up slot can land while an earlier push is still settling.
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push attempt ${attempt} failed, retrying"; sleep 5
+          done
+          echo "could not push ledger after 3 attempts"; exit 1
+
+      - name: Upload run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: careeros-log-${{ github.run_id }}
+          path: logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # The deadman. run_daily has its own crash wrapper, but it cannot fire if
+      # Python never started — the exact failure mode that went unnoticed for
+      # 27 days. This fires on any step failing, for any reason.
+      - name: Alert on failure
+        if: failure()
+        run: |
+          # The response is CHECKED, not discarded. Tested 2026-09-30 by pushing a
+          # requirements.txt to a throwaway branch to trip the guard above: the
+          # step fired correctly, but it piped Telegram's reply to /dev/null, so a
+          # deadman that had silently stopped delivering would have looked exactly
+          # like a deadman that worked. That is the same blindness this step exists
+          # to prevent, one level up.
+          RESPONSE=$(curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=CareerOS daily FAILED. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}")
+          if echo "$RESPONSE" | grep -q '"ok":true'; then
+            echo "failure alert delivered to Telegram"
+          else
+            # Deliberately does NOT exit 1. The run has already failed; masking the
+            # real failure behind a notification failure would lose the cause.
+            echo "::warning::failure alert did NOT reach Telegram"
+            echo "telegram response: ${RESPONSE:0:300}"
+          fi

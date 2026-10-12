@@ -1,0 +1,111 @@
+{
+  "_comment": "Tier 1 = structured feeds, no scraping. Every entry here is an ASSUMPTION until careeros/verify_sources.py proves it. The 'verified' field is written by that script, never by hand.",
+  "user_agent": "CareerOS/0.1 (personal job search; contact you@example.com)",
+  "sources": [
+    {
+      "id": "remoteok",
+      "name": "RemoteOK",
+      "type": "json_api",
+      "url": "https://remoteok.com/api",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-08-17T16:14:26+00:00",
+        "records": 100,
+        "error": null
+      },
+      "notes": "First array element is a legal disclaimer object, not a job. Skip it."
+    },
+    {
+      "id": "remotive",
+      "name": "Remotive",
+      "type": "json_api",
+      "url": "https://remotive.com/api/remote-jobs",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-08-17T16:14:29+00:00",
+        "records": 16,
+        "error": null
+      },
+      "notes": "Jobs live under the 'jobs' key."
+    },
+    {
+      "id": "weworkremotely_all",
+      "name": "WeWorkRemotely (all jobs)",
+      "type": "rss",
+      "url": "https://weworkremotely.com/remote-jobs.rss",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-08-17T16:14:31+00:00",
+        "records": 100,
+        "error": null
+      },
+      "notes": "Category-specific feeds also exist if the combined feed is unavailable."
+    },
+    {
+      "id": "weworkremotely_programming",
+      "name": "WeWorkRemotely (programming)",
+      "type": "rss",
+      "url": "https://weworkremotely.com/categories/remote-programming-jobs.rss",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-08-17T16:14:33+00:00",
+        "records": 25,
+        "error": null
+      },
+      "notes": "Fallback if the combined feed fails."
+    },
+    {
+      "id": "hn_whoishiring",
+      "name": "Hacker News Who Is Hiring",
+      "type": "algolia",
+      "url": "https://hn.algolia.com/api/v1/search_by_date?tags=story,author_whoishiring&query=Ask%20HN%3A%20Who%20is%20hiring%3F&hitsPerPage=3",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-08-17T16:14:35+00:00",
+        "records": 3,
+        "error": null
+      },
+      "notes": "Two-step: find the newest monthly thread, then fetch its comments via tags=comment,story_<objectID>."
+    },
+    {
+      "id": "himalayas",
+      "name": "Himalayas",
+      "type": "json_api",
+      "url": "https://himalayas.app/jobs/api?limit=100",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-08-17T16:14:36+00:00",
+        "records": 20,
+        "error": null
+      },
+      "notes": "The only source that states location and timezone as DATA: locationRestrictions is a country list, timezoneRestrictions a list of UTC offsets. Everything else makes the pipeline guess that from a title. limit is capped server-side around 20 regardless of what is asked."
+    },
+    {
+      "id": "jobicy",
+      "name": "Jobicy",
+      "type": "json_api",
+      "url": "https://jobicy.com/api/v2/remote-jobs?count=50",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-08-17T16:14:38+00:00",
+        "records": 50,
+        "error": null
+      },
+      "notes": "Best published-salary coverage measured: 52% on 2026-08-17 against RemoteOK's 4% the same day. Jobs under the 'jobs' key. salaryPeriod can be monthly or hourly \u2014 sources._period_salary handles it."
+    }
+  ]
+}

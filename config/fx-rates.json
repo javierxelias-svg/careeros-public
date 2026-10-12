@@ -1,0 +1,11 @@
+{
+  "_comment": "Approximate conversion rates to USD. Refresh monthly. Converted salaries are tagged in the digest so the operator knows the number is indicative, not exact.",
+  "last_refreshed": "2026-08-14",
+  "to_usd": {
+    "USD": 1.0,
+    "EUR": 1.09,
+    "GBP": 1.27,
+    "CAD": 0.73,
+    "AUD": 0.66
+  }
+}

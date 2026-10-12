@@ -1,0 +1,32 @@
+{
+ "acme-robotics|solutions-engineer-americas": {
+  "reviewed": true,
+  "offer": [
+   "EXAMPLE: unlimited PTO with a recommended minimum",
+   "EXAMPLE: fully remote across the Americas"
+  ],
+  "pros": [
+   "EXAMPLE: no years requirement in the posting",
+   "EXAMPLE: pay band published"
+  ],
+  "cons": [
+   "EXAMPLE: band top only just clears your target"
+  ],
+  "angle": "EXAMPLE: lead with something you built and can demo.",
+  "ask": "EXAMPLE: “What does the path from this role to the next one look like?”"
+ },
+ "example-co|implementation-specialist": {
+  "reviewed": true,
+  "offer": [
+   "EXAMPLE: async team, no core hours"
+  ],
+  "pros": [
+   "EXAMPLE: implementation lane, customer-facing"
+  ],
+  "cons": [
+   "EXAMPLE: pay estimated, not published"
+  ],
+  "angle": "EXAMPLE: show a working onboarding flow you automated.",
+  "ask": "EXAMPLE: “Is this role open to someone outside the US mainland?”"
+ }
+}

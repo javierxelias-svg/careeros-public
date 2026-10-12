@@ -1,0 +1,31 @@
+[
+ {
+  "t": "Junior Technical Account Manager",
+  "c": "Example Co",
+  "fam": "support",
+  "url": "https://example.com/jobs/1",
+  "lo": 0,
+  "hi": 0,
+  "conf": "unknown",
+  "basis": "base",
+  "ote": null,
+  "wall": 0,
+  "wallWhy": "junior in the title",
+  "lane": "core",
+  "freedom": 8,
+  "port": "americas",
+  "variable": false,
+  "found": "1 January 2026",
+  "offer": [
+   "EXAMPLE: pinned roles are carried forward when the live feed stops returning them"
+  ],
+  "pros": [
+   "EXAMPLE: fictional entry showing the schema"
+  ],
+  "cons": [
+   "EXAMPLE: not on the board today"
+  ],
+  "angle": "EXAMPLE: replace this file with your own pinned roles, or delete it (it is optional).",
+  "ask": "EXAMPLE: “Is this role still open?”"
+ }
+]

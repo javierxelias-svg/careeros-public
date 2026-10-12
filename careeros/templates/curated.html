@@ -1,0 +1,782 @@
+<title>Thirty Doors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap">
+
+<style>
+:root{
+  --ground:oklch(0.972 0.008 165);
+  --paper:oklch(0.995 0.004 165);
+  --paper-2:oklch(0.955 0.010 168);
+  --ink:oklch(0.24 0.025 200);
+  --ink-2:oklch(0.46 0.020 200);
+  --ink-3:oklch(0.60 0.016 200);
+  --rule:oklch(0.885 0.012 180);
+  --rule-2:oklch(0.815 0.016 180);
+  --accent:oklch(0.62 0.145 62);
+  --accent-soft:oklch(0.93 0.045 75);
+  --jade:oklch(0.50 0.095 168);
+  --jade-soft:oklch(0.93 0.040 168);
+  --clay:oklch(0.54 0.130 32);
+  --clay-soft:oklch(0.94 0.035 40);
+  --shadow:0 1px 2px oklch(0.24 0.03 200 / 0.05), 0 8px 24px oklch(0.24 0.03 200 / 0.05);
+  --on-accent:oklch(0.99 0.004 165);
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:oklch(0.185 0.020 205);
+    --paper:oklch(0.225 0.022 205);
+    --paper-2:oklch(0.265 0.024 205);
+    --ink:oklch(0.945 0.012 170);
+    --ink-2:oklch(0.775 0.016 175);
+    --ink-3:oklch(0.635 0.018 180);
+    --rule:oklch(0.325 0.020 200);
+    --rule-2:oklch(0.415 0.022 200);
+    --accent:oklch(0.795 0.135 68);
+    --accent-soft:oklch(0.315 0.055 62);
+    --jade:oklch(0.760 0.105 168);
+    --jade-soft:oklch(0.300 0.045 168);
+    --clay:oklch(0.740 0.115 38);
+    --clay-soft:oklch(0.310 0.050 34);
+    --on-accent:oklch(0.18 0.020 205);
+    --shadow:0 1px 2px oklch(0 0 0 / 0.30), 0 10px 30px oklch(0 0 0 / 0.28);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:oklch(0.185 0.020 205);
+  --paper:oklch(0.225 0.022 205);
+  --paper-2:oklch(0.265 0.024 205);
+  --ink:oklch(0.945 0.012 170);
+  --ink-2:oklch(0.775 0.016 175);
+  --ink-3:oklch(0.635 0.018 180);
+  --rule:oklch(0.325 0.020 200);
+  --rule-2:oklch(0.415 0.022 200);
+  --accent:oklch(0.795 0.135 68);
+  --accent-soft:oklch(0.315 0.055 62);
+  --jade:oklch(0.760 0.105 168);
+  --jade-soft:oklch(0.300 0.045 168);
+  --clay:oklch(0.740 0.115 38);
+  --clay-soft:oklch(0.310 0.050 34);
+  --on-accent:oklch(0.18 0.020 205);
+  --shadow:0 1px 2px oklch(0 0 0 / 0.30), 0 10px 30px oklch(0 0 0 / 0.28);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:Newsreader,Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;text-wrap:balance;margin:0;line-height:1.06;letter-spacing:-0.02em}
+p{margin:0}
+a{color:inherit}
+.wrap{max-width:1140px;margin:0 auto;padding:0 28px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);
+}
+:where(button,a,input,select,summary):focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:3px;
+}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:1px solid var(--rule);background:var(--paper)}
+.mast-in{display:flex;flex-direction:column;gap:26px;padding:38px 0 34px}
+.mast-top{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap}
+.mast h1{
+  font-size:clamp(52px,10vw,104px);font-weight:800;
+  font-stretch:112%;letter-spacing:-0.035em;
+}
+.mast h1 em{font-style:normal;color:var(--accent)}
+.thesis{
+  font-size:clamp(19px,2.3vw,25px);line-height:1.42;max-width:33ch;font-weight:400;color:var(--ink);
+}
+.thesis-quote{border-left:0;padding:0;margin:0}
+.mast-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:44px;align-items:end}
+.mast-note{font-size:15.5px;color:var(--ink-2);max-width:52ch;line-height:1.6}
+.mast-note strong{color:var(--ink);font-weight:600}
+.themebtn{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
+  background:none;border:1px solid var(--rule-2);color:var(--ink-2);
+  padding:7px 12px;border-radius:2px;cursor:pointer;transition:border-color .25s var(--ease),color .25s var(--ease);
+}
+.themebtn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- section frame ---------- */
+section{padding:66px 0}
+.sechead{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+.sechead h2{font-size:clamp(27px,3.4vw,38px);font-weight:700;font-stretch:106%}
+.seclede{font-size:17.5px;color:var(--ink-2);max-width:66ch;margin-bottom:34px;line-height:1.6}
+
+/* ---------- math module ---------- */
+.math{background:var(--paper);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.math-head{
+  display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:20px 26px;border-bottom:1px solid var(--rule);background:var(--paper-2);
+}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.branch{padding:28px 26px 30px}
+.branch + .branch{border-left:1px solid var(--rule)}
+.branch h3{font-size:15px;font-weight:600;letter-spacing:0.01em;margin-bottom:4px}
+.branch .where{font-size:13.5px;color:var(--ink-3);margin-bottom:18px}
+.bigfig{font-family:Archivo,sans-serif;font-variant-numeric:tabular-nums;font-size:42px;font-weight:700;letter-spacing:-0.035em;line-height:1}
+.branch.win .bigfig{color:var(--jade)}
+.figline{font-size:14px;color:var(--ink-2);margin-top:10px}
+.verdict{
+  padding:18px 26px;border-top:1px solid var(--rule);background:var(--jade-soft);
+  font-size:15.5px;line-height:1.55;color:var(--ink);
+}
+.ctrl{display:flex;align-items:center;gap:12px;font-size:13.5px;color:var(--ink-2)}
+.ctrl input[type=range]{accent-color:var(--accent);width:150px}
+.seg{display:inline-flex;border:1px solid var(--rule-2);border-radius:2px;overflow:hidden}
+.seg button{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+  background:none;border:0;color:var(--ink-2);padding:8px 13px;cursor:pointer;transition:background .2s var(--ease),color .2s var(--ease);
+}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}
+
+/* ---------- playbook ---------- */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:0;border-top:1px solid var(--rule)}
+.rule{padding:26px 26px 30px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+.rule:last-child{border-right:0}
+.rule .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);letter-spacing:0.08em}
+.rule h3{font-size:19px;font-weight:600;margin:10px 0 9px;letter-spacing:-0.01em}
+.rule p{font-size:15px;color:var(--ink-2);line-height:1.58}
+.rule .say{
+  margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;
+  color:var(--ink);background:var(--accent-soft);padding:10px 12px;border-radius:3px;
+}
+
+/* ---------- filters ---------- */
+.toolbar{
+  position:sticky;top:0;z-index:20;background:var(--ground);
+  border-bottom:1px solid var(--rule);padding:14px 0;margin-bottom:0;
+}
+.toolrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:0.04em;
+  border:1px solid var(--rule-2);background:var(--paper);color:var(--ink-2);
+  padding:7px 12px;border-radius:2px;cursor:pointer;
+  transition:border-color .22s var(--ease),color .22s var(--ease),background .22s var(--ease);
+}
+.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.count{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);margin-left:auto;white-space:nowrap}
+select.sortsel{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;background:var(--paper);color:var(--ink);
+  border:1px solid var(--rule-2);border-radius:2px;padding:7px 10px;cursor:pointer;
+}
+
+/* ---------- manifest ---------- */
+.colhead{
+  display:grid;grid-template-columns:34px minmax(0,2.7fr) 1.25fr 0.8fr 0.95fr 1fr 26px;
+  gap:16px;padding:14px 18px 8px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);
+}
+@media (max-width:880px){.colhead{display:none}}
+.wingkey{display:inline-flex;align-items:center;gap:5px;margin-right:14px;font-size:13.5px;white-space:nowrap}
+.wingkey i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.w0{background:var(--jade)} .w1{background:oklch(0.62 0.10 130)} .w2{background:var(--accent)}
+.w3{background:oklch(0.60 0.14 45)} .w4{background:var(--clay)}
+.wingdot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.wingcell{display:flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  letter-spacing:0.04em;color:var(--ink-2);white-space:nowrap}
+.chip.life[aria-pressed=true]{background:var(--jade);border-color:var(--jade);color:var(--on-accent)}
+.floorctl{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-2);
+  font-family:"IBM Plex Mono",monospace;letter-spacing:0.02em}
+.floorctl input[type=range]{accent-color:var(--jade);width:118px}
+.lifegrid{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:20px}
+.lifeitem{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:0.03em;
+  padding:5px 9px;border-radius:2px;border:1px solid transparent;white-space:nowrap}
+.lifeitem.yes{background:var(--jade-soft);color:var(--jade);border-color:var(--jade)}
+.lifeitem.no{background:var(--clay-soft);color:var(--clay);border-color:var(--clay)}
+.lifescore{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3);margin-left:4px}
+.lifepill{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:500;
+  padding:2px 5px;border-radius:2px;background:var(--paper-2);color:var(--ink-3);border:1px solid var(--rule-2)}
+.lifepill.full{background:var(--jade);color:var(--on-accent);border-color:var(--jade)}
+.wingbox{margin-top:18px;padding:15px 18px;border:1px dashed var(--rule-2);border-radius:3px;
+  display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.wingbox b{color:var(--ink);font-weight:600}
+.autobadge{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:0.08em;
+  color:var(--clay);border:1px solid var(--clay);padding:2px 6px;border-radius:2px;margin-left:8px;white-space:nowrap}
+.autobadge.pin{color:var(--jade);border-color:var(--jade)}
+.manifest{border-top:1px solid var(--rule)}
+.row{border-bottom:1px solid var(--rule);background:var(--paper);scroll-margin-top:82px}
+.rowbtn{
+  width:100%;display:grid;
+  grid-template-columns:34px minmax(0,2.7fr) 1.25fr 0.8fr 0.95fr 1fr 26px;
+  gap:16px;align-items:center;text-align:left;
+  background:none;border:0;padding:17px 18px;cursor:pointer;color:inherit;
+  font-family:inherit;font-size:inherit;
+  transition:background .2s var(--ease);
+}
+.rowbtn:hover{background:var(--paper-2)}
+.rank{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3)}
+.rtitle{font-family:Archivo,sans-serif;font-weight:600;font-size:17.5px;letter-spacing:-0.012em;line-height:1.22}
+.rco{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+.rco b{font-weight:600;color:var(--ink)}
+.rpay{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:14.5px;font-weight:500;white-space:nowrap}
+.rpay small{display:block;font-size:11px;color:var(--ink-3);font-weight:400;letter-spacing:0.03em;margin-top:3px}
+.rbank{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:14.5px;color:var(--jade);white-space:nowrap}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:0.05em;
+  padding:3px 7px;border-radius:2px;white-space:nowrap;border:1px solid transparent;
+}
+.tag.port{background:var(--jade-soft);color:var(--jade);border-color:var(--jade)}
+.tag.ask,.tag.quiet{background:var(--paper-2);color:var(--ink-3);border-color:var(--rule-2)}
+.tag.wall{background:var(--clay-soft);color:var(--clay);border-color:var(--clay)}
+.tag.open{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.caret{color:var(--ink-3);transition:transform .3s var(--ease),color .3s var(--ease);font-size:12px;display:inline-block}
+.row[data-open=true] .caret{transform:rotate(90deg);color:var(--accent)}
+.row[data-open=true]{background:var(--paper-2)}
+
+.detail{display:none;padding:4px 18px 30px 70px;border-top:1px solid var(--rule)}
+.row[data-open=true] .detail{display:block;animation:rise .42s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:26px 34px;margin-top:22px}
+.dcol h4{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:0.13em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;margin-bottom:9px;
+}
+.dcol ul{margin:0;padding-left:17px}
+.dcol li{font-size:15px;line-height:1.55;margin-bottom:7px;color:var(--ink-2)}
+.dcol li b{color:var(--ink);font-weight:600}
+.angle{
+  margin-top:22px;padding:17px 19px;background:var(--paper);border:1px solid var(--rule);border-radius:3px;
+  font-size:15.5px;line-height:1.6;
+}
+.angle h4{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:0.13em;text-transform:uppercase;
+  color:var(--accent);font-weight:500;margin-bottom:8px;
+}
+.dfoot{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
+.apply{
+  font-family:Archivo,sans-serif;font-size:14px;font-weight:600;letter-spacing:0.01em;
+  background:var(--ink);color:var(--ground);text-decoration:none;padding:10px 17px;border-radius:2px;
+  transition:background .22s var(--ease);
+}
+.apply:hover{background:var(--accent)}
+.star{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:0.05em;
+  background:none;border:1px solid var(--rule-2);color:var(--ink-2);padding:9px 14px;border-radius:2px;cursor:pointer;
+  transition:border-color .22s var(--ease),color .22s var(--ease),background .22s var(--ease);
+}
+.star:hover{border-color:var(--accent);color:var(--accent)}
+.star[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.srcnote{font-size:13px;color:var(--ink-3);line-height:1.5}
+
+/* ---------- tray ---------- */
+.tray{
+  position:sticky;bottom:0;z-index:25;background:var(--ink);color:var(--ground);
+  display:flex;align-items:center;gap:16px;padding:13px 22px;flex-wrap:wrap;
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:0.03em;
+  transform:translateY(102%);transition:transform .4s var(--ease);
+}
+.tray{pointer-events:none}
+.tray[data-show=true]{transform:none;pointer-events:auto}
+.tray b{color:var(--accent);font-weight:600}
+.tray .clear{
+  margin-left:auto;background:none;border:1px solid oklch(0.6 0.02 200 / 0.5);color:inherit;
+  font-family:inherit;font-size:11.5px;padding:6px 11px;border-radius:2px;cursor:pointer;
+}
+
+/* ---------- close ---------- */
+.limits{border-top:1px solid var(--rule);padding:44px 0 70px;background:var(--paper)}
+.limits h3{font-size:19px;font-weight:600;margin-bottom:14px}
+.limits ul{margin:0;padding-left:19px;max-width:74ch}
+.limits li{font-size:15px;color:var(--ink-2);margin-bottom:9px;line-height:1.55}
+.empty{padding:54px 18px;text-align:center;color:var(--ink-3);font-size:16px}
+
+@media (max-width:880px){
+  .mast-grid{grid-template-columns:1fr;gap:26px}
+  .branches{grid-template-columns:1fr}
+  .branch + .branch{border-left:0;border-top:1px solid var(--rule)}
+  .rowbtn{grid-template-columns:26px minmax(0,1fr) 22px;gap:12px;row-gap:11px}
+  .rpay,.rbank,.tags,.wingcell{grid-column:2}
+  .detail{padding-left:24px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+
+<header class="mast">
+  <div class="wrap mast-in">
+    <div class="mast-top">
+      <span class="eyebrow" id="stamp">CareerOS</span>
+      <button class="themebtn" id="themebtn" type="button">Theme</button>
+    </div>
+    <div class="mast-grid">
+      <h1>Thirty<br><em>Doors</em></h1>
+      <div>
+        <p class="thesis thesis-quote">&ldquo;Rank jobs by the life they allow, not only by the salary.&rdquo;</p>
+        <p class="mast-note" style="margin-top:18px">
+          Openings pulled from the whole pool and ranked against that sentence rather than against salary.
+          Every number below is <strong>guaranteed base</strong>. Where a company published on-target earnings,
+          the variable half is stripped out and labelled. What you are buying with year one is
+          <strong>a portable job</strong>, so portability outranks pay.
+          The list <strong>rebuilds itself every morning</strong>, so new postings arrive on their own.
+        </p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="math">
+  <div class="wrap">
+    <div class="sechead"><h2>The two branches are the same money</h2></div>
+    <p class="seclede">
+      Stay at home base (an example 30 percent rate), or live abroad under an example foreign-earned-income exclusion.
+      Both rates are illustrative settings, not anyone's real tax situation. Drive the salary and your monthly burn, and watch where the lines cross. Estimates, not tax advice: confirm with a CPA.
+    </p>
+
+    <div class="math">
+      <div class="math-head">
+        <div class="ctrl">
+          <label for="salrange">Salary</label>
+          <input type="range" id="salrange" min="70000" max="260000" step="5000" value="120000">
+          <span class="mono" id="salout" style="min-width:76px">$120,000</span>
+        </div>
+        <div class="ctrl">
+          <label for="burnrange">You live on</label>
+          <input type="range" id="burnrange" min="1000" max="5000" step="250" value="2000">
+          <span class="mono" id="burnout" style="min-width:88px">$2,000/mo</span>
+        </div>
+        <div class="ctrl">
+          <span>List shows</span>
+          <span class="seg" role="group" aria-label="Which branch the manifest totals use">
+            <button type="button" id="mode-pr" aria-pressed="true">Year one, home</button>
+            <button type="button" id="mode-ab" aria-pressed="false">Year two, abroad</button>
+          </span>
+        </div>
+      </div>
+      <div class="branches">
+        <div class="branch" id="branch-pr">
+          <h3>Branch A</h3>
+          <p class="where">Home base (example 30% rate)</p>
+          <p class="bigfig" id="pr-net">$80,400</p>
+          <p class="figline">take-home &middot; banks <span class="mono" id="pr-bank">$56,400</span> in a year</p>
+        </div>
+        <div class="branch" id="branch-ab">
+          <h3>Branch B</h3>
+          <p class="where">Abroad (example income exclusion)</p>
+          <p class="bigfig" id="ab-net">$117,600</p>
+          <p class="figline">take-home &middot; banks <span class="mono" id="ab-bank">$93,600</span> in a year</p>
+        </div>
+      </div>
+      <p class="verdict" id="verdict"></p>
+    </div>
+  </div>
+</section>
+
+<section id="playbook" style="padding-top:14px">
+  <div class="wrap">
+    <div class="sechead"><h2>Five rules for every one of these</h2></div>
+    <p class="seclede">The list is worth nothing without these. Rule two is the one that decides year two.</p>
+    <div class="rules">
+      <div class="rule">
+        <span class="n">01</span>
+        <h3>Compare base, never OTE</h3>
+        <p>On-target earnings hide a fifth of the number behind targets you do not control. One posting advertised $237,375 at an 80/20 split. The base was $75k to $92k.</p>
+        <p class="say">&ldquo;Is that base, or on-target? What is the split, and what share of the team actually earned the variable last year?&rdquo;</p>
+      </div>
+      <div class="rule">
+        <span class="n">02</span>
+        <h3>Ask the portability question first</h3>
+        <p>A portable job makes year two a change of address. A job that is not portable makes year two another job hunt. That property is worth more than $15,000 of salary.</p>
+        <p class="say">&ldquo;If I moved elsewhere in the Americas in about a year, could you keep employing me, directly or through an employer of record?&rdquo;</p>
+      </div>
+      <div class="rule">
+        <span class="n">03</span>
+        <h3>Lead with the pairing, not the resume</h3>
+        <p>Customer-facing experience plus a practice of shipping working systems with preflight checks and failover. Few applicants have both halves.</p>
+        <p class="say">&ldquo;I build the thing, and I can explain it to the person signing the cheque, in their words.&rdquo;</p>
+      </div>
+      <div class="rule">
+        <span class="n">04</span>
+        <h3>Treat a years requirement as a filter, not a fence</h3>
+        <p>Four in ten of these state a number. At companies under a few hundred people it usually means &ldquo;not a bootcamp grad&rdquo;. Apply anyway when the content matches what you actually do.</p>
+        <p class="say">&ldquo;I have not been paid for it yet. Here is the system, running, with the receipts.&rdquo;</p>
+      </div>
+      <div class="rule">
+        <span class="n">05</span>
+        <h3>Send in batches of five</h3>
+        <p>One application is a referendum on you. Five in a week is a process with a response rate. Star five below, send them the same morning, then move on to the next five.</p>
+        <p class="say">Two blockers first: one public repo with a two minute demo, and a resume aimed at the target title.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="list" style="padding-top:14px">
+  <div class="wrap">
+    <div class="sechead"><h2>The manifest</h2></div>
+    <p class="seclede">
+      Sorted by fit against the year plan: portable first, then guaranteed base, then how little the job asks of your evenings.
+      Open a row for what the company actually offers, what it costs you, and the angle to lead with.
+    </p>
+    <p class="seclede" style="margin-top:-20px">
+      <span id="lifeline"></span>
+      Every row also carries a <strong>winging-it reading</strong>, because you said you would be winging some of these.
+      <span class="wingkey"><i class="w0"></i>apply as you are</span>
+      <span class="wingkey"><i class="w1"></i>level, not years</span>
+      <span class="wingkey"><i class="w2"></i>small stretch</span>
+      <span class="wingkey"><i class="w3"></i>real stretch</span>
+      <span class="wingkey"><i class="w4"></i>lottery ticket</span>
+      The bar is reported, never used to hide a role from you.
+    </p>
+  </div>
+
+  <div class="toolbar">
+    <div class="wrap">
+      <div class="toolrow">
+        <button class="chip life" data-f="life" aria-pressed="false" type="button">Passes the life test</button>
+        <button class="chip" data-f="port" aria-pressed="false" type="button">Portable now</button>
+        <button class="chip" data-f="nowall" aria-pressed="false" type="button">No years wall</button>
+        <button class="chip" data-f="pub" aria-pressed="false" type="button">Published pay</button>
+        <button class="chip" data-f="95" aria-pressed="false" type="button">Base $95k+</button>
+        <button class="chip" data-f="noquota" aria-pressed="false" type="button">All base, no variable</button>
+        <button class="chip" data-f="asyouare" aria-pressed="false" type="button">Apply as you are</button>
+        <button class="chip" data-f="reviewed" aria-pressed="false" type="button">Hand reviewed</button>
+        <span class="floorctl">
+          <label for="floorrange">Your floor</label>
+          <input type="range" id="floorrange" min="70000" max="150000" step="2500" value="100000">
+          <span class="mono" id="floorout">$100,000</span>
+        </span>
+        <select class="sortsel" id="sortsel">
+          <option value="fit">Sort: fit for the plan</option>
+          <option value="base">Sort: guaranteed base</option>
+          <option value="bank">Sort: banked in year one</option>
+          <option value="wall">Sort: lowest experience wall</option>
+          <option value="freedom">Sort: most freedom</option>
+          <option value="wing">Sort: least winging it</option>
+          <option value="life">Sort: closest to the life test</option>
+        </select>
+        <span class="count" id="count"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="colhead">
+      <span></span><span>Role</span><span>Likely offer</span>
+      <span id="bankhead">Banked, home year one</span><span>Gates</span><span>Winging it</span><span></span>
+    </div>
+    <div class="manifest" id="manifest"></div>
+  </div>
+</section>
+
+<div class="tray" id="tray">
+  <span>This week&rsquo;s five</span>
+  <span><b id="traycount">0</b> starred</span>
+  <span id="traylist" style="opacity:.85"></span>
+  <button class="clear" id="trayclear" type="button">Clear</button>
+</div>
+
+<div class="limits">
+  <div class="wrap">
+    <h3>How this was built, and what it cannot tell you</h3>
+    <p id="metaline" style="max-width:74ch;color:var(--ink-2);font-size:15px;line-height:1.6;margin-bottom:14px"></p>
+    <ul>
+      <li>Rebuilt by the CareerOS daemon after every daily run, from the configured sources and employer boards. Roles are selected by title family, pay floor and lane, then ranked for the year plan rather than for salary.</li>
+      <li>The experience wall is <b>reported, never used to filter</b>. Some of these will be a stretch, so the page tells you how far above the bar each one sits and leaves the decision with you.</li>
+      <li>Pay marked <b>published</b> came from the posting. Pay marked <b>estimated</b> was inferred from the title and the market, so treat it as a starting guess and confirm on the first call.</li>
+      <li>Where a posting quoted on-target earnings, the base shown strips the variable half. Two Elastic roles publish a 70/30 mix in the body text; that real split is used here rather than the parser&rsquo;s 80/20 default. Grafana publishes no split, so 80/20 is assumed and flagged.</li>
+      <li>A posting that quotes on-target earnings without ever writing the word still reads as base. Render&rsquo;s $230k to $300k Solutions Engineer is the known example, and it is not on this list.</li>
+      <li>Take-home figures use EXAMPLE settings: a flat 30 percent at home base and an illustrative foreign-earned-income exclusion abroad. Change the constants in the page script to your own. They are estimates, not tax advice.</li>
+      <li>Portability marked <b>ask</b> means the posting is silent, not that the answer is no. Rule two exists to turn those into a yes or a no before you invest an interview loop.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const ROLES = __ROLE_DATA__;
+const META = __META_DATA__;
+
+
+/* ---------- money model ----------
+   EXAMPLE settings, illustrative only: a flat home-base rate and an
+   example foreign-earned-income exclusion. Estimates, not tax advice. */
+const FEIE = 100000, /* made-up example income exclusion */ PR_RATE = 0.30, ABROAD_FLOOR = 0.02, ABROAD_RATE = 0.30;
+const money = n => "$" + Math.round(n).toLocaleString("en-US");
+const netPR = g => g * (1 - PR_RATE);
+const netAbroad = g => g - (Math.max(0, g - FEIE) * ABROAD_RATE) - (g * ABROAD_FLOOR);
+const mid = r => r.likely || (r.lo + r.hi) / 2;
+
+let burn = 2000, mode = "pr", sortBy = "fit";
+const filters = new Set();
+const open = new Set();
+
+/* Starred picks survive a reload where storage is allowed, and fall back to
+   memory where it is not. Never let a blocked storage API break the page. */
+const STORE = "thirty-doors:starred";
+const readStore = () => { try { return new Set(JSON.parse(localStorage.getItem(STORE)) || []); }
+                          catch (e) { return new Set(); } };
+const writeStore = set => { try { localStorage.setItem(STORE, JSON.stringify([...set])); } catch (e) {} };
+const starred = readStore();
+
+/* ---------- the math module ---------- */
+const salRange = document.getElementById("salrange"), burnRange = document.getElementById("burnrange");
+function drawMath(redraw){
+  const g = +salRange.value;
+  burn = +burnRange.value;
+  document.getElementById("salout").textContent = money(g);
+  document.getElementById("burnout").textContent = money(burn) + "/mo";
+  const pr = netPR(g), ab = netAbroad(g), spend = burn * 12;
+  document.getElementById("pr-net").textContent = money(pr);
+  document.getElementById("ab-net").textContent = money(ab);
+  document.getElementById("pr-bank").textContent = money(Math.max(0, pr - spend));
+  document.getElementById("ab-bank").textContent = money(Math.max(0, ab - spend));
+  document.getElementById("branch-pr").classList.toggle("win", pr >= ab);
+  document.getElementById("branch-ab").classList.toggle("win", ab > pr);
+  document.getElementById("verdict").innerHTML =
+    "At " + money(g) + ", living abroad keeps " + money(ab - pr) +
+    " more of it. Matching that take-home at home base would take a salary of about <b>" +
+    money(ab / (1 - PR_RATE)) + "</b>, which is why the plan is to earn a Branch B salary now, " +
+    "bank the difference for a year, and then move without changing employers.";
+  redraw ? drawList() : updateBanks();
+}
+salRange.addEventListener("input", () => drawMath(false));
+burnRange.addEventListener("input", () => drawMath(false));
+
+/* ---------- list ---------- */
+const bankOf = r => r.hi
+  ? Math.max(0, (mode === "pr" ? netPR(mid(r)) : netAbroad(mid(r))) - burn * 12)
+  : 0;
+const WING_LABEL = ["apply as you are", "level, not years", "small stretch", "real stretch", "lottery ticket"];
+
+/* The floor is a dial, not a constant. Everything about the life test that
+   depends on pay is recomputed from it, so the reader sees what the number costs. */
+let payFloor = 100000;
+const lifeOf = r => Object.assign({}, r.life, { "Six figures": (r.likely || 0) >= payFloor });
+const lifeScoreOf = r => Object.values(lifeOf(r)).filter(Boolean).length;
+const TESTS = 7;
+
+const passes = r => {
+  if (filters.has("port") && r.port === "ask") return false;
+  if (filters.has("nowall") && r.wall > 0) return false;
+  if (filters.has("pub") && r.conf !== "published") return false;
+  if (filters.has("95") && r.hi < 95000) return false;
+  if (filters.has("noquota") && r.variable) return false;
+  if (filters.has("asyouare") && r.wall > 1) return false;
+  if (filters.has("reviewed") && !r.reviewed) return false;
+  if (filters.has("life") && lifeScoreOf(r) < TESTS) return false;
+  return true;
+};
+const sorters = {
+  fit: (a, b) => b.fit - a.fit,
+  base: (a, b) => mid(b) - mid(a),
+  bank: (a, b) => bankOf(b) - bankOf(a),
+  wall: (a, b) => a.wall - b.wall || b.fit - a.fit,
+  wing: (a, b) => a.wall - b.wall || b.fit - a.fit,
+  life: (a, b) => lifeScoreOf(b) - lifeScoreOf(a) || b.fit - a.fit,
+  freedom: (a, b) => b.freedom - a.freedom || b.fit - a.fit
+};
+const portTag = r => r.port === "yes"
+  ? '<span class="tag port">portable now</span>'
+  : r.port === "americas"
+    ? '<span class="tag port">americas</span>'
+    : '<span class="tag ask">portability: ask</span>';
+const varTag = r => r.variable
+  ? '<span class="tag wall">variable pay</span>'
+  : '<span class="tag quiet">all base</span>';
+
+function rowHTML(r, i){
+  const li = a => (a || []).map(x => "<li>" + x + "</li>").join("");
+  const isOpen = open.has(r.key);
+  return '<article class="row" data-open="' + isOpen + '" data-id="' + r.key + '">' +
+    '<button class="rowbtn" type="button" aria-expanded="' + isOpen + '">' +
+      '<span class="rank">' + String(i + 1).padStart(2, "0") + '</span>' +
+      '<span><span class="rtitle">' + r.t +
+        (r.reviewed ? "" : '<span class="autobadge">auto</span>') +
+        (r.pinned ? '<span class="autobadge pin">carried over</span>' : "") +
+        '</span><span class="rco">' + r.c + '</span></span>' +
+      '<span class="rpay">' + (r.hi ? money(r.likely) : "not stated") +
+        '<small>' + (!r.hi ? "ask on the first call"
+          : "likely for you &middot; band " + money(r.lo) + "&ndash;" + money(r.hi)) + '</small></span>' +
+      '<span class="rbank">' + (r.hi ? money(bankOf(r)) : "&ndash;") +
+        '<small style="display:block;font-size:11px;color:var(--ink-3)">' +
+        (mode === "pr" ? "banked at home" : "banked abroad") + '</small></span>' +
+      '<span class="tags">' + portTag(r) + varTag(r) + '</span>' +
+      '<span class="wingcell"><i class="wingdot w' + r.wall + '"></i>' + WING_LABEL[r.wall] +
+        '<b class="lifepill' + (lifeScoreOf(r) === TESTS ? " full" : "") + '">' + lifeScoreOf(r) + '/7</b></span>' +
+      '<span class="caret">&#9654;</span>' +
+    '</button>' +
+    '<div class="detail">' +
+      '<div class="wingbox"><i class="wingdot w' + r.wall + '" style="margin-top:7px"></i>' +
+        '<span><b>' + (r.wing ? r.wing.label : WING_LABEL[r.wall]) + ".</b> " +
+        (r.wing ? r.wing.line : "") +
+        (r.wallWhy ? ' <span class="srcnote">Posting says: &ldquo;' + r.wallWhy + '&rdquo;</span>' : "") +
+        '</span></div>' +
+      '<p class="srcnote" style="margin-top:16px">Published band <b>' + money(r.lo) + "&ndash;" + money(r.hi) +
+        '</b>. Likely for you <b>' + money(r.likely) + '</b>: ' + (r.likelyWhy || "") + '.' +
+        (r.ote ? " The band above already has the variable half stripped out." : "") + '</p>' +
+      (r.likely ? '<p class="srcnote">Taken abroad, ' + money(r.likely) + ' keeps <b>' +
+        money(netAbroad(r.likely)) + '</b> of itself, which is the take-home of a <b>' +
+        money(netAbroad(r.likely) / (1 - PR_RATE)) + '</b> salary at home base. That is where your six figures ' +
+        'actually comes from: the move, not the offer letter.</p>' : "") +
+      '<div class="lifegrid">' +
+        Object.entries(lifeOf(r)).map(([name, pass]) =>
+          '<span class="lifeitem ' + (pass ? "yes" : "no") + '">' +
+          (pass ? "&#10003;" : "&#215;") + " " + name + '</span>').join("") +
+        '<span class="lifescore">' + lifeScoreOf(r) + '/7</span>' +
+      '</div>' +
+      '<div class="dgrid">' +
+        '<div class="dcol"><h4>What they offer</h4><ul>' + li(r.offer) + '</ul></div>' +
+        '<div class="dcol"><h4>Why it fits</h4><ul>' + li(r.pros) + '</ul></div>' +
+        '<div class="dcol"><h4>What it costs you</h4><ul>' + li(r.cons) + '</ul></div>' +
+      '</div>' +
+      '<div class="angle"><h4>Your angle</h4>' + r.angle + '</div>' +
+      '<div class="angle" style="background:var(--paper-2)"><h4>Ask them this</h4>' + r.ask + '</div>' +
+      (r.ote ? '<p class="srcnote" style="margin-top:14px">Advertised as ' + money(r.ote.lo) + " to " + money(r.ote.hi) +
+        " on-target earnings. Base above is " + r.ote.note + ".</p>" : "") +
+      (r.reviewed ? "" : '<p class="srcnote" style="margin-top:14px">Added automatically by the daily run and ' +
+        'not reviewed by hand yet. The lines above are read straight off the posting.</p>') +
+      (r.pinned ? '<p class="srcnote" style="margin-top:14px">Carried over from the run on <b>' + r.found +
+        '</b> because it was recommended then. Today\'s scan did not return it, so <b>check the posting is still open</b> ' +
+        'before spending time on it.</p>' : "") +
+      '<div class="dfoot">' +
+        '<a class="apply" href="' + r.url + '" target="_blank" rel="noopener">Open the posting</a>' +
+        '<button class="star" type="button" aria-pressed="' + starred.has(r.key) + '">' +
+          (starred.has(r.key) ? "Starred for this week" : "Star for this week") + '</button>' +
+        '<span class="srcnote">Freedom ' + r.freedom + '/11 &middot; ' + r.conf + ' pay &middot; ' + r.fam + '</span>' +
+      '</div>' +
+    '</div>' +
+  '</article>';
+}
+
+function updateBanks(){
+  document.querySelectorAll(".row").forEach(row => {
+    const role = ROLES.find(r => r.key === row.dataset.id);
+    if (!role) return;
+    const cell = row.querySelector(".rbank");
+    cell.childNodes[0].nodeValue = money(bankOf(role));
+    cell.querySelector("small").textContent = mode === "pr" ? "banked at home" : "banked abroad";
+  });
+  drawTray();
+}
+
+function drawList(){
+  const rows = ROLES.filter(passes).sort(sorters[sortBy]);
+  const host = document.getElementById("manifest");
+  host.innerHTML = rows.length
+    ? rows.map(rowHTML).join("")
+    : '<p class="empty">Nothing matches all of those at once. That is the finding, not a bug: loosen one gate.</p>';
+  const bases = rows.filter(r => r.hi).map(mid).sort((a, b) => a - b);
+  const median = bases.length ? bases[Math.floor(bases.length / 2)] : 0;
+  document.getElementById("count").textContent =
+    rows.length + " of " + ROLES.length + " shown · median base " + money(median);
+  wire();
+  drawTray();
+}
+
+function wire(){
+  document.querySelectorAll(".row").forEach(row => {
+    const btn = row.querySelector(".rowbtn");
+    btn.addEventListener("click", () => {
+      const isOpen = row.dataset.open === "true";
+      row.dataset.open = String(!isOpen);
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      isOpen ? open.delete(row.dataset.id) : open.add(row.dataset.id);
+    });
+    const star = row.querySelector(".star");
+    star.addEventListener("click", event => {
+      event.stopPropagation();
+      const id = row.dataset.id;
+      starred.has(id) ? starred.delete(id) : starred.add(id);
+      writeStore(starred);
+      star.setAttribute("aria-pressed", String(starred.has(id)));
+      star.textContent = starred.has(id) ? "Starred for this week" : "Star for this week";
+      drawTray();
+    });
+  });
+}
+
+function drawTray(){
+  const tray = document.getElementById("tray");
+  const picks = [...starred].map(id => ROLES.find(r => r.key === id)).filter(Boolean);
+  tray.dataset.show = picks.length > 0;
+  document.getElementById("traycount").textContent = picks.length;
+  const banked = picks.filter(r => r.hi);
+  const avg = banked.reduce((sum, r) => sum + bankOf(r), 0) / (banked.length || 1);
+  document.getElementById("traylist").textContent = picks.length
+    ? picks.map(r => r.c).join(" · ") + (banked.length ? "  ·  avg " + money(avg) + " banked" : "")
+    : "";
+}
+document.getElementById("trayclear").addEventListener("click", () => {
+  starred.clear(); writeStore(starred); drawList();
+});
+
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const key = chip.dataset.f;
+    filters.has(key) ? filters.delete(key) : filters.add(key);
+    chip.setAttribute("aria-pressed", String(filters.has(key)));
+    drawList();
+  });
+});
+document.getElementById("sortsel").addEventListener("change", event => {
+  sortBy = event.target.value; drawList();
+});
+
+const modePR = document.getElementById("mode-pr"), modeAB = document.getElementById("mode-ab");
+function setMode(next){
+  mode = next;
+  modePR.setAttribute("aria-pressed", String(mode === "pr"));
+  modeAB.setAttribute("aria-pressed", String(mode === "abroad"));
+  document.getElementById("bankhead").textContent =
+    mode === "pr" ? "Banked, home year one" : "Banked, abroad year two";
+  updateBanks();
+}
+modePR.addEventListener("click", () => setMode("pr"));
+modeAB.addEventListener("click", () => setMode("abroad"));
+
+/* theme toggle: follows the host until the reader overrides it */
+document.getElementById("themebtn").addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const dark = current ? current === "dark"
+    : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+});
+
+/* provenance, written by the run that generated this page */
+document.getElementById("stamp").textContent =
+  "CareerOS · rebuilt " + META.built + " · " + META.scanned.toLocaleString("en-US") +
+  " listings scanned · " + META.count + " roles, " + META.reviewed + " reviewed by hand, " +
+  META.auto + " added automatically";
+const floorRange = document.getElementById("floorrange");
+function drawLifeLine(){
+  const pass = ROLES.filter(r => lifeScoreOf(r) === TESTS).length;
+  const near = ROLES.filter(r => lifeScoreOf(r) === TESTS - 1).length;
+  document.getElementById("floorout").textContent = money(payFloor);
+  document.getElementById("lifeline").innerHTML =
+    "<b>The life test</b> is your own specification run as a hard AND: your floor, time off you can " +
+    "actually take, your own schedule, nothing that follows you home, freedom to move, all base with no " +
+    "quota, and reachable today. Pay is tested against what you would <b>likely be offered</b>, not the " +
+    "top of the band, because the top of a band belongs to San Francisco and to people who have done the " +
+    "job for pay. At a floor of <b>" + money(payFloor) + "</b>, <b>" + pass + " of " + ROLES.length +
+    "</b> roles pass all seven and <b>" + near + "</b> miss by one. Drag the floor to see what your number " +
+    "costs you. Every row shows which tests it fails, so a failure becomes a question on the first call " +
+    "rather than a surprise after signing. ";
+}
+floorRange.addEventListener("input", () => {
+  payFloor = +floorRange.value;
+  drawLifeLine();
+  drawList();
+});
+drawLifeLine();
+document.getElementById("metaline").innerHTML =
+  "This page was rebuilt on <b>" + META.built + "</b> from " + META.scanned.toLocaleString("en-US") +
+  " listings. <b>" + META.reviewed + "</b> roles carry analysis written by hand; <b>" + META.auto +
+  "</b> arrived since and are marked <i>auto</i>, with their lines read straight off the posting.";
+
+drawMath(true);
+</script>
