@@ -15,12 +15,34 @@ is there, and show the tests that prove it.
 
 ---
 
+## Proof it's real (measured Oct 17, 2026)
+
+| | |
+|---|---|
+| **Runs by itself** | Every morning on GitHub Actions. 108 of its first 109 cloud runs passed. The one failure was a break I caused on purpose, to prove the failure alert reaches my phone. |
+| **Built over** | 125 commits I directed since July 6, 2026, plus 57 the system made itself (its daily records). |
+| **Reads** | 295 employer job boards and 16,258 listings in the Oct 17 run. |
+| **Tested** | 25 test files and 886 checks in the live engine, all passing. This Oct 12 copy has 744, also all passing: run `python3 careeros/tests/run_all.py`. |
+| **Size** | 13,765 lines of Python in the live engine (12,517 in this copy), standard library only, no third-party packages. |
+
+**Why this repo has one commit:** it is a cleaned public copy, taken Oct 12, 2026. The working repo is private because it holds my personal job-search records. Its history, with the bugs and how each was caught, is in **[BUILD-LOG.md](BUILD-LOG.md)**: 30 dated changes and 7 times the system was confidently wrong.
+
+## How I build it
+
+1. **I write the rule first**, in plain words: what "done" means, what the system must never do.
+2. **Claude Code writes the code.**
+3. **I run it and read the real output**, not a summary of it.
+4. **I break it on purpose**: bad input, a missing key, no network. It has to fail loudly, not quietly.
+5. **Nothing is done without a receipt**: a passing test, a message ID, a log line.
+
+What stays out of the AI's hands: secrets (GitHub secrets and the Mac Keychain, never the code), and the decision to send. The scheduled AI routine only pushes a trigger; whether to send is decided in Python against a ledger.
+
 ## What it does
 
 Every day it:
 
 1. **Reads job boards straight from the source.** `config/ats-boards.json`
-   lists 237 employers' job boards: 144 on Ashby, 71 on Greenhouse, 14 on
+   lists 237 employers' job boards in this Oct 12 copy (341 in the live engine today): 144 on Ashby, 71 on Greenhouse, 14 on
    Lever, 5 on Workday and 3 on Oracle. (Those are the hiring systems companies
    use to post jobs; most of them offer a public feed.) 194 of the 237 are
    switched on; the rest are paused. It also reads 7 public remote-job feeds
