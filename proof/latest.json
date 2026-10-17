@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "reason": "",
+  "run_at_utc": "2026-10-17T18:02:49Z",
+  "duration_seconds": 452,
+  "numbers": {
+    "sources_live": 8,
+    "sources_total": 8,
+    "boards_read": 190,
+    "boards_quiet": 4,
+    "listings_fetched": 11315,
+    "kept_after_filters": 2626
+  },
+  "tests": {
+    "files_total": 25,
+    "files_passed": 25,
+    "checks_passed": 744,
+    "checks_failed": 0
+  },
+  "python": "3.12.15",
+  "run_url": "https://github.com/javierxelias-svg/careeros-public/actions/runs/39056373799"
+}
