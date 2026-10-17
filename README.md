@@ -4,7 +4,7 @@ A job-search engine that runs by itself every morning. It reads job postings
 straight from employers' own job boards, throws out the ones that don't fit,
 ranks the rest, and sends a short daily list to my phone.
 
-Designed, directed and operated by Javier Elías Crespo; built with Claude Code;
+Designed, directed and operated by [Javier Elías Crespo](https://javierxelias-svg.github.io); built with Claude Code;
 every change verified by running it.
 
 I am not a software engineer. I decided what the system should do, wrote the
@@ -25,11 +25,11 @@ This public copy runs itself every day; see the latest run: **[proof/README.md](
 |---|---|
 | **Runs by itself** | Every morning on GitHub Actions. 108 of its first 109 cloud runs passed. The one failure was a break I caused on purpose, to prove the failure alert reaches my phone. |
 | **Built over** | 125 commits I directed since July 6, 2026, plus 57 the system made itself (its daily records). |
-| **Reads** | 295 employer job boards and 16,258 listings in the Oct 17 run. |
+| **Reads** | 295 employer job boards and 16,258 listings in the live engine's Oct 17 run (this public copy reads 190; see [proof/](proof/README.md)). |
 | **Tested** | 25 test files and 886 checks in the live engine, all passing. This Oct 12 copy has 744, also all passing: run `python3 careeros/tests/run_all.py`. |
 | **Size** | 13,765 lines of Python in the live engine (12,517 in this copy), standard library only, no third-party packages. |
 
-**Why this repo has one commit:** it is a cleaned public copy, taken Oct 12, 2026. The working repo is private because it holds my personal job-search records. Its history, with the bugs and how each was caught, is in **[BUILD-LOG.md](BUILD-LOG.md)**: 30 dated changes and 7 times the system was confidently wrong.
+**Why this repo's history is short:** it is a cleaned public copy, taken Oct 12, 2026; later commits are the build log and the daily proof run. The working repo is private because it holds my personal job-search records. Its history, with the bugs and how each was caught, is in **[BUILD-LOG.md](BUILD-LOG.md)**: 30 dated changes and 7 times the system was confidently wrong. How I debug it, with the numbers: [three times it was confidently wrong](https://javierxelias-svg.github.io/how-i-found-this/).
 
 ## How I build it
 

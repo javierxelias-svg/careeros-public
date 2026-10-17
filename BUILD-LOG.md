@@ -16,7 +16,7 @@ This log comes from the private repository's commit history, its `LEARNINGS.md` 
 |---|---|
 | Commits | 182 total; 125 are real work I directed, the other 57 are the robot's automated daily bookkeeping |
 | Active days | 27 distinct days with commits, July 6 to October 17, 2026 |
-| Job boards in config | 341 (298 active, 43 paused) across 8 applicant-tracking platforms |
+| Job boards in config | 341 (298 active, 43 paused) across 8 applicant-tracking platforms; 295 actually read in the Oct 17 run |
 | Python | 13,765 lines in 51 files, standard library only, zero third-party packages |
 | Tests | 25 test files, 886 printed checks plus two summary-style files, all passing |
 | Cloud runs | 109 GitHub Actions runs since 2026-09-28: 108 succeeded. The one failure was a test I caused on purpose to prove the failure alert works |
@@ -147,3 +147,7 @@ This log comes from the private repository's commit history, its `LEARNINGS.md` 
 - **Correct the record in public.** `b944989` exists only to fix my own wrong explanation.
 - **Say what isn't verified.** `7d455e1` ships with "still not verified live" in the commit message instead of hiding it.
 - **Keep decisions in code, not in the model.** The AI routine only pushes a trigger. Whether to send is decided in Python, against a ledger.
+
+---
+
+Portfolio: [javierxelias-svg.github.io](https://javierxelias-svg.github.io) · How I debug it: [javierxelias-svg.github.io/how-i-found-this](https://javierxelias-svg.github.io/how-i-found-this/)
