@@ -1,0 +1,77 @@
+name: public-proof
+
+# What this is: once a day, GitHub's own servers run this public copy of
+# CareerOS from scratch. First the tests, then the real engine against the
+# live job boards in dry-run mode (it builds the daily digest and sends
+# nothing). The result is saved as counts only in proof/latest.json and
+# proof/README.md, so anyone can see it really runs, every day.
+#
+# No secrets are used here. There are no Telegram keys in this repo or in this
+# workflow, so the engine has no way to send a message even if it tried.
+
+on:
+  schedule:
+    # Every day at 11:17 UTC. GitHub runs scheduled jobs "best effort", so it
+    # may start a little late; the receipt records the real time it ran.
+    - cron: '17 11 * * *'
+  workflow_dispatch:   # lets you start it by hand from the Actions tab
+
+# Two runs must never write the receipt at the same time.
+concurrency:
+  group: public-proof
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # needed only to commit the updated receipt back
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40   # a normal run takes about 10 minutes
+    steps:
+      # Get a copy of the code onto GitHub's machine.
+      - uses: actions/checkout@v4
+
+      # Install Python. CareerOS uses only Python's standard library, so there
+      # is nothing else to install.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Run the full test suite. If any test fails, the whole run stops here
+      # and shows red. A broken engine never gets a fresh receipt.
+      - name: Run the tests
+        run: python3 careeros/tests/run_all.py
+
+      # Run the real engine against the live job boards, send nothing, and
+      # write the receipt. The Telegram variables are set to empty on purpose,
+      # a second lock on top of there being no keys at all. If the engine
+      # fails, the receipt says "failed" instead of showing made-up numbers.
+      - name: Dry run against live job boards and write the receipt
+        env:
+          TELEGRAM_BOT_TOKEN: ''
+          TELEGRAM_CHAT_ID: ''
+        run: python3 .github/scripts/public_proof.py
+
+      # Save the receipt to the repo, signed by a bot, only if it changed.
+      - name: Commit the receipt
+        run: |
+          git config user.name  "careeros-bot"
+          git config user.email "careeros-bot@users.noreply.github.com"
+          git add proof/latest.json proof/README.md
+          if git diff --staged --quiet; then
+            echo "receipt unchanged, nothing to commit"; exit 0
+          fi
+          git commit -m "proof: public run $(date -u +%F)"
+          for attempt in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push attempt ${attempt} failed, retrying"; sleep 5
+          done
+          echo "could not push the receipt after 3 attempts"; exit 1
+
+      # If the dry run failed, the honest receipt is saved above, and then the
+      # run turns red here so the failure is visible on the badge too.
+      - name: Fail the run if the dry run failed
+        run: |
+          python3 -c "import json,sys; p=json.load(open('proof/latest.json')); print('status:', p['status'], p['reason']); sys.exit(0 if p['status']=='ok' else 1)"

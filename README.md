@@ -17,6 +17,10 @@ is there, and show the tests that prove it.
 
 ## Proof it's real (measured Oct 17, 2026)
 
+[![public-proof](https://github.com/javierxelias-svg/careeros-public/actions/workflows/public-proof.yml/badge.svg)](https://github.com/javierxelias-svg/careeros-public/actions/workflows/public-proof.yml)
+
+This public copy runs itself every day; see the latest run: **[proof/README.md](proof/README.md)**.
+
 | | |
 |---|---|
 | **Runs by itself** | Every morning on GitHub Actions. 108 of its first 109 cloud runs passed. The one failure was a break I caused on purpose, to prove the failure alert reaches my phone. |
@@ -38,6 +42,16 @@ is there, and show the tests that prove it.
 What stays out of the AI's hands: secrets (GitHub secrets and the Mac Keychain, never the code), and the decision to send. The scheduled AI routine only pushes a trigger; whether to send is decided in Python against a ledger.
 
 ## What it does
+
+```mermaid
+flowchart LR
+    A["Employer job boards<br/>and public job feeds"] --> B["Fetch every listing"]
+    B --> C["Hard rules:<br/>truly remote, pay floor, my terms"]
+    C --> D["Skip anything already seen<br/>dedupe ledger"]
+    D --> E["Score and rank"]
+    E --> F["Short daily digest"]
+    F --> G["Telegram, counted as sent<br/>only with a receipt"]
+```
 
 Every day it:
 
