@@ -15,7 +15,7 @@ is there, and show the tests that prove it.
 
 ---
 
-## Proof it's real (measured Oct 17, 2026)
+## Proof it's real (measured Oct 24, 2026)
 
 [![public-proof](https://github.com/javierxelias-svg/careeros-public/actions/workflows/public-proof.yml/badge.svg)](https://github.com/javierxelias-svg/careeros-public/actions/workflows/public-proof.yml)
 
@@ -23,10 +23,10 @@ This public copy runs itself every day; see the latest run: **[proof/README.md](
 
 | | |
 |---|---|
-| **Runs by itself** | Every morning on GitHub Actions. 108 of its first 109 cloud runs passed. The one failure was a break I caused on purpose, to prove the failure alert reaches my phone. |
-| **Built over** | 125 commits I directed since July 6, 2026, plus 57 the system made itself (its daily records). |
-| **Reads** | 295 employer job boards and 16,258 listings in the live engine's Oct 17 run (this public copy reads 190; see [proof/](proof/README.md)). |
-| **Tested** | 25 test files and 886 checks in the live engine, all passing. This Oct 12 copy has 744, also all passing: run `python3 careeros/tests/run_all.py`. |
+| **Runs by itself** | Every morning on GitHub Actions. 161 of 162 cloud runs since Sep 28 passed. The one failure was a break I caused on purpose, to prove the failure alert reaches my phone. |
+| **Built over** | 125 commits I directed from July 6 to Oct 17, 2026, plus 57 the system made itself (its daily records). |
+| **Reads** | 341 employer job boards in the live engine, 16,129 listings in its Oct 21 scan (this public copy reads 188, plus 6 with no openings; see [proof/](proof/README.md)). |
+| **Tested** | 25 test files in the live engine, all passing (Oct 24). This Oct 12 copy has 744 checks, also all passing: run `python3 careeros/tests/run_all.py`. |
 | **Size** | 13,765 lines of Python in the live engine (12,517 in this copy), standard library only, no third-party packages. |
 
 **Why this repo's history is short:** it is a cleaned public copy, taken Oct 12, 2026; later commits are the build log and the daily proof run. The working repo is private because it holds my personal job-search records. Its history, with the bugs and how each was caught, is in **[BUILD-LOG.md](BUILD-LOG.md)**: 30 dated changes and 7 times the system was confidently wrong. How I debug it, with the numbers: [three times it was confidently wrong](https://javierxelias-svg.github.io/how-i-found-this/).
