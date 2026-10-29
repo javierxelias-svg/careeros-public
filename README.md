@@ -1,5 +1,7 @@
 # CareerOS
 
+[![tests](https://github.com/javierxelias-svg/careeros-public/actions/workflows/tests.yml/badge.svg)](https://github.com/javierxelias-svg/careeros-public/actions/workflows/tests.yml)
+
 A job-search engine that runs by itself every morning. It reads job postings
 straight from employers' own job boards, throws out the ones that don't fit,
 ranks the rest, and sends a short daily list to my phone.

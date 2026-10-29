@@ -1,0 +1,43 @@
+name: tests
+
+# What this is: every time code is pushed or a pull request is opened,
+# GitHub's own servers run every test file in careeros/tests/. If any one
+# fails, the run turns red and so does the badge on the README.
+#
+# No secrets are used. The tests run offline on Python's standard library.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Run each test file on its own (found by name, so a new test file is
+      # never silently skipped), then fail if any of them failed.
+      - name: Run every test file
+        run: |
+          failed=0
+          for f in careeros/tests/test_*.py; do
+            echo "::group::$f"
+            if python3 "$f"; then
+              echo "PASS $f"
+            else
+              echo "::error::FAIL $f"
+              failed=$((failed + 1))
+            fi
+            echo "::endgroup::"
+          done
+          echo "failed files: $failed"
+          test "$failed" -eq 0
