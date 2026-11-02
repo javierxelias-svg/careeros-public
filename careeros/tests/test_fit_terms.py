@@ -35,17 +35,23 @@ import prefilter  # noqa: E402
 TRAVEL_BLOCKS = [
     "Able to to travel up to 50% to customer locations",   # Vector, verbatim
     "Willing to travel 50% of the time",
-    "This role requires travel up to 25%",
     "Expect ~50% travel to customer sites",
     "Travel: 50%",
     "up to 50% travel required",
     "Travelling up to 30% is expected",
+    "Travel: 26%",
+    "25–40% travel",               # Hippocratic AI Payors shape, 2026-10-16
+    "travel 20-40% of the time",   # the TOP of a range decides
     # Anthropic, Community Engagement (Texas), verbatim, 2026-10-05.
     "You will travel regularly within your region, up to 50% of the time",
 ]
 TRAVEL_ALLOWS = [
     # 5% is a couple of trips a year, and the operator accepts work trips.
     "travel up to 5%",
+    # Operator term change, 2026-10-15: up to 25% is allowed and flagged, the operator decides.
+    "This role requires travel up to 25%",
+    "Expect ~20% travel to customer sites",
+    "15-25% travel",
     "occasional travel to meet the team",
     "we travel twice a year for offsites",
     "This role has 100% remote flexibility",   # must not read as 100% travel
@@ -84,6 +90,9 @@ HOURS_KEEP = [
     # The inversion. These advertise the best thing a posting can say to the operator.
     "No on-call, ever. We protect your evenings.",
     "There is no on-call rotation for this role",
+    # Ashby's Product Support Engineer, rejected for on-call on 2026-10-13.
+    "We staff across regions rather than relying on on-call rotations",
+    "follow-the-sun coverage instead of on-call",
     "We do not require weekend coverage",
     "fully async, no set hours",
     "Remote, async, flexible hours",
@@ -102,6 +111,10 @@ OFFICE_REJECT = [
     "We have a return-to-office policy of 3 days.",
     # Anthropic, verbatim, 2026-10-05.
     "Currently, we expect all staff to be in one of our offices at least 25% of the time.",
+    # Thatch, verbatim, 2026-10-12. It printed as "fully remote" because the
+    # company blurb said "fully distributed".
+    "We're hiring a Member Experience Specialist based in our San Francisco office "
+    "to support Thatch members.",
 ]
 # And the inversion guard: these advertise exactly what the operator wants and must not be
 # rejected for containing the word "office".
@@ -111,6 +124,11 @@ OFFICE_KEEP = [
     "We are 100% remote and have never had an office.",
     "Remote role; we meet in person twice a year for offsites.",
     "Our office in Lisbon is open if you want a desk, but nobody is required to come in.",
+    # Ramp, verbatim, 2026-10-13: a benefits list. Eight "Remote (US)" Technical
+    # Consultant roles were rejected as hybrid over this line.
+    "Parental leave at 100% pay - Pet insurance - In-office perks: lunch, snacks, drinks",
+    # Where the COMPANY sits is not where the role sits.
+    "Thatch is fully distributed. Our team is based in San Francisco.",
 ]
 
 
@@ -125,19 +143,43 @@ def main():
     print("=== travel percentage is a hard reject (the branch that never matched) ===")
     for text in TRAVEL_BLOCKS + OTHER_BLOCKS:
         check(f"blocks: {text[:56]}",
-              bool(prefilter.HARD_INCOMPATIBLE.search(text)))
+              bool(prefilter.hard_incompatible(text)))
 
     print("\n=== ...without eating the roles that are fine ===")
     for text in TRAVEL_ALLOWS:
-        hit = prefilter.HARD_INCOMPATIBLE.search(text)
+        hit = prefilter.hard_incompatible(text)
         check(f"allows: {text[:56]}", hit is None,
               f"matched {hit.group(0)!r}" if hit else "")
+
+    print("\n=== allowed travel is still flagged, the operator decides ===")
+    for text in ("This role requires travel up to 25%", "Expect ~20% travel to customer sites"):
+        red = [label for rx, label in prefilter._RED if rx.search(text)]
+        check(f"flags: {text[:56]}", "travel 10-25%, operator's call" in red, f"-> {red}")
+    check("5% travel is not flagged",
+          not any(rx.search("travel up to 5%") for rx, _ in prefilter._RED))
 
     print("\n=== commission in the pay field is a hard reject ===")
     for text in COMMISSION_BLOCKS:
         check(f"blocks: {text[:56]}", bool(prefilter.COMMISSION_PAY.search(text)))
     for text in COMMISSION_ALLOWS:
         check(f"allows: {text[:56]!r}", prefilter.COMMISSION_PAY.search(text) is None)
+
+    print("\n=== commission stated in the body, two exact phrasings only ===")
+    for text in ("Compensation range (mix of salary and commission): $140,000-$170,000 USD.",
+                 "Competitive salary + equity + commission",
+                 "$72,000 - $95,000 USD base salary + commission"):
+        check(f"blocks: {text[:56]}", bool(prefilter.COMMISSION_BODY.search(text)))
+    for text in ("a base salary, an equity incentive plan and variable commission "
+                 "(for quota-based roles)",
+                 "For commissioned roles, the base salary listed does not include variable pay",
+                 "Our cash compensation (salary + commission if applicable) range for this role",
+                 "regulated by the Securities and Exchange Commission"):
+        check(f"allows: {text[:56]!r}", prefilter.COMMISSION_BODY.search(text) is None)
+
+    print("\n=== a learning stipend is a perk, not 'no experience required' ===")
+    green = prefilter.find_flags("We offer a $1,500 annual learning stipend.")[0]
+    check("learning stipend is labelled as a perk", "learning budget" in green)
+    check("...and is not a will-train signal", "will train" not in green)
 
     print("\n=== on-call and shift work are hard rejects ===")
     for text in HOURS_REJECT:

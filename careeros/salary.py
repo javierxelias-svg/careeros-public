@@ -121,6 +121,31 @@ _NOT_PAY_CONTEXT = re.compile(
     re.IGNORECASE,
 )
 
+# A one-off payment, not a wage. Freshly Commerce's posting on 2026-10-28 said
+# it would "pay you $100 USD for your time" on a trial task; 100 <= 500 was
+# inferred hourly and published as $208,000. Read only from the words touching
+# the figure (cut at the next number), so "$120k-$150k + $500 stipend" still
+# parses as the salary it is, and "take-home pay" stays a wage.
+_ONE_OFF_BEFORE = re.compile(
+    r"\b(?:paid\s+(?:trial|test)|trial\s+(?:task|project|assignment)|"
+    r"take[-\s]home\s+(?:assignment|task|project|exercise|test|challenge)|"
+    r"bonus\s+of|gift\s+card)\b",
+    re.IGNORECASE,
+)
+_ONE_OFF_AFTER = re.compile(
+    r"\b(?:for\s+your\s+time|for\s+(?:the|a|this)\s+(?:trial|test|task|"
+    r"assignment|take[-\s]home)|paid\s+(?:trial|test)|stipend|gift\s+card)\b",
+    re.IGNORECASE,
+)
+_ONE_OFF_CUT = re.compile(r"[\d$€£¥|;\n]")
+
+
+def _is_one_off(text, start, end):
+    """True when the words touching the figure name a one-off payment."""
+    before = _ONE_OFF_CUT.split(text[max(0, start - 60):start])[-1]
+    after = _ONE_OFF_CUT.split(text[end:end + 40])[0]
+    return bool(_ONE_OFF_BEFORE.search(before) or _ONE_OFF_AFTER.search(after))
+
 
 # --- Base vs on-target earnings ---------------------------------------------
 #
@@ -132,10 +157,13 @@ _NOT_PAY_CONTEXT = re.compile(
 # narrow: every entry here discounts a real published number, so a false positive
 # is expensive. "base + variable" is included because the phrase describes the
 # package the quoted range covers, not a base with something extra bolted on.
+# "base + bonus" was removed 2026-10-16 (operator term change, 2026-10-15): a bonus on
+# top of a full base leaves the base guaranteed, so it is valued at $0 and never
+# subtracted from the figure.
 OTE_MARKER = re.compile(
     r"\b(?:ote|o\.t\.e\.|on[-\s]?target\s+(?:earnings|compensation|comp)|"
     r"total\s+target\s+(?:cash\s+)?comp(?:ensation)?|"
-    r"base\s*(?:\+|plus|and)\s*(?:variable|commission|bonus|incentive)|"
+    r"base\s*(?:\+|plus|and)\s*(?:variable|commission|incentive)|"
     r"salary\s*(?:\+|plus)\s*commission)\b",
     re.IGNORECASE,
 )
@@ -223,8 +251,14 @@ def detect_basis(text, figure_start=None):
         return "base", 0.0, False
 
     lead = text if figure_start is None else text[max(0, figure_start - _BASE_ANCHOR_WINDOW):figure_start]
-    if _BASE_ANCHOR.search(lead):
-        return "base", 0.0, False
+    base_hits = list(_BASE_ANCHOR.finditer(lead))
+    if base_hits:
+        # Nearest word to the figure wins. Cresta (2026-10-14) writes "...reflects
+        # base pay, total compensation includes equity. OTE Range : $130,000" —
+        # the OTE label sits right on the number and a base word sits further back.
+        ote_hits = list(OTE_MARKER.finditer(lead)) if figure_start is not None else []
+        if not ote_hits or base_hits[-1].start() > ote_hits[-1].start():
+            return "base", 0.0, False
 
     if not OTE_MARKER.search(text):
         return "base", 0.0, False
@@ -510,6 +544,8 @@ def parse(text, currency_hint=None, allow_hourly_inference=True):
     # A figure sitting in a sentence about the company is not the job's pay.
     if _NOT_PAY_CONTEXT.search(clause):
         return Salary(None, None, confidence="unknown", raw=raw)
+    if _is_one_off(cleaned, match.start(), match.end()):
+        return Salary(None, None, confidence="unknown", raw=raw)
 
     period = _detect_period(clause)
 
@@ -597,7 +633,12 @@ def parse_description(text, currency_hint=None):
         return UNKNOWN
     body = text[:_MAX_DESCRIPTION_SCAN]
     for match in PAY_LABEL.finditer(body):
-        segment = body[match.start():match.start() + _PAY_WINDOW]
+        # Never end the window inside a figure. Chime's "$133,000 — $184,000"
+        # was cut at "$184" on 2026-10-13 and printed as $184,000–$133,000.
+        end = match.start() + _PAY_WINDOW
+        while end < len(body) and (body[end].isdigit() or body[end] in ",.kK"):
+            end += 1
+        segment = body[match.start():end]
         if not _HAS_CURRENCY.search(segment):
             continue
         # Prose: never let a small bare number be guessed into an hourly wage.

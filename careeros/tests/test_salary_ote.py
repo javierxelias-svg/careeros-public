@@ -43,6 +43,10 @@ BASIS_CASES = [
     ("Base pay range $95,000-$115,000. OTE varies by territory.",
      "base", 0.0, 115_000, "base anchor beats a later OTE word"),
     ("Salary $80,000 per year", "base", 0.0, 80_000, "no variable language at all"),
+    # Operator term change, 2026-10-15: a bonus on top of a full base is not OTE. The
+    # base is all guaranteed; the bonus is valued at $0, never subtracted.
+    ("$120,000 - $150,000 base + bonus", "base", 0.0, 150_000, "base + bonus is a base"),
+    ("$110,000 base plus annual bonus", "base", 0.0, 110_000, "base plus annual bonus"),
     # Frozen from WeWorkRemotely 2026-08-19 — states BOTH numbers in one
     # sentence, and the base is the one the parser anchors on.
     ("the base wage range for this position is targeted at $137,000-$177,000 and "
@@ -90,6 +94,10 @@ DESCRIPTION_CASES = [
      "on-target earnings section"),
     ("Salary range: $110,000 - $140,000 base salary. Equity and benefits on top.",
      "base", 140_000, "base section untouched"),
+    # Cresta, verbatim shape (Greenhouse, 2026-10-15): "OTE Range" must discount.
+    ("This range reflects base pay, total compensation includes equity. "
+     "OTE Range : $130,000\u2013$170,000 + Offers Equity", "ote", 136_000,
+     "Cresta OTE Range"),
 ]
 
 # (text, expected_basis, label) — structured ATS fields carry no prose.

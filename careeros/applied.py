@@ -39,8 +39,13 @@ LEDGER = STATE_DIR / "applied.jsonl"
 # demanded two years and said "if not, please do not apply"; another posting
 # read senior and its form asked nothing. Recorded per application so the pattern
 # becomes visible across employers instead of being re-learned each time.
+#
+# `skipped`, added 2026-10-13: a role the operator said no to, or one a written
+# term rules out (commission, named states, an office). run_daily drops every
+# key in current(), so a skip stops a role reprinting exactly as a send does.
+# Before this, roles the operator had already declined came back the next morning.
 STATUSES = ("sent", "replied", "interviewing", "offer", "rejected", "withdrawn",
-            "blocked_by_form")
+            "blocked_by_form", "skipped")
 
 
 def _now():
@@ -110,6 +115,70 @@ def current(ledger=None):
         if isinstance(event, dict) and event.get("key"):
             state[event["key"]] = event
     return state
+
+
+def _norm_url(url):
+    # Keep the query: Greenhouse custom boards put the job id there
+    # (jobs.example.com/jobs?gh_jid=1234567). Only tracking params are dropped.
+    from urllib.parse import parse_qsl, urlencode, urlsplit
+    parts = urlsplit((url or "").strip().lower())
+    query = sorted({(k, v) for k, v in parse_qsl(parts.query)
+                    if not k.startswith("utm_")})
+    return f"{parts.netloc}{parts.path.rstrip('/')}?{urlencode(query)}"
+
+
+_UUID = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+
+
+def _posting_id(url):
+    """
+    The ATS's own id for a posting, or "" when the URL is not a known ATS.
+
+    One posting has many URLs: Ashby's /application page, a company domain with
+    ?ashby_jid=, Greenhouse's three board hosts and ?gh_jid=, Lever's /apply, and
+    a Workday slug that is rewritten whenever the title is. The id survives all of
+    them. Workday R-numbers repeat across employers, so they carry the tenant.
+    """
+    import re
+    from urllib.parse import parse_qs, urlsplit
+    parts = urlsplit((url or "").strip().lower())
+    query = parse_qs(parts.query)
+    host, path = parts.netloc, parts.path
+    if query.get("gh_jid"):
+        return "gh:" + query["gh_jid"][0]
+    if query.get("ashby_jid"):
+        return "ashby:" + query["ashby_jid"][0]
+    found = re.search(_UUID, path)
+    if "ashbyhq.com" in host and found:
+        return "ashby:" + found.group(0)
+    if "lever.co" in host and found:
+        return "lever:" + found.group(0)
+    found = re.search(r"/jobs/(\d+)", path)
+    if "greenhouse.io" in host and found:
+        return "gh:" + found.group(1)
+    found = re.search(r"_(j?r-?\d+)(?:-\d+)?/?$", path)
+    if "myworkdayjobs.com" in host and found:
+        return f"wd:{host.split('.')[0]}:{found.group(1)}"
+    return ""
+
+
+def is_done(company, title, url, state):
+    """
+    True when this role is already in the ledger, by title OR by posting URL.
+
+    Title alone failed on 2026-10-16: an employer renamed a posting on the same
+    URL, and a role already in the ledger topped that morning's digest.
+    The posting id catches the same role behind a different URL form.
+    """
+    if key(company, title) in state:
+        return True
+    if not (url or "").strip():
+        return False
+    target, posting = _norm_url(url), _posting_id(url)
+    return any(
+        _norm_url(e.get("url")) == target
+        or (posting and _posting_id(e.get("url")) == posting)
+        for e in state.values())
 
 
 def pressure(today=None, ledger=None):

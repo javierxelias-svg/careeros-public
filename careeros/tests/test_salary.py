@@ -46,6 +46,20 @@ CASES = [
     ("$5,000", "unknown", None, "below plausible annual floor"),
     ("0.5% equity", "unknown", None, "equity percentage is not salary"),
     ("$2,500", "unknown", None, "ambiguous magnitude, refuses to guess"),
+
+    # --- a one-off payment is not a wage (Freshly Commerce, 2026-10-28) ---
+    ("pay you $100 USD for your time", "unknown", None, "trial task fee, not $100/hr"),
+    ("This is a paid trial task: $150", "unknown", None, "paid trial"),
+    ("Paid test project of $200", "unknown", None, "paid test"),
+    ("take-home assignment, compensated at $75", "unknown", None, "take-home fee"),
+    ("a $500 stipend", "unknown", None, "stipend"),
+    ("a signing bonus of $10,000", "unknown", None, "bonus of $X"),
+    ("a $50 gift card", "unknown", None, "gift card"),
+    ("$120,000 - $150,000 plus a signing bonus of $10,000", "published", 150_000,
+     "salary next to a bonus still parses"),
+    ("$120,000 - $150,000 + $500 home office stipend", "published", 150_000,
+     "salary next to a stipend still parses"),
+    ("$45/hr, take-home pay", "published", 45 * 2080, "take-home pay is a wage"),
 ]
 
 BAR_CASES = [

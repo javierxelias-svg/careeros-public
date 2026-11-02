@@ -43,6 +43,8 @@ ENDPOINTS = {
     "ashby": "https://api.ashbyhq.com/posting-api/job-board/{slug}?includeCompensation=true",
     "greenhouse": "https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true",
     "lever": "https://api.lever.co/v0/postings/{slug}?mode=json",
+    "recruitee": "https://{slug}.recruitee.com/api/offers/",
+    "gem": "https://api.gem.com/job_board/v0/{slug}/job_posts/",
 }
 
 _TAG = re.compile(r"<[^>]+>")
@@ -269,14 +271,89 @@ def _lever(data, company):
             "url": job.get("hostedUrl") or job.get("applyUrl") or "",
             "salary_raw": str(categories.get("commitment") or ""),
             "region": str(categories.get("location") or ""),
-            "description": _clean(job.get("descriptionPlain") or job.get("description")),
+            # Duties live in "lists" and perks in "additional"; the terms gate
+            # needs them (Olo's on-call line hid there, 2026-10-31).
+            "description": _clean(" ".join(
+                [str(job.get("descriptionPlain") or job.get("description") or "")]
+                + [f"{x.get('text', '')} {x.get('content', '')}"
+                   for x in job.get("lists") or [] if isinstance(x, dict)]
+                + [str(job.get("additionalPlain") or job.get("additional") or "")])),
             "job_type": str(categories.get("commitment") or ""),
             "posted_at": job.get("createdAt"),
         })
     return rows
 
 
-PARSERS = {"ashby": _ashby, "greenhouse": _greenhouse, "lever": _lever}
+# Recruitee and Gem, added 2026-10-13 with Workable (below), to widen the
+# sources after only one role in ten cleared the operator's entry-level and pay terms.
+# Probed that day: 527 companies, and 24 answered only on these three (Clay,
+# Lindy, Retool, MailerLite, Zyte). All three are public and keyless.
+_RECRUITEE_SYMBOL = {"USD": "$", "EUR": "€", "GBP": "£"}
+
+
+def _recruitee(data, company):
+    """
+    Recruitee. The only one of the six that states pay as structured numbers,
+    and it carries three separate booleans for where the work happens.
+    """
+    rows = []
+    for job in data.get("offers") or []:
+        if not isinstance(job, dict):
+            continue
+        pay = job.get("salary") if isinstance(job.get("salary"), dict) else {}
+        symbol = _RECRUITEE_SYMBOL.get(str(pay.get("currency") or "").upper())
+        comp = ""
+        if symbol and pay.get("period") == "year" and pay.get("min") and pay.get("max"):
+            try:
+                comp = (f"{symbol}{int(float(pay['min'])):,} - "
+                        f"{symbol}{int(float(pay['max'])):,}")
+            except (TypeError, ValueError):
+                comp = ""
+        if job.get("hybrid") or job.get("on_site"):
+            workplace = "onsite"
+        else:
+            workplace = "remote" if job.get("remote") else ""
+        place = ", ".join(str(x) for x in (job.get("city"), job.get("country")) if x)
+        rows.append({
+            "workplace": workplace,
+            "title": job.get("title", ""),
+            "company": job.get("company_name") or company,
+            "url": job.get("careers_url") or "",
+            "salary_raw": comp,
+            "region": f"Remote, {place}" if workplace == "remote" and place else (
+                place or str(job.get("location") or "")),
+            "description": _clean(f"{job.get('description') or ''} "
+                                  f"{job.get('requirements') or ''}"),
+            "job_type": str(job.get("employment_type_code") or ""),
+            "posted_at": job.get("published_at"),
+        })
+    return rows
+
+
+def _gem(data, company):
+    """Gem. A flat list shaped like Greenhouse, plus a location_type field."""
+    rows = []
+    for job in data:
+        if not isinstance(job, dict):
+            continue
+        kind = str(job.get("location_type") or "").lower()
+        rows.append({
+            "workplace": ("remote" if kind == "remote"
+                          else ("onsite" if kind else "")),
+            "title": job.get("title", ""),
+            "company": company,
+            "url": job.get("absolute_url", ""),
+            "salary_raw": "",
+            "region": str((job.get("location") or {}).get("name") or ""),
+            "description": _clean(job.get("content_plain") or job.get("content")),
+            "job_type": str(job.get("employment_type") or ""),
+            "posted_at": job.get("first_published_at") or job.get("updated_at"),
+        })
+    return rows
+
+
+PARSERS = {"ashby": _ashby, "greenhouse": _greenhouse, "lever": _lever,
+           "recruitee": _recruitee, "gem": _gem}
 
 
 # Workday and Oracle, added 2026-10-08 so the hospitality / luxury lane can
@@ -424,7 +501,56 @@ def _oracle(board, user_agent):
     return rows
 
 
-ENTERPRISE = {"workday": _workday, "oracle": _oracle}
+def _workable(board, user_agent):
+    """
+    Workable. The list carries no description, so it is read like Workday: the
+    title list first, then one detail request per title in the operator's lanes.
+    """
+    slug = board["slug"]
+    api = "https://apply.workable.com/api"
+    postings, token = [], None
+    while len(postings) < ENTERPRISE_MAX_LIST:
+        body = {"query": "", "location": [], "department": [], "worktype": [],
+                "remote": []}
+        if token:
+            body["token"] = token
+        data = _send(f"{api}/v3/accounts/{slug}/jobs", user_agent, body) or {}
+        page = data.get("results") or []
+        if not page:
+            break
+        postings.extend(p for p in page if isinstance(p, dict))
+        token = data.get("nextPage")
+        if not token:
+            break
+        time.sleep(POLITENESS_DELAY)
+
+    rows = []
+    wanted = [p for p in postings if _in_lane(p.get("title", ""))]
+    wanted.sort(key=lambda p: 0 if p.get("workplace") == "remote" else 1)
+    for posting in wanted[:ENTERPRISE_MAX_DETAIL]:
+        code = posting.get("shortcode") or ""
+        detail = _send(f"{api}/v2/accounts/{slug}/jobs/{code}", user_agent) or {}
+        time.sleep(POLITENESS_DELAY)
+        kind = str(posting.get("workplace") or "").lower()
+        where = posting.get("location") if isinstance(posting.get("location"), dict) else {}
+        place = ", ".join(str(x) for x in (where.get("city"), where.get("country")) if x)
+        rows.append({
+            "workplace": ("remote" if kind == "remote"
+                          else ("onsite" if kind else "")),
+            "title": posting.get("title", ""),
+            "company": board["company"],
+            "url": f"https://apply.workable.com/{slug}/j/{code}/",
+            "salary_raw": "",
+            "region": f"Remote, {place}" if kind == "remote" and place else place,
+            "description": _clean(" ".join(str(detail.get(k) or "") for k in (
+                "description", "requirements", "benefits"))),
+            "job_type": str(posting.get("type") or ""),
+            "posted_at": posting.get("published"),
+        })
+    return rows
+
+
+ENTERPRISE = {"workday": _workday, "oracle": _oracle, "workable": _workable}
 
 
 def fetch(user_agent, logger, boards=None, limit=None):
@@ -459,7 +585,8 @@ def fetch(user_agent, logger, boards=None, limit=None):
             continue
         url = ENDPOINTS[board["platform"]].format(slug=board["slug"])
         data = _get(url, user_agent)
-        if data is None or (isinstance(data, dict) and not data.get("jobs")) or (
+        if data is None or (isinstance(data, dict) and not (
+                data.get("jobs") or data.get("offers"))) or (
                 isinstance(data, list) and not data):
             dead += 1
             per_company[board["company"]] = 0

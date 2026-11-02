@@ -53,9 +53,51 @@ WRITTEN = [
      3, "few meetings", None),
     ("business hours are set hours", "Available during business hours.", {},
      -3, "set hours", None),
+    # A stated minimum is the good kind of time off (an operator term), so since
+    # 2026-10-12 it earns more than a bare "time off stated".
     ("unlimited PTO with a stated minimum is not penalised",
      "Unlimited PTO with a minimum of 3 weeks.", {"green": ["unlimited PTO"]},
-     2, "time off stated", "unlimited PTO, no minimum"),
+     3, "time off minimum", "unlimited PTO, no minimum"),
+    # ReadMe's exact wording, 2026-10-12. It matched nothing before and was
+    # charged the unlimited-PTO penalty.
+    ("hyphenated minimum (ReadMe)",
+     "Unlimited PTO with a three-week minimum.", {"green": ["unlimited PTO"]},
+     3, "time off minimum", "unlimited PTO, no minimum"),
+    # False matches found replaying 11,298 live postings on 2026-10-12.
+    ("parental-leave minimum is not time off (Elastic)",
+     "Embracing parenthood with minimum of 16 weeks of parental leave", {},
+     0, None, "time off minimum"),
+    ("office-days minimum is not time off (Braze)",
+     "in office a minimum of 3 days a week at either Chicago or Austin", {},
+     0, None, "time off minimum"),
+    ("holiday minimum counts (Wellhub)",
+     "Employees receive a minimum of 25 days paid holiday per year", {},
+     3, "time off minimum", None),
+    # Real posting wording, 2026-10-12: Supabase, Vanta, ReadMe.
+    ("health 100% (Supabase)",
+     "Supabase covers 100% of health insurance for employees.", {},
+     2, "health fully covered", None),
+    ("health premiums 100% (Vanta)",
+     "with 100% of employee-only benefit premiums covered for most medical plans", {},
+     2, "health fully covered", None),
+    ("health fully covered (ReadMe)",
+     "Fully covered medical, dental, and vision insurance for you.", {},
+     2, "health fully covered", None),
+    # Real wording missed until 2026-10-13: Ashby Product Support, Customer.io.
+    ("all premiums covered (Ashby)",
+     "top-notch health insurance for you and your dependents with all premiums covered by us.",
+     {}, 2, "health fully covered", None),
+    ("100% coverage of ... premiums (Customer.io)",
+     "including 100% coverage of medical, dental, vision, mental health, and "
+     "supplemental insurance premiums for you and your family", {},
+     2, "health fully covered", None),
+    ("fully covered lunches are not health (FleetWorks)",
+     "Competitive medical, dental, and vision benefits - Fully covered lunches and dinners",
+     {}, 0, None, "health fully covered"),
+    ("a deductible is not coverage",
+     "Health insurance with a deductible.", {}, 0, None, "health fully covered"),
+    ("terms-proven employer", "", {"terms_proven": True},
+     3, "terms-proven employer", None),
     ("builder role", "", {"fit_label": "AI builder"}, 2, "builder role", None),
     ("large employer", "", {"large_employer": True}, -1, "large employer", None),
 ]
@@ -114,6 +156,22 @@ def main():
         print(f"  [{'PASS' if ok else 'FAIL'}] {label:34s} -> {got}")
         if not ok:
             failures.append(f"is_portable({label}): want {expected}, got {got}")
+
+    print("\n=== nomad-friendly: work-abroad weeks are a bonus (operator term change, 2026-10-15) ===")
+    for text, want in (
+        ("We are nomad-friendly", ["nomad-friendly"]),
+        ("work abroad for up to 4 weeks a year", ["nomad-friendly"]),
+        ("digital nomads welcome", ["nomad-friendly"]),
+        ("you cannot work from abroad", []),
+        ("you can't work from abroad", []),
+        ("work from anywhere in the world", ["work from anywhere"]),
+    ):
+        got = [r for r in freedom.score(geo.CLASS_US, [], [], [], text=text)[1]
+               if r in ("nomad-friendly", "work from anywhere")]
+        ok = got == want
+        print(f"  [{'PASS' if ok else 'FAIL'}] {text:44s} -> {got}")
+        if not ok:
+            failures.append(f"nomad: {text!r} want {want}, got {got}")
 
     print("\n" + "=" * 60)
     if failures:

@@ -43,6 +43,15 @@ for text in CLEAN:
     if not ok:
         failures.append(f"false culture flag on {text!r}: {red}")
 
+# A promise is not a flag: Collabora, 2026-10-31, "No on-call rotations".
+for text in ("No on-call rotations – this isn't support work.", "There is no on-call."):
+    _, red = prefilter.find_flags(text)
+    if "on-call" in red:
+        failures.append(f"on-call flagged on a no: {text!r}")
+_, red = prefilter.find_flags("You will join the on-call rotation.")
+if "on-call" not in red:
+    failures.append("real on-call not flagged")
+
 print("\n" + "=" * 60)
 if failures:
     print(f"FAILED {len(failures)}")

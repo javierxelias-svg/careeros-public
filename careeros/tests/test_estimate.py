@@ -36,6 +36,17 @@ CASES = [
     ("Chief Vibes Officer", False, False, "unrecognised role refuses"),
     ("", False, False, "empty title refuses"),
     ("Underwater Basket Weaver", False, False, "nonsense refuses"),
+    # 2026-10-13: a parenthetical qualifies one role, it does not list several.
+    # This exact GitLab title lost its estimate and was dropped from the run.
+    ("Customer Success Engineer, LATAM (Spanish, Portugese)", True, True,
+     "languages in brackets are not extra roles"),
+    ("Site Lead, Sr Engineers, Security Engineer, PM, Data Engineer", False, False,
+     "a real multi-role posting still refuses"),
+    # Lanes fit.py already ranked but the estimator had no band for.
+    ("Technical Consultant, Mid-Market", True, True, "technical consultant band"),
+    ("Enablement Program Specialist, Onboarding", True, True, "enablement band"),
+    ("Knowledge Manager", True, True, "knowledge band"),
+    ("Product Support Specialist", True, True, "product support band"),
 ]
 
 

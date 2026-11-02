@@ -80,7 +80,10 @@ BLOCKED_PATTERNS = [
 # and the daily digest, which is what actually reaches the operator, was not. Negated mentions
 # are REMOVED before the search rather than matched around, same as curated does.
 TZ_NEGATED = re.compile(
-    r"\b(?:no|without|never any|zero|free from|not?\s+require\w*)\s+"
+    r"\b(?:no|without|never any|zero|free from|not?\s+require\w*|"
+    # "We staff across regions rather than relying on on-call rotations": Ashby's
+    # Product Support Engineer was rejected for on-call on 2026-10-13.
+    r"rather than(?:\s+relying on)?|instead of)\s+"
     r"(?:formal\s+|scheduled\s+|any\s+)?"
     r"(?:on[- ]call|pager(?: duty)?|weekend (?:rotation|coverage)|shift work|"
     r"night shifts?)", re.I)
@@ -187,7 +190,7 @@ TITLE_REGION_LOCKS = [
     # can work; only the ones they cannot are listed. Also absent: "based" and "hybrid"
     # phrasings, which belong to office_required() rather than here.
     (r"[-–—,(\[|/]\s*(?:remote[,\s]+)?(?:"
-     r"mumbai|bangalore|bengaluru|hyderabad|pune|chennai|delhi|gurgaon|noida|"
+     r"mumbai|bangalore|bengaluru|hyderabad|pune|chennai|delhi|gurgaon|gurugram|noida|"
      r"sydney|melbourne|brisbane|perth|auckland|wellington|"
      r"singapore|tokyo|osaka|kyoto|seoul|beijing|shanghai|shenzhen|guangzhou|"
      r"hong kong|taipei|manila|cebu|jakarta|bangkok|ho chi minh|hanoi|"
@@ -280,6 +283,32 @@ def body_region_lock(text):
 
 _ANYWHERE_RE = re.compile("|".join(ANYWHERE_PATTERNS), re.I)
 _US_RE = re.compile("|".join(US_PATTERNS), re.I)
+
+# A bare "US" or "Americas" inside a location LIST. Only ever applied to a region
+# field or a title, never to the posting body, where "us" is a pronoun and
+# "Americas" names a sales territory. Found 2026-10-13: "US/EU - Remote",
+# "Home Based - Americas; Home based - EMEA" and "(US/Canada)" were all read as
+# locked to the other region named, because US_PATTERNS wants "US remote" or
+# "United States" spelled out. Case-sensitive on purpose for the bare token.
+_US_TOKEN = re.compile(r"(?<![A-Za-z])U\.?S\.?A?(?![A-Za-z])")
+_AMERICAS_TOKEN = re.compile(r"\bamericas\b|\bAMER\b|\bnorth(?:ern)? america\b", re.I)
+
+
+_REGION_UK_RE = re.compile(r"\b(?:united kingdom|england|scotland|wales)\b", re.I)
+_US_STATE_RE = re.compile(
+    r"\b(?:alabama|alaska|arizona|arkansas|california|colorado|connecticut|"
+    r"delaware|florida|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|"
+    r"louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|"
+    r"missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|"
+    r"new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|"
+    r"rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|"
+    r"virginia|washington|west virginia|wisconsin|wyoming|puerto rico)\b", re.I)
+
+
+def _names_us(text):
+    """True when a region field or title names the US or the Americas."""
+    return bool(_US_RE.search(text) or _US_TOKEN.search(text)
+                or _AMERICAS_TOKEN.search(text))
 _BLOCKED_RES = [(re.compile(p, re.I), label) for p, label in BLOCKED_PATTERNS]
 _TZ_HARD_RES = [(re.compile(p, re.I), label) for p, label in TIMEZONE_HARD]
 _TZ_SOFT_RES = [(re.compile(p, re.I), label) for p, label in TIMEZONE_SOFT]
@@ -363,10 +392,10 @@ def title_region_lock(title):
         return None
 
     for pattern, label in _BLOCKED_RES:
-        if pattern.search(text) and not _US_RE.search(text):
+        if pattern.search(text) and not _names_us(text):
             return CLASS_BLOCKED, f"title restricts to {label}: {text}"
     for pattern, label in _TITLE_LOCK_RES:
-        if pattern.search(text) and not _US_RE.search(text):
+        if pattern.search(text) and not _names_us(text):
             return CLASS_BLOCKED, f"title restricts to {label}: {text}"
     for pattern, label in _TITLE_US_RES:
         if pattern.search(text):
@@ -423,10 +452,46 @@ IN_OFFICE = re.compile(
 )
 
 
+# A benefits list is not a work arrangement. On 2026-10-13 eight "Remote (US)"
+# Technical Consultant roles at Ramp were rejected as hybrid because the line
+# "100% pay - Pet insurance - In-office perks: lunch, snacks" put a percentage
+# within thirty characters of "in-office".
+OFFICE_PERKS = re.compile(
+    r"\bin[- ]office\s+(?:perks?|lunch(?:es)?|snacks?|meals?|catering|amenities|"
+    r"events?|gym)\b", re.I)
+
+# The role itself is placed in a named office. Thatch's "Member Experience
+# Specialist - San Francisco" said "We're hiring a Member Experience Specialist
+# based in our San Francisco office" and printed as fully remote on 2026-10-12,
+# because the company blurb said "fully distributed". Anchored to a hiring verb
+# or the role so a sentence about where the COMPANY sits does not match.
+ROLE_IN_OFFICE = re.compile(
+    r"\b(?:hiring|looking for|seeking|this (?:role|position)|you(?:'ll| will)? be)\b"
+    r"[^.\n]{0,80}?\bbased (?:in|out of|at) (?:our|the) [^.\n]{2,40}?\boffice\b",
+    re.I)
+
+
+# Intercom (now Fin), read live 2026-10-16. Three shapes the gate missed:
+# LinkedIn's "#LI-Hybrid"/"#LI-Onsite" tags, a sentence that OPENS "Based in our
+# San Francisco office", and "roles can be based out of our ... offices".
+ROLE_BASED_IN_OFFICE = re.compile(
+    r"(?<![\w-])#LI-(?:Hybrid|Onsite)\b"
+    r"|(?:^|[.\n!?]\s*)based (?:in|out of|at) our [^.\n]{2,40}?\boffices?\b"
+    r"|\b(?:roles?|positions?) (?:can|will|must) be based (?:in|out of|at) (?:one of )?"
+    r"(?:our|the) [^.\n]{2,40}?\boffices?\b", re.I)
+
+# Company-wide boilerplate ("Fin has a hybrid working policy"). Read only when the
+# region field does not itself say remote: the same paragraph sits on Intercom's
+# "USA, Remote" postings too.
+HYBRID_POLICY = re.compile(r"\bhybrid working (?:policy|model)\b|\bhas a hybrid\b", re.I)
+
+
 def office_required(text):
     """(True, evidence) when the posting requires time in an office."""
     blob = OFFICE_NEGATED.sub(" ", text or "")
-    hit = IN_OFFICE.search(blob)
+    blob = OFFICE_PERKS.sub(" ", blob)
+    hit = (IN_OFFICE.search(blob) or ROLE_IN_OFFICE.search(blob)
+           or ROLE_BASED_IN_OFFICE.search(blob))
     return (True, " ".join(hit.group(0).split())[:60]) if hit else (False, "")
 
 
@@ -453,6 +518,10 @@ def classify_geo(region_field, text, title=""):
     needs_office, evidence = office_required(blob)
     if needs_office:
         return CLASS_BLOCKED, f"requires time in an office: {evidence}"
+    if not re.search(r"\bremote\b", region, re.I):
+        policy = HYBRID_POLICY.search(OFFICE_NEGATED.sub(" ", text or ""))
+        if policy:
+            return CLASS_BLOCKED, f"requires time in an office: {policy.group(0)}"
 
     # The employer's own scope statement beats the feed's category.
     locked = body_region_lock(text)
@@ -464,10 +533,32 @@ def classify_geo(region_field, text, title=""):
 
     if region:
         for pattern, label in _BLOCKED_RES:
-            if pattern.search(region) and not _US_RE.search(region):
+            if pattern.search(region) and not _names_us(region):
                 return CLASS_BLOCKED, f"region locked to {label}: {region}"
-        if _US_RE.search(region):
+        if _names_us(region):
             return CLASS_US, f"region field: {region}"
+        # A region field that names a country, territory or city the operator cannot work
+        # from, and nowhere in the US or the Americas, is a lock, with or without
+        # the word "only". Until 2026-10-13 "London, United Kingdom", "Remote -
+        # India" and "Sydney, Australia" fell through to "location unstated,
+        # assumed US-scope". It went unnoticed because most such rows died on a
+        # different rule; the day that rule was loosened, eleven of them
+        # surfaced. The title rules are reused so there is one list, not two.
+        #
+        # Two things outrank it. A posting that says "work from anywhere" in its
+        # own words is not locked by a city in the feed, which is often just the
+        # headquarters (Siena AI lists "London" on roles its text opens to the
+        # world). And a list of US cities with one foreign office in it is a US
+        # posting.
+        says_anywhere = (_ANYWHERE_RE.search(blob)
+                         and not _QUALIFIED_ANYWHERE_RE.search(blob))
+        if not says_anywhere and not _US_STATE_RE.search(region):
+            probe = ", " + region
+            for pattern, label in _TITLE_LOCK_RES:
+                if pattern.search(probe):
+                    return CLASS_BLOCKED, f"region field names {label}: {region}"
+            if _REGION_UK_RE.search(region):
+                return CLASS_BLOCKED, f"region field names the UK: {region}"
         # A region field naming a US sub-region is a lock too, and it has to be
         # read BEFORE the body. Linear's Customer Success Manager carries
         # region "North America" and the sentence "This role is open to

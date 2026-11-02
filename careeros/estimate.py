@@ -34,6 +34,20 @@ ROLE_BANDS = [
     (r"\bsupport\s+engineer\b|\btechnical\s+support\b", (65_000, 110_000)),
     (r"\bdeveloper\s+(?:advocate|relations)\b|\bdevrel\b", (90_000, 150_000)),
     (r"\bdeveloper\s+experience\b", (95_000, 155_000)),
+    # Added 2026-10-13. fit.py already ranked these as the operator's lanes, but with no
+    # band here an unpriced posting had no estimate and fell out of the run.
+    (r"\btechnical\s+consultant\b", (85_000, 135_000)),
+    (r"\b(?:customer|product|partner|sales|revenue|field|technical)?\s*"
+     r"(?:education|enablement|training)\s+(?:program\s+)?"
+     r"(?:specialist|manager|lead|partner|consultant|designer|coordinator)\b"
+     r"|\binstructional\s+designer\b|\bcustomer\s+trainer\b", (70_000, 120_000)),
+    (r"\bknowledge\s+(?:manager|management|base|engineer|specialist|operations)\b"
+     r"|\bhelp\s+cent(?:er|re)\b|\btechnical\s+writ(?:er|ing)\b"
+     r"|\bdocumentation\s+(?:engineer|specialist|lead|manager)\b"
+     r"|\bsupport\s+content\b", (70_000, 120_000)),
+    (r"\b(?:product|ai)\s+support\s+(?:specialist|engineer|lead)\b"
+     r"|\bproduct\s+specialist\b", (65_000, 110_000)),
+    (r"\bcommunity\s+(?:manager|lead)\b", (65_000, 110_000)),
 
     # --- engineering ---
     (r"\b(?:machine\s+learning|ml|ai)\s+engineer\b", (110_000, 190_000)),
@@ -101,8 +115,13 @@ def _is_multi_role(title):
     Engineer" averages unrelated bands into a range so wide it means nothing.
     Better to decline and let it fall through to the unpriced bucket.
     """
-    matches = sum(1 for pattern, _ in _ROLE_RES if pattern.search(title))
-    separators = len(MULTI_ROLE_SEPARATORS.findall(title))
+    # A parenthetical qualifies ONE role, it does not list several. "Customer
+    # Success Engineer, LATAM (Spanish, Portugese)" counted two commas and two
+    # role words, was declared multi-role, lost its estimate and was dropped on
+    # 2026-10-12, a Spanish-required role that belonged in the digest.
+    core = re.sub(r"\([^)]*\)|\[[^\]]*\]", " ", title)
+    matches = sum(1 for pattern, _ in _ROLE_RES if pattern.search(core))
+    separators = len(MULTI_ROLE_SEPARATORS.findall(core))
     return matches >= 2 and separators >= 2
 
 
