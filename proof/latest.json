@@ -1,22 +1,22 @@
 {
   "status": "ok",
   "reason": "",
-  "run_at_utc": "2026-11-01T17:07:45Z",
-  "duration_seconds": 432,
+  "run_at_utc": "2026-11-02T20:47:25Z",
+  "duration_seconds": 446,
   "numbers": {
     "sources_live": 8,
     "sources_total": 8,
     "boards_read": 189,
     "boards_quiet": 5,
-    "listings_fetched": 11340,
-    "kept_after_filters": 2642
+    "listings_fetched": 11317,
+    "kept_after_filters": 2633
   },
   "tests": {
-    "files_total": 25,
-    "files_passed": 25,
-    "checks_passed": 744,
+    "files_total": 26,
+    "files_passed": 26,
+    "checks_passed": 748,
     "checks_failed": 0
   },
   "python": "3.12.15",
-  "run_url": "https://github.com/javierxelias-svg/careeros-public/actions/runs/41329846021"
+  "run_url": "https://github.com/javierxelias-svg/careeros-public/actions/runs/41522385698"
 }
