@@ -473,7 +473,7 @@ def fetch(user_agent, logger, boards=None, limit=None):
         # raised KeyError instead of degrading. Production survives only because
         # load_boards normalises the key, and the six hospitality boards added
         # that same day carry no team_size in config.
-        row["ats_team_size"] = board.get("team_size")
+            row["ats_team_size"] = board.get("team_size")
         rows.extend(found)
         per_company[board["company"]] = len(found)
         time.sleep(POLITENESS_DELAY)
