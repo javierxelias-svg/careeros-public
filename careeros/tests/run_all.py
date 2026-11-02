@@ -39,6 +39,7 @@ TESTS = [
     "test_lean.py",
     "test_remote_gate.py",
     "test_builder_forms.py",
+    "test_ats_fetch.py",
 ]
 
 
