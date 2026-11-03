@@ -28,10 +28,10 @@ This public copy runs itself every day; see the latest run: **[proof/README.md](
 | **Runs by itself** | Every morning on GitHub Actions. 161 of 162 cloud runs since Sep 28 passed. The one failure was a break I caused on purpose, to prove the failure alert reaches my phone. |
 | **Built over** | 125 commits I directed from July 6 to Oct 17, 2026, plus 57 the system made itself (its daily records). |
 | **Reads** | 341 employer job boards in the live engine, 16,129 listings in its Oct 21 scan (this public copy reads 188, plus 6 with no openings; see [proof/](proof/README.md)). |
-| **Tested** | 25 test files in the live engine, all passing (Oct 24). This Oct 12 copy has 744 checks, also all passing: run `python3 careeros/tests/run_all.py`. |
-| **Size** | 13,765 lines of Python in the live engine (12,517 in this copy), standard library only, no third-party packages. |
+| **Tested** | 28 test files, 960 checks, all passing (Nov 2): run `python3 careeros/tests/run_all.py`. |
+| **Size** | 15,043 lines of Python (Nov 2), standard library only, no third-party packages. |
 
-**Why this repo's history is short:** it is a cleaned public copy, taken Oct 12, 2026; later commits are the build log and the daily proof run. The working repo is private because it holds my personal job-search records. Its history, with the bugs and how each was caught, is in **[BUILD-LOG.md](BUILD-LOG.md)**: 30 dated changes and 7 times the system was confidently wrong. How I debug it, with the numbers: [three times it was confidently wrong](https://javierxelias-svg.github.io/how-i-found-this/).
+**Why this repo's history is short:** it is a cleaned public copy, taken Oct 12, 2026 and refreshed to the live engine's code on Nov 2, 2026; later commits are the build log and the daily proof run. The working repo is private because it holds my personal job-search records. Its history, with the bugs and how each was caught, is in **[BUILD-LOG.md](BUILD-LOG.md)**: 30 dated changes and 7 times the system was confidently wrong. How I debug it, with the numbers: [three times it was confidently wrong](https://javierxelias-svg.github.io/how-i-found-this/).
 
 ## How I build it
 
@@ -58,12 +58,16 @@ flowchart LR
 Every day it:
 
 1. **Reads job boards straight from the source.** `config/ats-boards.json`
-   lists 237 employers' job boards in this Oct 12 copy (341 in the live engine today): 144 on Ashby, 71 on Greenhouse, 14 on
-   Lever, 5 on Workday and 3 on Oracle. (Those are the hiring systems companies
-   use to post jobs; most of them offer a public feed.) 194 of the 237 are
+   lists 453 employers' job boards (Nov 2): 232 on Ashby, 160 on Greenhouse, 47 on
+   Lever, 5 on Workday, 3 on Oracle, 3 on Gem, 2 on Recruitee and 1 on Workable. (Those are the hiring systems companies
+   use to post jobs; most of them offer a public feed.) 410 of the 453 are
    switched on; the rest are paused. It also reads 7 public remote-job feeds
    listed in `config/sources.json` (RemoteOK, Remotive, two WeWorkRemotely
-   feeds, Hacker News "Who is hiring", Himalayas, Jobicy).
+   feeds, Hacker News "Who is hiring", Himalayas, Jobicy), plus two gig boards
+   (Mercor, Alignerr) for a separate part-time lane. Before a role is shown,
+   `careeros/terms_gate.py` reads the full posting and removes any role whose
+   own text breaks a written term (pay too low, commission pay, presenting as a
+   duty, 4+ years required, and so on), printing the sentence that failed.
 2. **Reads the pay.** `careeros/salary.py` turns pay text like
    "$70,000 - $90,000", "70k-90k USD", "£70,000" or "$100,000 OTE with 30%
    variable" into a number it can compare. OTE ("on-target earnings") is pay
@@ -114,7 +118,7 @@ reads them from the Keychain first, then from environment variables.
 
 ## How it's tested
 
-There are 25 test files in `careeros/tests/`. One command runs all of them:
+There are 28 test files in `careeros/tests/`. One command runs all of them:
 
 ```
 python3 careeros/tests/run_all.py

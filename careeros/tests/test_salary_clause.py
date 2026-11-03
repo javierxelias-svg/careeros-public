@@ -70,6 +70,20 @@ def main():
     if not ok:
         failures.append("Arcforma posting still parses as unpriced")
 
+    # Chime, 2026-10-13: "Software Engineer, AI Enablement — $184,000–$133,000".
+    # The 220-character window after the pay word ended inside the second
+    # figure, so the parser read "$133,000 — $184", swapped the pair because
+    # low > high, then restored the "missing" thousands on 184.
+    print("\n=== a pay window that ends mid-number ===")
+    lead = "salary listed in this job description does not include incentive pay. "
+    chime = lead + "x" * (220 - len(lead) - len("Wage Notice $133,000 — $184")) \
+        + "Wage Notice $133,000 — $184,000 USD A little about us"
+    got = salary.parse_description(chime)
+    ok = (got.low, got.high) == (133000.0, 184000.0)
+    print(f"  [{'PASS' if ok else 'FAIL'}] window cut at '$184' -> {got.low}-{got.high}")
+    if not ok:
+        failures.append(f"mid-number window: got {got.low}-{got.high}")
+
     print("\n" + "=" * 60)
     if failures:
         print(f"FAILED {len(failures)}")

@@ -17,6 +17,13 @@ import experience  # noqa: E402
 
 YEARS_CASES = [
     ("5+ years of experience in a technical role", 5, "plus form with the word experience"),
+    ("Paid month off after 4 years & every 2 years after", None, "perk after N years is not a wall"),
+    ("our average employee tenure is 3.6 years, a number you", None, "decimal tenure is not a wall"),
+    ("Prefect and Dagster, competitors for eight years, joined", None, "company history"),
+    ("We went from $1M to $100M ARR in under four years", None, "growth claim"),
+    ("For over 10 years, Andela has", None, "company age"),
+    ("over 5 years of experience required", 5, "'over N years of experience' is still a wall"),
+    ("For most people that's roughly 7+ years, but we care more", None, "soft wording"),
     ("Minimum of 10 years of experience in SaaS", 10, "minimum of"),
     # A stated range is one requirement, and its floor is the bar they will
     # actually consider. Separate requirements elsewhere in a posting are each
@@ -108,8 +115,14 @@ ADMIT_CASES = [
      "two years is admitted now, and ranked below a clean role"),
     ("Support Engineer", "3-5 years of experience in a similar role", True,
      "a range floor of 3 is admitted and penalised, not discarded"),
-    ("Support Engineer", "8+ years of experience required", True,
-     "even eight years is only a penalty — the form decides"),
+    # 2026-10-16: a stated floor of 4+ blocks again. The operator's written
+    # term (2026-10-15): a "3-5 years" range counts as 3; a 4+ minimum is a no.
+    ("Support Engineer", "8+ years of experience required", False,
+     "eight years is blocked — 4+ minimum is the operator's written no"),
+    ("Implementation Specialist", "4+ years of experience", False,
+     "four years is blocked"),
+    ("Support Engineer", "4-6 years of experience", False,
+     "a range floor of 4 is blocked"),
     ("Senior Support Engineer", "4+ years of experience required", False,
      "but a senior TITLE blocks regardless of the number beside it"),
     ("Principal Customer Engineer", "no numbers here at all", False, "scope the operator has not had"),

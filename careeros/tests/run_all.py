@@ -15,6 +15,7 @@ from pathlib import Path
 
 TESTS = [
     "test_salary.py",
+    "test_terms_gate.py",
     "test_enterprise.py",
     "test_culture.py",
     "test_salary_clause.py",
@@ -40,6 +41,7 @@ TESTS = [
     "test_remote_gate.py",
     "test_builder_forms.py",
     "test_ats_fetch.py",
+    "test_bridge.py",
 ]
 
 

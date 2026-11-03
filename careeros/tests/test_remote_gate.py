@@ -175,6 +175,43 @@ class _QuietLog:
         pass
 
 
+# --------------------------------------------------------------------------
+# Intercom (now Fin) and Netomi, 2026-10-14: both reached a shortlist. Live text
+# pulled 2026-10-16. Intercom states hybrid in boilerplate the gate never read;
+# Netomi's region field is a city the India list spelled only "gurgaon".
+# --------------------------------------------------------------------------
+def test_intercom_hybrid_phrasings():
+    for label, region, body in (
+        ("hybrid working policy", "Chicago, Illinois",
+         "Customer Success Manager. Policies. Fin has a hybrid working policy. We believe"),
+        ("#LI-Hybrid tag", "San Francisco, California",
+         "Forward Deployed Data Scientist. #LI-Hybrid Unleash Your Potential"),
+        ("based in our office, sentence start", "San Francisco, California",
+         "Role. Based in our San Francisco office, you will be at the forefront"),
+        ("roles can be based out of our offices", "Chicago, Illinois",
+         "These roles can be based out of our San Francisco or Chicago offices."),
+    ):
+        check(f"Intercom: {label}", geo.classify_geo(region, body, "Customer Success Manager")[0],
+              geo.CLASS_BLOCKED)
+    # Boilerplate policy on a role whose own region field says remote is not a lock.
+    check("policy boilerplate on a USA, Remote role",
+          geo.classify_geo("San Francisco, California; USA, Remote",
+                           "Fin has a hybrid working policy.", "CSM")[0] != geo.CLASS_BLOCKED,
+          True)
+    check("hybrid events are not a hybrid role",
+          geo.classify_geo("United States", "Support the delivery of hybrid events "
+                           "with in-person and livestream experiences.", "Events")[0]
+          != geo.CLASS_BLOCKED, True)
+
+
+def test_netomi_gurugram():
+    check("Netomi Gurugram", geo.classify_geo("Gurugram", "We are remote.",
+                                              "Agentic Solution Engineer")[0] != geo.CLASS_US,
+          True)
+    check("Netomi Gurugram not B", geo.classify_geo("Gurugram", "", "Product Support Engineer")[0],
+          geo.classify_geo("Bengaluru", "", "Product Support Engineer")[0])
+
+
 def run():
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):

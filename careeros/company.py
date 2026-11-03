@@ -110,6 +110,59 @@ def score(company_name, path=None):
     return points, labels
 
 
+EVIDENCE_PATH = CONFIG_PATH.parent / "terms-proven-evidence.json"
+
+# Term numbers as the 2026-10-12 audit used them. 2 (no on-call) and 3 (no
+# quota) were proven in writing by nobody, so they never print.
+_TERM_NAMES = {
+    "1": "fully remote", "4": "pay published", "5": "time-off minimum",
+    "6": "async", "7": "work from anywhere", "8": "health covered",
+}
+_EVIDENCE_CACHE = None
+
+
+def proven_terms(company_name, path=None):
+    """
+    The terms this employer proves on its own pages, as short names, or [].
+
+    Read from the audit file, not from the posting, so the digest can say WHY
+    an employer is on the terms-proven list. A missing or broken file means no
+    names, never a crash.
+    """
+    global _EVIDENCE_CACHE
+    if _EVIDENCE_CACHE is None or path is not None:
+        entries = []
+        try:
+            data = json.loads(
+                Path(path or EVIDENCE_PATH).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            data = {}
+        for entry in (data.get("qualifying") or []) if isinstance(data, dict) else []:
+            if not isinstance(entry, dict):
+                continue
+            names = {_normalize(n) for n in
+                     [entry.get("company")] + list(entry.get("name_variants") or [])}
+            names.discard("")
+            terms = [_TERM_NAMES[k] for k in sorted(entry.get("terms_proven") or {})
+                     if k in _TERM_NAMES]
+            if names and terms:
+                entries.append((names, terms))
+        if path is not None:
+            return _lookup(company_name, entries)
+        _EVIDENCE_CACHE = entries
+    return _lookup(company_name, _EVIDENCE_CACHE)
+
+
+def _lookup(company_name, entries):
+    name = _normalize(company_name)
+    if not name:
+        return []
+    for names, terms in entries:
+        if _matches(name, names):
+            return terms
+    return []
+
+
 def _matches(name, names):
     """
     Exact normalized match, or the config name as a whole-word prefix.

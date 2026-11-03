@@ -20,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import company as company_mod  # noqa: E402
 import digest  # noqa: E402
 import experience  # noqa: E402
 import fit  # noqa: E402
@@ -152,19 +153,54 @@ def main():
         got = geo.geo_tag(geo.CLASS_US, reason)
         check(f"{reason[:40]}", got == want, f"-> {got!r}")
 
-    print("\n=== rank(): years sink a role, they no longer delete it ===")
-    # Reversed 2026-09-30, hours after the block went in. The posting is a soft
-    # signal and the application form is the gate — a hand-written note once read
-    # "No years requirement" off a posting whose form demanded two. So a five-year role is
-    # still sent, and it is sent BELOW an identical clean one.
+    print("\n=== rank(): years under 4 sink a role, they do not delete it ===")
+    # The posting is a soft signal and the application form is the gate — a
+    # hand-written note once read "No years requirement" off a posting whose form
+    # demanded two. So a three-year role is still sent, BELOW an identical clean one.
+    three_year = with_wall(
+        scored("Solutions Engineer", "Threeco", geo.CLASS_ANYWHERE, 9,
+               ["work from anywhere", "async"], ["customer-facing technical"],
+               fit_lane=fit.LANE_CORE),
+        3, 3,
+    )
     chosen, main_lane, _, _, _, _, walled = digest.select(
-        [(0, FIVE_YEAR_CORE), (1, CLEAN_CORE)]
+        [(0, three_year), (1, CLEAN_CORE)]
     )
     order = [p[1].listing.company for p in main_lane]
     check("both are sent", len(order) == 2, f"main={order}")
-    check("the clean role comes FIRST, the five-year role second",
-          order == ["Cleanco", "Perfectco"], f"order={order}")
-    check("nothing was held back for years alone", walled == 0, f"walled={walled}")
+    check("the clean role comes FIRST, the three-year role second",
+          order == ["Cleanco", "Threeco"], f"order={order}")
+    check("nothing was held back for 3 years", walled == 0, f"walled={walled}")
+
+    print("\n=== select(): a 4+ year floor is held back (operator's written term, 2026-10-15) ===")
+    _, main_five, _, _, _, _, walled_five = digest.select(
+        [(0, FIVE_YEAR_CORE), (1, CLEAN_CORE)])
+    order = [p[1].listing.company for p in main_five]
+    check("only the clean role is sent", order == ["Cleanco"], f"main={order}")
+    check("the five-year role is held back, not lost", walled_five == 1,
+          f"walled={walled_five}")
+
+    print("\n=== pay read on the page re-checks the pay floor (Foodsmart, 2026-10-16) ===")
+    low = scored("Member Support Specialist", "Lowco", geo.CLASS_ANYWHERE, 9,
+                 ["work from anywhere", "async"], ["customer-facing technical"],
+                 fit_lane=fit.LANE_CORE)
+    low.salary = salary_mod.parse("$40,000 - $50,000")
+    ok_pay = scored("Support Specialist", "Fineco", geo.CLASS_ANYWHERE, 9,
+                    ["work from anywhere", "async"], ["customer-facing technical"],
+                    fit_lane=fit.LANE_CORE)
+    # The (example) floor is tested against the range TOP: $70k-$95k stays.
+    ok_pay.salary = salary_mod.parse("$70,000 - $95,000")
+    short = scored("Support Analyst", "Midco", geo.CLASS_ANYWHERE, 9,
+                   ["work from anywhere", "async"], ["customer-facing technical"],
+                   fit_lane=fit.LANE_CORE)
+    short.salary = salary_mod.parse("$70,000 - $80,000")
+    _, main_pay, _, _, _, _, walled_pay = digest.select(
+        [(0, low), (1, ok_pay), (2, CLEAN_CORE), (3, short)])
+    names = [p[1].listing.company for p in main_pay]
+    check("$40-50k published is held back", "Lowco" not in names, f"main={names}")
+    check("a range whose top clears $85k stays", "Fineco" in names, f"main={names}")
+    check("a range topping out at $80k is held back", "Midco" not in names, f"main={names}")
+    check("unknown pay is never blocked by this", "Cleanco" in names, f"main={names}")
 
     print("\n=== select(): a senior TITLE is still blocked ===")
     _, main_senior, _, _, _, _, walled_senior = digest.select(
@@ -273,6 +309,88 @@ def main():
     companies = {p[1].listing.company for p in main_lane}
     check("the freed slots went to other companies", len(companies) >= 5,
           f"-> {sorted(companies)}")
+
+    print("\n=== select_proven(): terms-proven employers get their own section ===")
+    # Added 2026-10-12. Ashby's Implementation Consultant ranked #195 because
+    # its posting does not write "async"; the section must pick it up anyway.
+    def proven_item(title, company, lane=fit.LANE_CORE, labels=None):
+        item = scored(title, company, geo.CLASS_US, 3, [], [], fit_lane=lane)
+        item.company_labels = list(labels if labels is not None
+                                   else ["terms-proven employer"])
+        return item
+
+    pool = [
+        ("a1", proven_item("Implementation Consultant", "Ashby")),
+        ("a2", proven_item("Implementation Manager", "Ashby")),
+        ("a3", proven_item("Implementation Lead", "Ashby")),
+        ("p1", proven_item("Technical CSM", "PostHog")),
+        ("x1", proven_item("Solutions Engineer", "Nobodyco", labels=[])),
+        ("o1", proven_item("Tax Accountant", "Automattic", lane=fit.LANE_OFF)),
+    ]
+    picked = digest.select_proven(pool, chosen=[("p1", pool[3][1])])
+    keys = [k for k, _ in picked]
+    check("in-lane proven roles are picked", "a1" in keys, f"-> {keys}")
+    check("already-chosen role is not repeated", "p1" not in keys, f"-> {keys}")
+    check("unproven employer is not picked", "x1" not in keys, f"-> {keys}")
+    check("off-lane role at a proven employer is not picked", "o1" not in keys,
+          f"-> {keys}")
+    check(f"per-company cap of {digest.MAX_PER_COMPANY}",
+          sum(1 for k in keys if k.startswith("a")) == digest.MAX_PER_COMPANY,
+          f"-> {keys}")
+    ordered = digest.rank_for_enrich(pool)
+    check("enrich reads proven candidates first",
+          ordered[0][0] in ("a1", "a2", "a3", "p1"), f"-> {ordered[0][0]}")
+    terms = company_mod.proven_terms("PostHog Inc.")
+    check("PostHog's proven terms are named",
+          "time-off minimum" in terms and "async" in terms, f"-> {terms}")
+    check("unknown company has no proven terms",
+          company_mod.proven_terms("Nobodyco") == [], "")
+
+    # 2026-10-13: the operator was doing the terms check by hand for every
+    # role, so each role now prints it.
+    print("\n=== the terms line: in writing / silent / fails ===")
+
+    def termed(pay, reasons, green=(), notes=(), description=""):
+        item = scored("Implementation Manager", "Canvasco", geo.CLASS_US, 5,
+                      list(reasons), list(green))
+        item.salary = pay
+        item.notes = list(notes)
+        item.listing.description = description
+        return digest.terms_line(item)
+
+    line = termed(salary_mod.Salary(90000, 120000, confidence="published"),
+                  ["async", "time off minimum", "health fully covered"],
+                  description="No on-call, ever. We protect your evenings.")
+    check("everything written lands under in writing",
+          line == "✅ in writing: remote · no on-call · pay $85k+ · time off · async · "
+                  "health 100%   ❓ silent: work abroad   ❌ none", f"-> {line!r}")
+    line = termed(salary_mod.UNKNOWN, [])
+    check("a silent posting is all questions, never a fail",
+          line == "✅ in writing: remote   ❓ silent: on-call · pay · time off · "
+                  "schedule · work abroad · health   ❌ none", f"-> {line!r}")
+    line = termed(salary_mod.Salary(73000, 130000, confidence="published"),
+                  ["set hours", "unlimited PTO, no minimum"])
+    check("a range that starts under $85k says where it starts",
+          "pay starts $73k" in line.split("❌")[0], f"-> {line!r}")
+    check("written set hours is a fail", line.endswith("❌ set hours"), f"-> {line!r}")
+    check("unlimited PTO with no minimum is a question, not a yes",
+          "time off (unlimited, no minimum)" in line.split("❓")[1], f"-> {line!r}")
+    ote = salary_mod.Salary(130000, 170000, confidence="published", basis="ote",
+                            variable_share=0.2)
+    check("on-target pay is a fail", "❌ variable pay (OTE)" in termed(ote, []))
+    check("a guessed band is not pay in writing",
+          "❓ silent: on-call · pay" in termed(
+              salary_mod.Salary(99000, 141000, confidence="estimated"), []))
+    check("work-abroad weeks count as written",
+          "work abroad" in termed(salary_mod.UNKNOWN, [], green=["work-abroad weeks"]
+                                  ).split("❓")[0])
+    proven = scored("Implementation Consultant", "Ashby", geo.CLASS_US, 5, [], [])
+    line = digest.terms_line(proven)
+    check("terms an employer proves on its own pages count as written",
+          all(term in line.split("❓")[0] for term in ("time off", "async", "health 100%")),
+          f"-> {line!r}")
+    check("the line prints inside the entry",
+          "✅ in writing: remote" in digest._entry(REAL_WILDCARD))
 
     print("\n=== orphan variation selector stripped from titles ===")
     mangled = "️ Location Services Engineer | Maps Platform"

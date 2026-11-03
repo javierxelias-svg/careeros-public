@@ -66,6 +66,10 @@ OFF_TITLES = [
     "Account Executive, Enterprise",
     "Senior Recruiter",
     "Curriculum Developer",
+    # 2026-10-13: the education/enablement lane must not pull these back in.
+    "High School Teacher",
+    "Personal Trainer",
+    "Content Marketing Manager",
     # Any C-level title is out of reach and out of lane, nonsense or not.
     "Chief Vibes Officer",
     # Both reached the live digest on 2026-08-16.
@@ -78,6 +82,20 @@ ADJACENT_TITLES = [
     "Developer Advocate",
     "Customer Success Manager",
     "Solutions Consultant",
+    # Opened 2026-10-13, operator decision: any role the operator can do or be
+    # trained for, base pay, no quota. Teaching a product to people is a support
+    # skill. Each of these was unrecognised or off-lane the day before:
+    # Tailscale's "Enablement Program Specialist, Onboarding" ($120k-$150k)
+    # never reached the digest.
+    # "Sales Enablement & Onboarding Manager" moved here from the not-core list
+    # below: it is still not implementation (core), but it is no longer hidden.
+    "Customer Education Specialist",
+    "Enablement Program Specialist, Onboarding",
+    "Customer Trainer",
+    "Support Content Specialist",
+    "Product Support Specialist",
+    "Sales Enablement & Onboarding Manager",
+    "Technical Consultant, Mid-Market",
 ]
 
 # Must NOT be punished. Unknown is not the same as unwanted.
@@ -90,7 +108,6 @@ STRETCH_TITLES = [
     # A call-centre title is not the premium-member lane and must not dilute it.
     "Customer Service Representative",
     "KYC/B Onboarding Analyst",
-    "Sales Enablement & Onboarding Manager",
     "Employee Onboarding Coordinator",
     "Onboarding Manager",
     "Software Engineer",
@@ -105,7 +122,7 @@ STRETCH_TITLES = [
 def _check(titles, want, failures):
     for title in titles:
         lane, label = fit.classify(title)
-        ok = lane == want
+        ok = lane in want if isinstance(want, list) else lane == want
         mark = "PASS" if ok else "FAIL"
         shown = title if title else "(empty)"
         print(f"  [{mark}] {shown[:52]:54s} -> {lane} ({label})")
@@ -131,7 +148,13 @@ def main():
     _check(["AI Operations Engineer", "AI Ops Specialist",
             "Applied AI Operations Lead", "AI Business Systems Analyst",
             "Business Systems Engineer (Automation)"], fit.LANE_CORE, failures)
-    _check(["Business Systems Analyst"], fit.LANE_STRETCH, failures)
+    # Was stretch until 2026-10-16; widened to adjacent to stretch the search
+    # (systems titles hold the automation work the operator already does).
+    _check(["Business Systems Analyst", "GTM Systems Analyst", "GTM Systems Specialist",
+            "Business Systems Engineer", "Automations Engineer, Post Sales Systems"],
+           [fit.LANE_ADJACENT, fit.LANE_CORE], failures)
+    _check(["Agent Designer", "Dialogue Designer", "Agent Strategist",
+            "Senior Agent Architect"], [fit.LANE_CORE], failures)
     _check(["AI Automation Sales Representative"], fit.LANE_OFF, failures)
 
     # 2026-10-08: AI customer-service ops lane.

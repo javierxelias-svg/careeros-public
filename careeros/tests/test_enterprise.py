@@ -79,6 +79,67 @@ with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
 loaded = ats.load_boards(fh.name)
 check([b["company"] for b in loaded] == ["A"], "workday loaded, unknown platform skipped")
 
+# Recruitee, Gem and Workable, added 2026-10-13. Canned rows are shaped like
+# the live answers read that day (MailerLite, Retool, Hugging Face).
+print("\n=== Recruitee ===")
+rows = ats._recruitee({"offers": [
+    {"title": "Onboarding Specialist", "company_name": "MailerLite", "remote": True,
+     "hybrid": False, "on_site": False, "city": "Vilnius", "country": "Lithuania",
+     "salary": {"min": "70000", "max": "90000", "period": "year", "currency": "EUR"},
+     "description": "<p>Body</p>", "requirements": "<p>Reqs</p>",
+     "careers_url": "https://mailerlite.recruitee.com/o/x"},
+    {"title": "Office Manager", "remote": True, "hybrid": True, "salary": None},
+    "not a dict",
+]}, "fallback")
+check(len(rows) == 2, "non-dict offer skipped")
+check(rows[0]["workplace"] == "remote" and rows[0]["region"] == "Remote, Vilnius, Lithuania",
+      "remote offer keeps its country in the region")
+check(rows[0]["salary_raw"] == "€70,000 - €90,000", "structured pay becomes a readable range")
+check(rows[0]["description"] == "Body Reqs", "description and requirements joined, HTML cleaned")
+check(rows[1]["workplace"] == "onsite" and rows[1]["company"] == "fallback",
+      "hybrid wins over remote; missing company falls back")
+
+print("\n=== Gem ===")
+rows = ats._gem([
+    {"title": "Solutions Engineer", "location_type": "remote",
+     "location": {"name": "United States"}, "content_plain": "Body",
+     "absolute_url": "https://jobs.gem.com/retool/1"},
+    {"title": "Software Engineer", "location_type": "hybrid", "location": None},
+], "Retool")
+check([r["workplace"] for r in rows] == ["remote", "onsite"], "location_type decides workplace")
+check(rows[0]["region"] == "United States" and rows[1]["region"] == "", "missing location is empty")
+
+
+def fake_workable(url, user_agent, body=None):
+    calls.append(url)
+    if url.endswith("/jobs"):
+        if body and body.get("token") == "p2":
+            return {"results": [{"title": "Implementation Specialist", "shortcode": "B2",
+                                 "workplace": "remote",
+                                 "location": {"city": "", "country": "United States"}}]}
+        return {"nextPage": "p2", "results": [
+            {"title": "Housekeeping Attendant", "shortcode": "A1", "workplace": "on_site"},
+            {"title": "Customer Success Manager", "shortcode": "C3", "workplace": "hybrid",
+             "location": {"city": "Dublin", "country": "Ireland"}}]}
+    return {"description": "<p>Desc</p>", "requirements": "<p>Req</p>", "benefits": None}
+
+
+print("\n=== Workable ===")
+calls.clear()
+ats._send = fake_workable
+rows = ats._workable({"slug": "acme", "company": "Acme"}, "ua")
+check([r["title"] for r in rows] == ["Implementation Specialist", "Customer Success Manager"],
+      "second page read; remote posting fetched first; off-lane title dropped")
+check(not any(u.endswith("/A1") for u in calls), "no detail request for off-lane title")
+check(rows[0]["region"] == "Remote, United States" and rows[0]["workplace"] == "remote",
+      "remote posting keeps its country")
+check(rows[1]["workplace"] == "onsite" and rows[1]["region"] == "Dublin, Ireland",
+      "hybrid is onsite")
+check(rows[0]["description"] == "Desc Req" and rows[0]["url"].endswith("/acme/j/B2/"),
+      "detail text joined; apply link built")
+ats._send = lambda u, a, b=None: None
+check(ats._workable({"slug": "x", "company": "x"}, "ua") == [], "dead endpoint returns []")
+
 print("\n" + "=" * 60)
 if failures:
     print(f"FAILED {len(failures)}")

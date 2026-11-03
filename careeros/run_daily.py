@@ -22,6 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import applied  # noqa: E402
 import curated  # noqa: E402
 import dedupe  # noqa: E402
 import digest  # noqa: E402
@@ -29,8 +30,66 @@ import enrich  # noqa: E402
 import forms  # noqa: E402
 import prefilter  # noqa: E402
 import sources  # noqa: E402
+import terms_gate  # noqa: E402
 from _shared import notify, runner  # noqa: E402
 from _shared.paths import SENT_DIR, ensure_dirs  # noqa: E402
+
+
+def _terms_gate(fresh, user_agent, logger):
+    """
+    The second filter, 2026-10-30. Removes every role whose posting writes a
+    no against the operator's terms (terms_gate.py) and returns (kept, removed Counter).
+
+    Reads the listing description plus any page enrich.py cached; no network.
+    The audit that day found Ashby pages cache as an empty JavaScript shell, so
+    the description (the ATS's full text) is what usually carries the posting.
+    """
+    from collections import Counter
+    import time
+    removed = Counter()
+    kept = []
+    now = time.time()
+    for pair in fresh:
+        item = pair[1]
+        page = enrich._read_cache(item.listing.url, now)
+        verdict = terms_gate.check_scored(item, enrich.posting_only(page) if page else None)
+        if verdict.fails:
+            for rule, label, quote in verdict.fails[:1]:
+                removed[f"{rule} {label}"] += 1
+                logger.info("  gate: removed %s @ %s — %s: %s", item.listing.title[:40],
+                            item.listing.company[:20], label, quote[:120])
+            continue
+        kept.append(pair)
+    return kept, removed
+
+
+def _gate_chosen(fresh, user_agent, logger, removed):
+    """
+    A role the operator is shown must have been READ. Any chosen role whose text is too
+    thin to judge gets its page fetched now and is gated again; if it still
+    cannot be read, or it fails, it leaves the pool and selection reruns.
+    """
+    for _ in range(4):
+        (chosen, *rest) = digest.select(fresh)
+        proven = digest.select_proven(fresh, chosen)
+        bridge = digest.select_bridge(fresh, chosen + proven)
+        out = set()
+        for key, item in chosen + proven + bridge:
+            verdict = terms_gate.check_scored(item)
+            if verdict.read:
+                continue
+            page = enrich.page_text(item.listing.url, user_agent)
+            verdict = terms_gate.check_scored(item, enrich.posting_only(page) if page else None)
+            if verdict.fails or not verdict.read:
+                reason = (f"{verdict.fails[0][0]} {verdict.fails[0][1]}" if verdict.fails
+                          else "posting not readable")
+                removed[reason] += 1
+                logger.info("  gate: removed chosen %s — %s", item.listing.title[:44], reason)
+                out.add(key)
+        if not out:
+            return fresh, (chosen, *rest), proven, bridge
+        fresh = [p for p in fresh if p[0] not in out]
+    return fresh, (chosen, *rest), proven, bridge
 
 
 def _archive(date_label, message, chosen, stats):
@@ -107,6 +166,16 @@ def make_main(dry_run):
         seen = dedupe.load_seen()
         logger.info("ledger holds %d live keys", len(seen))
         fresh = dedupe.filter_new(kept, seen, logger)
+        # A role already applied to never comes back. The seen ledger only
+        # covers what a digest showed, so a role the operator found elsewhere
+        # (off the curated page, 2026-10-12) reappeared the same evening on a
+        # dry run.
+        done = applied.current()
+        before = len(fresh)
+        fresh = [p for p in fresh
+                 if not applied.is_done(p[1].listing.company, p[1].listing.title,
+                                        p[1].listing.url, done)]
+        logger.info("applied ledger removed %d role(s) already sent or skipped", before - len(fresh))
 
         # Open the job pages before ranking. Only survivors, only the top slice,
         # so this is tens of requests rather than hundreds. Everything downstream
@@ -116,11 +185,21 @@ def make_main(dry_run):
             "user_agent", "CareerOS/0.1 (personal job search)"
         )
         enriched, beyond_cap = enrich.run(
-            fresh, user_agent, logger, ranker=digest.rank
+            fresh, user_agent, logger, ranker=digest.rank_for_enrich
         )
 
+        # The second filter (operator decision, 2026-10-30): a written no
+        # against the operator's terms removes the role; a warning is not
+        # enough. See terms_gate.py.
+        fresh, gate_removed = _terms_gate(fresh, user_agent, logger)
+        fresh, selection, proven, bridge = _gate_chosen(fresh, user_agent, logger,
+                                                         gate_removed)
         (chosen, main_lane, wildcards, us_only, overflow, suppressed,
-         walled) = digest.select(fresh)
+         walled) = selection
+        # Terms-proven employers get their own short section. See select_proven.
+        chosen = chosen + proven
+        # Part-time bridge roles, their own section. See select_bridge.
+        chosen = chosen + bridge
 
         # Read each chosen role's application form, so the digest can say which
         # ones are quick and which ask for years. See forms.py.
@@ -139,10 +218,11 @@ def make_main(dry_run):
             ),
             "enriched": enriched,
             "beyond_cap": beyond_cap,
+            "gate_removed": dict(gate_removed),
         }
         message = digest.build(
             chosen, main_lane, wildcards, us_only, overflow, suppressed, walled,
-            stats, date_label
+            stats, date_label, proven=proven, bridge=bridge
         )
 
         logger.info("digest:\n%s", message)
@@ -152,8 +232,12 @@ def make_main(dry_run):
         # the boards. Wrapped because a broken page must never cost the operator
         # the operator's digest: the Telegram send is the run's actual job.
         try:
+            # Same second filter as the digest: the page never shows a role
+            # the digest would remove.
+            gated = [s for s in kept if not terms_gate.check_scored(s).fails]
+            logger.info("curated: terms gate removed %d of %d", len(kept) - len(gated), len(kept))
             path, curated_meta = curated.run(
-                kept, logger=logger, scanned=len(listings))
+                gated, logger=logger, scanned=len(listings))
             logger.info("curated page ready: %s (%s)", path, curated_meta)
         except Exception as exc:  # noqa: BLE001 - deliberately broad, see above
             logger.error("curated page FAILED, digest unaffected: %s", exc,

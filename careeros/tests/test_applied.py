@@ -97,6 +97,95 @@ def main():
         check("a reply moves out of 'out' and into 'answered'",
               line and "answered" in line and "1 out" not in line, f"-> {line}")
 
+        # 2026-10-13: roles the operator had skipped printed again in the next
+        # digest because only sent roles were remembered.
+        print("\n=== skipped: the operator's no is remembered and is not an application ===")
+        skips = Path(tmp) / "skips.jsonl"
+        applied.log("Skipco", "AI Operations Engineer", status="skipped",
+                    note="operator's call: culture reviews", ledger=skips)
+        check("a skipped role is in current(), so the run drops it",
+              applied.key("skipco", " AI Operations Engineer ")
+              in applied.current(skips))
+        check("a skip alone prints no pressure line",
+              applied.pressure(ledger=skips) is None)
+        applied.log("Exampleco", "AI Agent Operations Specialist", ledger=skips)
+        line = applied.pressure(ledger=skips)
+        check("a skip is never counted as out", line and "1 out" in line, f"-> {line}")
+
+    print("\n=== a retitled posting is still the same application ===")
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "applied.jsonl"
+        url = "https://jobs.ashbyhq.com/exampleco/0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d"
+        applied.log("Exampleco", "AI Agent Operations Specialist, Support", url=url,
+                    status="rejected", ledger=path)
+        state = applied.current(path)
+        check("same URL, new title is done (retitled posting, 2026-10-16)",
+              applied.is_done("Exampleco", "AI Agent Support Specialist", url, state))
+        check("URL match ignores query string and trailing slash",
+              applied.is_done("Exampleco", "Anything", url + "/?utm_source=x", state))
+        check("a different role at the same company is not done",
+              not applied.is_done("Exampleco", "AI Agent Support Specialist",
+                                  "https://jobs.ashbyhq.com/exampleco/other", state))
+        gh = "https://jobs.greenco.example/jobs?gh_jid=1234567"
+        applied.log("Greenco", "Role A", url=gh, ledger=path)
+        state = applied.current(path)
+        check("Greenhouse job id in the query keeps two roles apart",
+              not applied.is_done("Greenco", "Role B",
+                                  "https://jobs.greenco.example/jobs?gh_jid=7654321", state))
+        check("same Greenhouse job id is done",
+              applied.is_done("Greenco", "Role A renamed", gh + "&gh_jid=1234567", state))
+        check("title match still works with no URL",
+              applied.is_done("exampleco", "ai agent operations specialist, support", "", state))
+
+    print("\n=== same posting ID behind a different URL form ===")
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "applied.jsonl"
+        uuid = "0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d"
+        applied.log("Exampleco", "AI Agent Operations Specialist, Support",
+                    url=f"https://jobs.ashbyhq.com/exampleco/{uuid}",
+                    status="rejected", ledger=path)
+        applied.log("Greenco", "Role A",
+                    url="https://boards.greenhouse.io/greenco/jobs/1234567", ledger=path)
+        lever = "0b5c3d1e-2f4a-4b6c-8d9e-0a1b2c3d4e5f"
+        applied.log("Acme", "Support Engineer",
+                    url=f"https://jobs.lever.co/acme/{lever}", ledger=path)
+        applied.log("Bigco", "Support Engineer", url=(
+            "https://bigco.wd5.myworkdayjobs.com/en-US/External/job/Remote/"
+            "Support-Engineer_R12345"), ledger=path)
+        state = applied.current(path)
+        check("Ashby /application page of the same UUID is done",
+              applied.is_done("Exampleco", "AI Agent Support Specialist",
+                              f"https://jobs.ashbyhq.com/exampleco/{uuid}/application?src=x",
+                              state))
+        check("Ashby job on a company domain (?ashby_jid=) is done",
+              applied.is_done("Exampleco", "AI Agent Support Specialist",
+                              f"https://www.exampleco.com/careers?ashby_jid={uuid}", state))
+        check("Greenhouse ?gh_jid= on a custom board matches /jobs/<id>",
+              applied.is_done("Greenco", "Role A renamed",
+                              "https://jobs.greenco.example/jobs?gh_jid=1234567", state))
+        check("Greenhouse new board host, extra query, same id is done",
+              applied.is_done("Greenco", "Role A renamed",
+                              "https://job-boards.greenhouse.io/greenco/jobs/1234567?gh_src=a1",
+                              state))
+        check("a different Greenhouse id is not done",
+              not applied.is_done("Greenco", "Role B",
+                                  "https://jobs.greenco.example/jobs?gh_jid=7654321", state))
+        check("Lever /apply page of the same posting is done",
+              applied.is_done("Acme", "AI Support Engineer",
+                              f"https://jobs.lever.co/acme/{lever}/apply", state))
+        check("Workday retitled slug, same R-number is done",
+              applied.is_done("Bigco", "AI Support Engineer", (
+                  "https://bigco.wd5.myworkdayjobs.com/External/job/Remote-USA/"
+                  "AI-Support-Engineer_R12345?source=LinkedIn"), state))
+        check("the same R-number at another Workday employer is not done",
+              not applied.is_done("Otherco", "Support Engineer", (
+                  "https://otherco.wd1.myworkdayjobs.com/External/job/Remote/"
+                  "Support-Engineer_R12345"), state))
+        check("a different Ashby UUID is not done",
+              not applied.is_done("Exampleco", "AI Agent Support Specialist",
+                                  "https://jobs.ashbyhq.com/exampleco/"
+                                  "11111111-2222-3333-4444-555555555555", state))
+
     print("\n" + "=" * 60)
     if failures:
         print(f"FAILED {len(failures)}")

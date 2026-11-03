@@ -83,7 +83,7 @@ CORE_PATTERNS = [
     # search on newer industries. Premium-tier support AT SOFTWARE COMPANIES stays
     # (derived, below).
     (r"\btechnical\s+account\s+manager\b", "technical account manager"),
-    (r"\bautomation\s+engineer(?:ing)?\b", "automation engineer"),
+    (r"\bautomations?\s+engineer(?:ing)?\b", "automation engineer"),
 ]
 
 # Engineering-heavy titles, demoted from CORE to adjacent 2026-10-12 by the
@@ -113,6 +113,37 @@ ADJACENT_PATTERNS = [
     (r"\bdeployment\s+engineer\b|\bfield\s+engineer\b", "deployment engineer"),
     (r"\bcustomer\s+success\b", "customer success"),
     (r"\btechnical\s+consultant\b", "technical consultant"),
+    # Widened 2026-10-13, operator decision: widen the AI roles to stay future
+    # proof. Each of these fell to stretch
+    # ("unrecognised role") in a 72-title replay that day, where a role has to
+    # argue for its slot. Titles new enough that nobody has years in them.
+    (r"\b(?:gtm|go[- ]to[- ]market)\s+engineer(?:ing)?\b", "GTM engineer"),
+    (r"\bai\s+(?:solutions?|success|strategist|strategy|governance)\b", "AI adoption"),
+    (r"\bsolutions?\s+specialist\b|\bproduct\s+expert\b", "solutions specialist"),
+    (r"\bautomation\s+expert\b", "automation specialist"),
+    # Widened 2026-10-16 to stretch the search: business/GTM systems is the
+    # automation work the operator already does, under a systems title (Ashby GTM
+    # Systems Analyst, ClickUp Business Systems Engineer, Tines GTM Systems
+    # Specialist were all "unrecognised role" that day). Adjacent, not core: most
+    # want Salesforce or HubSpot admin experience the operator does not have yet.
+    (r"\b(?:business|gtm|go[- ]to[- ]market|revenue|crm)\s+systems?\s+"
+     r"(?:analyst|engineer|specialist|administrator|admin|manager)\b", "business systems"),
+    (r"(?<!marketing )\b(?:strategy\s*(?:&|and)\s*)?operations\s+(?:associate|generalist)\b",
+     "operations generalist"),
+    (r"\bhuman\s+data\b|\bdata\s+operations\b", "AI data operations"),
+    # Later the same day. Reading 1,577 postings by hand turned up three roles
+    # in the operator's lanes under titles nothing here matched: GitLab "Tech
+    # Operations Specialist" (runs the field's AI tools, $95k+), Cresta
+    # "Embedded AI Expert" (asks for contact-centre experience), ElevenLabs
+    # "Customer Support Specialist". Plain "Business Systems Analyst" stays
+    # stretch, as decided 2026-10-08: it counts only with an AI word.
+    (r"\btech(?:nology)?\s+operations\b", "tech operations"),
+    (r"\bembedded\s+ai\b|\bai\s+expert\b", "AI adoption"),
+    # Plain support is the nearest match to the operator's previous support
+    # work. The pay floor and the shift-work gates above this module still
+    # decide what prints.
+    (r"\bcustomer\s+support\s+(?:specialist|associate|representative|advocate|agent)\b|"
+     r"\bsupport\s+specialist\b|\btier\s+[12]\s+support\b", "customer support"),
 ]
 
 # Adjacent roles that must be tested BEFORE the off-lane list, for exactly the
@@ -475,6 +506,23 @@ COLLISION_PATTERNS = [
     # 2026-10-08: writing an AI's character is not the editorial writing the
     # `writer` off rule blocks.
     (r"\b(?:ai|character|persona|personality|dialogue)\s+writer\b", "AI character"),
+    # 2026-10-13, operator decision: any industry or role the operator can do or
+    # be trained for. Teaching customers a product is a support skill (make the
+    # complicated clear) and it is base pay, no quota. These sit
+    # here because each collides with an off rule written for a different job:
+    # "Customer Trainer" with `teaching`, "Support Content Specialist" with
+    # `marketing`. Tailscale's "Enablement Program Specialist, Onboarding"
+    # ($120k-$150k) was unrecognised and never reached the digest.
+    (r"\b(?:customer|product|partner|client|user|developer)\s+"
+     r"(?:education|enablement|training|trainer)\b"
+     r"|\benablement\s+(?:program\s+)?(?:specialist|manager|lead|partner)\b"
+     r"|\b(?:sales|revenue|field|technical)\s+enablement\b"
+     r"|\binstructional\s+designer\b|\btraining\s+specialist\b",
+     "customer education / enablement"),
+    (r"\bsupport\s+content\b|\bhelp\s+cent(?:er|re)\s+"
+     r"(?:manager|specialist|lead|writer|editor)\b", "support content"),
+    (r"\bproduct\s+support\s+(?:specialist|lead)\b|\bproduct\s+specialist\b",
+     "product support"),
 ]
 
 # Builder and creative-tech lanes, opened 2026-10-01: a problem handed over, the
@@ -518,6 +566,9 @@ BUILDER_PATTERNS = [
     (r"\bai\s+(?:character|persona(?:lity)?)\b|\bpersonality\s+designer\b",
      "AI character"),
     (r"\bconversation(?:al)?\s+(?:design(?:er)?|architect)\b|"
+     # 2026-10-16: the titles agent companies actually use (PolyAI, Parloa,
+     # Sierra, Observe.AI), all "unrecognised role" that day.
+     r"\b(?:ai\s+)?agent\s+(?:designer|strategist|architect)\b|\bdialog(?:ue)?\s+designer\b|"
      r"\bprompt\s+design(?:er)?\b|\bai\s+content\s+design(?:er)?\b",
      "conversation design"),
     # Knowledge and context engineering: building knowledge bases with a
@@ -535,6 +586,8 @@ BUILDER_PATTERNS = [
      "creative technologist"),
 ]
 
+_SOFTWARE_TITLE = re.compile(
+    r"^\s*(?:software|full[- ]?stack|back[- ]?end|front[- ]?end)\s+engineer\b", re.I)
 _HARD_BLOCK = [(re.compile(p, re.I), label) for p, label in HARD_BLOCK_PATTERNS]
 _BUILDER = [(re.compile(p, re.I), label) for p, label in BUILDER_PATTERNS]
 _COLLISION = [(re.compile(p, re.I), label) for p, label in COLLISION_PATTERNS]
@@ -614,6 +667,12 @@ def classify(title):
         if pattern.search(text):
             return LANE_OFF, label
 
+    # A hand-coding title is not core because of the word after the comma.
+    # 2026-10-13: "Software Engineer, AI Enablement" (Chime) and "Fullstack
+    # Engineer, AI Implementation" (Oneleet) both printed in the lane the operator reads
+    # first. Stretch, not off: shown only if it argues for the slot.
+    if _SOFTWARE_TITLE.search(text):
+        return LANE_STRETCH, "software engineering"
     for pattern, label in _CORE:
         if pattern.search(text):
             return LANE_CORE, label

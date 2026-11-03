@@ -425,7 +425,124 @@ def _norm_hn(body, user_agent):
     return listings
 
 
+# EXAMPLE operator setting — the residence codes the operator can work from.
+MERCOR_RESIDENCE_OK = {"USA", "PRI"}
+
+
+def _norm_mercor(body):
+    """
+    Mercor's public expert-gig board, for the part-time (bridge) lane.
+
+    Added 2026-10-26 with the bridge lane. Only hourly-paid listings pass: a
+    per-task or one-time rate cannot be compared with the hourly bridge floor. A
+    listing locked to residents of other countries is dropped; None or [] means
+    open to any residence. Every listing is a contract, so job_type says so,
+    which is what routes it to the bridge lane and never a full-time slot.
+    """
+    data = json.loads(body.decode("utf-8", errors="replace"))
+    rows = data.get("listings") if isinstance(data, dict) else None
+    if not isinstance(rows, list):
+        return []
+    listings = []
+    for row in rows:
+        if not isinstance(row, dict) or row.get("status") != "active":
+            continue
+        if row.get("payRateFrequency") != "hourly":
+            continue
+        residence = row.get("eligibleResidenceLocation") or []
+        if residence and not MERCOR_RESIDENCE_OK & set(residence):
+            continue
+        low, high = row.get("rateMin"), row.get("rateMax")
+        if not isinstance(high, (int, float)) or high <= 0:
+            continue
+        low = low if isinstance(low, (int, float)) and low > 0 else high
+        hours = row.get("hoursPerWeek")
+        description = row.get("description") or ""
+        if hours:
+            description = f"{hours} hours per week. {description}"
+        listings.append(Listing(
+            title=row.get("title", ""),
+            company="Mercor",
+            url=f"https://work.mercor.com/jobs/{row.get('listingId', '')}",
+            salary_raw=f"${low:g}-${high:g}/hr",
+            region="Remote",
+            description=description,
+            source="mercor_experts",
+            posted_at=row.get("createdAt"),
+            job_type=f"contract, {row.get('commitment') or 'hourly'}",
+            workplace="remote" if row.get("workArrangement") == "remote" else "",
+        ))
+    return listings
+
+
+ALIGNERR_PAGE = "https://www.alignerr.com/api/jobs?limit=120&offset={}"
+ALIGNERR_MAX_PAGES = 80
+
+
+def _norm_alignerr(body, user_agent, read_pages=True):
+    """
+    Alignerr's public gig board (Labelbox), for the part-time (bridge) lane.
+
+    Added 2026-11-01, operator decision, to the daily scan. The API pages
+    120 at a time, ~5,600 rows, but most are one gig repeated per city, so one
+    row is kept per title and pay. Every gig is an hourly freelance contract,
+    so job_type routes it to the bridge lane. The list gives a 150-character
+    summary only, which the first dry run labelled "posting would not load";
+    gigs that fit the operator's skills (~80) get their full page read here instead.
+    """
+    data = json.loads(body.decode("utf-8", errors="replace"))
+    if not isinstance(data, dict) or not isinstance(data.get("jobs"), list):
+        return []
+    rows = list(data["jobs"])
+    total = data.get("total") if isinstance(data.get("total"), int) else 0
+    page = 1
+    while len(rows) < total and page < ALIGNERR_MAX_PAGES:
+        more = json.loads(_fetch(ALIGNERR_PAGE.format(len(rows)), user_agent))
+        more = more.get("jobs") if isinstance(more, dict) else None
+        if not isinstance(more, list) or not more:
+            break
+        rows.extend(more)
+        page += 1
+        time.sleep(POLITENESS_DELAY)
+
+    listings, seen = [], set()
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        pay = row.get("pay") or ""
+        if "/hr" not in pay:
+            continue
+        key = (row.get("title", ""), pay)
+        if key in seen:
+            continue
+        seen.add(key)
+        listings.append(Listing(
+            title=row.get("title", ""),
+            company="Alignerr",
+            url=f"https://www.alignerr.com/jobs/{row.get('id', '')}",
+            salary_raw=pay,
+            region="Remote",
+            description=row.get("description") or "",
+            source="alignerr",
+            job_type="contract, hourly",
+            workplace="remote",
+        ))
+
+    if read_pages:
+        import enrich
+        import prefilter
+        for listing in listings:
+            if not prefilter.bridge_fits(type("S", (), {"listing": listing})()):
+                continue
+            page = enrich.page_text(listing.url, user_agent)
+            if page:
+                listing.description = enrich.posting_only(page)
+    return listings
+
+
 NORMALIZERS = {
+    "mercor_experts": lambda body, ua: _norm_mercor(body),
+    "alignerr": _norm_alignerr,
     "remoteok": lambda body, ua: _norm_remoteok(body),
     "remotive": lambda body, ua: _norm_remotive(body),
     "himalayas": lambda body, ua: _norm_himalayas(body),

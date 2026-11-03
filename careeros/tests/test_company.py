@@ -178,6 +178,16 @@ def main():
         if not ok:
             failures.append(f"bilingual flag on {text!r}: want {expected}, got {got}")
 
+    print("\n=== big pharma is flagged first, never hidden (operator term, 2026-10-14) ===")
+    for name, want in (("Veeva Systems", True), ("Pfizer Inc", True), ("IQVIA", True),
+                       ("Oscar Health", False), ("Canvas Medical", False),
+                       ("Lillypad", False), ("Vertex", False)):
+        points, labels = company.score(name)
+        got = bool(labels) and labels[0].startswith("⚠️ big pharma")
+        print(f"  [{'PASS' if got == want else 'FAIL'}] {name:20s} -> {labels}")
+        if got != want:
+            failures.append(f"pharma flag on {name!r}: want {want}, got {labels}")
+
     print("\n" + "=" * 60)
     if failures:
         print(f"FAILED {len(failures)}")

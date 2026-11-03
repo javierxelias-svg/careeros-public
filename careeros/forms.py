@@ -51,6 +51,17 @@ _YEARS_Q = re.compile(
     re.I,
 )
 
+# A required question that narrows where the applicant may live below "the
+# United States". Added 2026-10-13: Mixpanel lists states, Greenhouse's own PM
+# role names two time zones, Wistia says continental US, Gong West Coast. An
+# operator outside those areas is ruled out, and no posting-level rule can see
+# a form.
+_WHERE_Q = re.compile(
+    r"\bfollowing\s+(?:u\.?s\.?\s+)?states\b|\b(?:continental|contiguous)\b|"
+    r"\blower\s+48\b|\btime\s*zones?\b|\bwest\s+coast\b|\beast\s+coast\b",
+    re.I,
+)
+
 QUICK_MAX_QUESTIONS = 12
 QUICK_MAX_ESSAYS = 1
 
@@ -124,16 +135,19 @@ def verdict(questions):
     if not questions:
         return None
     required = [q for q in questions if q[1]]
+    where = ""
+    if any(_WHERE_Q.search(label) for label, _, _ in required):
+        where = " · 📍 form limits location (states or time zone): check your location"
     for label, _, _ in required:
         if _YEARS_Q.search(label):
             short = label.strip().replace("\n", " ")
             if len(short) > 60:
                 short = short[:57].rstrip() + "…"
-            return f"⛔ form asks about experience: \"{short}\""
+            return f"⛔ form asks about experience: \"{short}\"" + where
     essays = sum(1 for q in required if q[2] == "essay")
     if len(required) <= QUICK_MAX_QUESTIONS and essays <= QUICK_MAX_ESSAYS:
-        return f"⚡ quick form: {len(required)} questions, no years asked"
-    return f"📝 form: {len(required)} questions, {essays} written answers"
+        return f"⚡ quick form: {len(required)} questions, no years asked" + where
+    return f"📝 form: {len(required)} questions, {essays} written answers" + where
 
 
 def annotate(items, user_agent, logger):

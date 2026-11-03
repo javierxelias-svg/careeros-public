@@ -91,6 +91,22 @@ def main():
           f"-> {forms.verdict(essays)!r}")
     check("unknown form says nothing", forms.verdict(None) is None and forms.verdict([]) is None)
 
+    # 2026-10-13: Mixpanel and Greenhouse both gate by place on the FORM, where
+    # no posting rule can see it. Shown, never hidden: the operator decides.
+    print("\n=== a form that limits where the applicant may live says so ===")
+    states = [("Email", True, "other"),
+              ("Are you currently residing or willing to relocate to one of the "
+               "following states?", True, "other")]
+    got = forms.verdict(states)
+    check("a state list is flagged on the same line",
+          got.startswith("⚡") and "📍 form limits location" in got, f"-> {got!r}")
+    zones = [("Due to current team needs, we are only considering candidates in the "
+              "Central or Eastern Time Zones. Please confirm.", True, "other")]
+    check("a time-zone gate is flagged", "📍" in forms.verdict(zones))
+    country = [("Are you located in or willing to relocate to the United States?",
+                True, "other")]
+    check("a plain country question is not", "📍" not in forms.verdict(country))
+
     print("\n=== a form tag prints on its own line ===")
     item = scored("Implementation Specialist", "implementation")
     item.form_tag = "⚡ quick form: 6 questions, no years asked"

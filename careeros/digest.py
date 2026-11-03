@@ -13,11 +13,14 @@ from datetime import datetime
 
 import dedupe
 import applied
+import company as company_mod
 import experience
 import fit
+import freedom
 import geo
 import netpay
 import prefilter
+import salary as salary_mod
 from _shared.paths import SENT_DIR
 
 # Fit lanes in preference order — used only for sorting, never as a gate here.
@@ -90,9 +93,20 @@ def target_rank(item):
         return 1
     return 0
 
-MAX_MAIN = 14
+# 14 hid qualified roles once the terms gate thinned the pool (2026-10-31:
+# "5 more qualified, not shown"); operator decision, 2026-10-21: show every one.
+MAX_MAIN = 25
 MAX_WILDCARD = 3
 MAX_US_ONLY = 4
+MAX_PROVEN = 5
+MAX_BRIDGE = 5
+# One gig platform (Mercor) posts hundreds of roles; two per company keeps
+# room for the other sources without hiding a platform's best two.
+MAX_BRIDGE_PER_COMPANY = 2
+# Gig "employers" that charge the worker. IAPWE reached the first live bridge
+# run (2026-10-26) at "$75/hr"; it sells a paid job-board subscription that
+# reviewers report is hard to cancel, with work unpaid unless accepted.
+BRIDGE_BLOCKED = {"iapwe"}
 TELEGRAM_SAFE_CHARS = 3800
 # One employer may not own the digest. Reading employer boards directly put 1,764
 # postings into the pool, and Payoneer took four consecutive main-lane slots with
@@ -168,6 +182,100 @@ def rank(items):
             -(pair[1].salary.top or 0),
         ),
     )
+
+
+def is_proven(item):
+    """In the operator's lanes, at an employer that proves their terms on its own pages."""
+    return (item.fit_lane in (fit.LANE_CORE, fit.LANE_ADJACENT)
+            and freedom.TERMS_PROVEN_LABEL in (item.company_labels or []))
+
+
+def rank_for_enrich(items):
+    """
+    rank(), with the best terms-proven candidates moved to the front.
+
+    Added 2026-10-12. Their postings rarely write "async", so they rank near
+    #200 and fell outside the 200-page enrich cap: the PROVEN section would
+    have printed guessed pay and unread experience walls. Fifteen pages is the
+    price of reading them.
+    """
+    ranked = rank(items)
+    first = [p for p in ranked if is_proven(p[1])][:MAX_PROVEN * 3]
+    picked = {id(p) for p in first}
+    return first + [p for p in ranked if id(p) not in picked]
+
+
+def select_proven(items, chosen):
+    """
+    Up to MAX_PROVEN in-lane roles at terms-proven employers, not already chosen.
+
+    Added 2026-10-12, operator decision. The main ranking leads with what the
+    POSTING writes, so Ashby's Implementation Consultant sat at #195 although
+    Ashby proves more of the operator's terms in its handbook than most postings
+    do in their text. Re-weighting the sort moved it one place. A short section
+    of its own puts these employers in front of the operator every morning
+    instead. Same gates as
+    the main lane: experience wall, portability (on-call still blocks).
+    """
+    taken = {key for key, _ in chosen}
+    per_company = Counter()
+    walled = {}
+    proven = []
+    for pair in rank(items):
+        if len(proven) >= MAX_PROVEN:
+            break
+        if pair[0] in taken or pair[1].bridge or not is_proven(pair[1]):
+            continue
+        if not clears_experience_wall(pair[1], walled):
+            continue
+        if not prefilter.is_portable(pair[1]):
+            continue
+        name = dedupe.normalize(pair[1].listing.company) or "?"
+        if per_company[name] >= MAX_PER_COMPANY:
+            continue
+        proven.append(pair)
+        per_company[name] += 1
+    return proven
+
+
+def select_bridge(items, chosen):
+    """
+    Up to MAX_BRIDGE part-time roles for the bridge lane, not already chosen.
+
+    Added 2026-10-26, operator decision: hunt a part-time bridge job in
+    parallel with the full-time search, with tight parameters on both,
+    prioritizing freedom and money. Tight means published pay only: prefilter
+    already held it to the hourly bridge floor, and a guessed part-time rate is
+    too often wrong by half. Relevance is prefilter.bridge_fits (the operator's
+    skills, no credential), not the full-time job families; remote, on-call
+    and shift work were gated upstream. Ordered by hourly pay, top first:
+    money is half the brief.
+    """
+    taken = {key for key, _ in chosen}
+    per_company = Counter()
+    walled = {}
+    bridge = []
+    by_pay = sorted(rank(items), key=lambda p: -(p[1].salary.top or 0))
+    for pair in by_pay:
+        if len(bridge) >= MAX_BRIDGE:
+            break
+        item = pair[1]
+        if pair[0] in taken or not item.bridge:
+            continue
+        if item.salary.confidence != "published":
+            continue
+        if not clears_experience_wall(item, walled):
+            continue
+        if not prefilter.bridge_fits(item):
+            continue
+        name = dedupe.normalize(item.listing.company) or "?"
+        if name in BRIDGE_BLOCKED:
+            continue
+        if per_company[name] >= MAX_BRIDGE_PER_COMPANY:
+            continue
+        bridge.append(pair)
+        per_company[name] += 1
+    return bridge
 
 
 def earns_main_lane(item):
@@ -256,6 +364,20 @@ def clears_experience_wall(item, walled):
 
 def admits_item(item):
     """The same verdict without recording it, for counting `eligible`."""
+    # Pay read off the job page after prefilter ran. Foodsmart Member Support
+    # (2026-10-16) had no pay in the feed, passed prefilter, then the page said
+    # $40,000-$50,000 and nothing re-checked the floor. Published pay only: an
+    # estimate never blocks here.
+    pay = getattr(item, "salary", None)
+    # Part-time roles are held to the hourly bridge floor, not the full-time one.
+    bridge = getattr(item, "bridge", False)
+    floor = prefilter.BRIDGE_PAY_FLOOR if bridge else prefilter.PAY_FLOOR
+    if (pay is not None and getattr(pay, "confidence", "") == "published"
+            and pay.top is not None
+            and not salary_mod.clears_bar(pay, floor)):
+        if bridge:
+            return False, f"part-time pay below ${prefilter.BRIDGE_HOURLY_FLOOR}/hr"
+        return False, f"published pay below ${prefilter.PAY_FLOOR // 1000}k"
     wall = getattr(item, "wall", None)
     if not wall:
         return True, ""
@@ -275,7 +397,9 @@ def select(items):
     Off-lane roles never appear. They are counted and reported, never silently
     dropped.
     """
-    ranked = rank(items)
+    # Part-time roles have their own lane (select_bridge) and never take a
+    # full-time slot: the operator's full-time terms say no 1099.
+    ranked = [p for p in rank(items) if not p[1].bridge]
     taken = set()
     per_company = Counter()
     walled = {}
@@ -353,16 +477,105 @@ def select(items):
     return chosen, main, wildcards, us_only, overflow, suppressed, len(walled)
 
 
+# The operator's terms, checked the way a person reading the posting would
+# check them. Added 2026-10-13: the operator had been running this check by
+# hand for every role.
+#
+# Three buckets, because silence is not a no: it is an unknown, and an unknown
+# is what a first call is for. A term only reaches ❌ when the posting writes
+# the opposite. Every role on the page has already passed the remote gate, so
+# that one is always written.
+# EXAMPLE operator setting — set your own floor.
+TERMS_PAY_BOTTOM = 85_000
+
+
+_PROVEN_AS_REASON = {
+    "time-off minimum": "time off minimum",
+    "async": "async",
+    "work from anywhere": "work from anywhere",
+    "health covered": "health fully covered",
+}
+
+
+def terms_line(item):
+    """One line: which of the operator's terms the posting writes, leaves silent, or fails."""
+    yes, silent, no = ["remote"], [], []
+    # The posting, plus what the employer proves on its own pages (audited in
+    # config/terms-proven-evidence.json). Ashby's handbook is in writing too.
+    reasons = list(item.freedom_reasons or []) + [
+        _PROVEN_AS_REASON[name]
+        for name in company_mod.proven_terms(item.listing.company)
+        if name in _PROVEN_AS_REASON]
+
+    if geo.TZ_NEGATED.search(item.listing.searchable):
+        yes.append("no on-call")
+    else:
+        silent.append("on-call")
+
+    pay = item.salary
+    if pay.is_ote:
+        no.append("variable pay (OTE)")
+    elif getattr(item, "bridge", False) and pay.confidence == "published" and pay.top:
+        # Already held to the hourly bridge floor upstream; say it per hour.
+        yes.append(f"pay ${prefilter.BRIDGE_HOURLY_FLOOR}/hr+")
+    elif pay.confidence == "published" and pay.low:
+        if pay.low >= TERMS_PAY_BOTTOM:
+            yes.append(f"pay ${TERMS_PAY_BOTTOM // 1000}k+")
+        else:
+            silent.append(f"pay starts ${int(pay.low // 1000)}k")
+    else:
+        silent.append("pay")
+
+    if "time off minimum" in reasons or "time off stated" in reasons:
+        yes.append("time off")
+    elif "unlimited PTO, no minimum" in reasons:
+        silent.append("time off (unlimited, no minimum)")
+    else:
+        silent.append("time off")
+
+    if "set hours" in reasons:
+        no.append("set hours")
+    elif "async" in reasons:
+        yes.append("async")
+    elif "flexible hours" in reasons:
+        yes.append("flexible hours")
+    else:
+        silent.append("schedule")
+
+    if ("work from anywhere" in reasons or "works from another country" in item.green
+            or "work-abroad weeks" in item.green):
+        yes.append("work abroad")
+    else:
+        silent.append("work abroad")
+
+    if "health fully covered" in reasons:
+        yes.append("health 100%")
+    else:
+        silent.append("health")
+
+    return (f"✅ in writing: {' · '.join(yes)}   "
+            f"❓ silent: {' · '.join(silent) or 'none'}   "
+            f"❌ {' · '.join(no) or 'none'}")
+
+
 def _entry(item, note=None):
     listing = item.listing
-    lines = [f"• {listing.title} @ {listing.company} — {item.salary.display()}"]
+    if getattr(item, "bridge", False) and item.salary.top:
+        # Part-time pay in the unit the bridge floor is set in. The annualised figure
+        # and the take-home line both assume 2080 hours, which a part-time
+        # role does not work; the prefilter note gives the 20 hrs/week month.
+        hourly = item.salary.top / salary_mod.HOURS_PER_YEAR
+        lines = [f"• {listing.title} @ {listing.company} — up to ${hourly:,.0f}/hr"]
+    else:
+        lines = [f"• {listing.title} @ {listing.company} — {item.salary.display()}"]
     # Take-home, added 2026-09-28. Gross pay is misleading where the income tax
     # rate is high: under the example tax model in netpay.py a $95k offer is
     # worth about $69k. Printed from the TOP of the
     # band, matching how the pay bonus is scored, and only when a number exists
     # — an estimated band already carries its own warning and does not need a
     # second invented figure stacked on top of it.
-    if item.salary.confidence == "published" and item.salary.top:
+    if (item.salary.confidence == "published" and item.salary.top
+            and not getattr(item, "bridge", False)):
         take_home = netpay.summary(item.salary.top)
         if take_home:
             lines.append(f"  {take_home}")
@@ -409,6 +622,8 @@ def _entry(item, note=None):
         detail.append(", ".join(item.green[:2]))
     if detail:
         lines.append(f"  {' · '.join(detail)}")
+
+    lines.append(f"  {terms_line(item)}")
 
     form_tag = getattr(item, "form_tag", None)
     if form_tag:
@@ -503,7 +718,7 @@ def gap_warning(today=None):
 
 
 def build(chosen, main, wildcards, us_only, overflow, suppressed, walled,
-          stats, date_label):
+          stats, date_label, proven=(), bridge=()):
     """Assemble the Telegram message."""
     gap = gap_warning()
 
@@ -548,6 +763,13 @@ def build(chosen, main, wildcards, us_only, overflow, suppressed, walled,
         for pair in main:
             parts.append(_entry(pair[1]))
 
+    if proven:
+        parts.append(f"🛡️ PROVEN EMPLOYERS — your terms, in their own pages ({len(proven)})")
+        for pair in proven:
+            terms = company_mod.proven_terms(pair[1].listing.company)
+            note = ("✅ proven: " + " · ".join(terms)) if terms else None
+            parts.append(_entry(pair[1], note))
+
     if wildcards:
         parts.append(f"🌟 WILDCARD — no experience required ({len(wildcards)})")
         for pair in wildcards:
@@ -556,6 +778,12 @@ def build(chosen, main, wildcards, us_only, overflow, suppressed, walled,
     if us_only:
         parts.append(f"🇺🇸 MORE US / NORTH AMERICA REMOTE ({len(us_only)})")
         for pair in us_only:
+            parts.append(_entry(pair[1]))
+
+    if bridge:
+        parts.append(f"⏱️ PART-TIME (bridge) — ${prefilter.BRIDGE_HOURLY_FLOOR}/hr+, "
+                     f"remote ({len(bridge)})")
+        for pair in bridge:
             parts.append(_entry(pair[1]))
 
     footer = (
@@ -584,6 +812,10 @@ def build(chosen, main, wildcards, us_only, overflow, suppressed, walled,
         # no footer, because the operator would read it as the market being thinner than it is.
         footer += (f"\n{walled} roles held back — senior, staff, principal, "
                    f"director or VP in the title")
+    gate = stats.get("gate_removed") or {}
+    if gate:
+        top = ", ".join(f"{k} {v}" for k, v in sorted(gate.items(), key=lambda kv: -kv[1])[:4])
+        footer += f"\n🚫 {sum(gate.values())} removed by the terms gate (written no): {top}"
     if stats.get("no_salary"):
         footer += f"\n{stats['no_salary']} listings dropped — no pay stated and role unrecognised"
     parts.append(footer)

@@ -81,6 +81,33 @@ CASES = [
      "AI Engineer (US Only)", "", geo.CLASS_US),
     ("no title at all, old two-arg behaviour",
      "", WWR_FEED_REGION, geo.CLASS_ANYWHERE),
+    # 2026-10-13: a location LIST that also names the US or the Americas is not
+    # a lock. All four were rejected as "region-locked" that morning.
+    ("US/EU list in the region field (Oneleet)",
+     "GTM AI Engineer", "US/EU - Remote", geo.CLASS_US),
+    ("Americas listed beside EMEA (Canonical)",
+     "Project Manager", "Home Based - Americas; Home based - EMEA", geo.CLASS_US),
+    ("(US/Canada) in the title (Sanity)",
+     "Senior Solution Architect (US/Canada)",
+     "Remote in the United States or Canada", geo.CLASS_US),
+    ("Remote (US) (Ramp)",
+     "Technical Consultant, Mid-Market", "Remote (US)", geo.CLASS_US),
+    # ...and the fix must not loosen a real lock.
+    ("EMEA alone is still locked",
+     "Support Engineer - EMEA", "EMEA", geo.CLASS_BLOCKED),
+    # A foreign place in the region field is a lock without the word "only".
+    ("region names a foreign city",
+     "Partner Manager", "London, United Kingdom", geo.CLASS_BLOCKED),
+    ("region names a foreign country",
+     "Deployment Strategist", "Remote - India", geo.CLASS_BLOCKED),
+    ("a list that includes the US stays eligible (GitLab)",
+     "Customer Success Engineer, LATAM",
+     "Remote, Brazil; Remote, Mexico; Remote, United States", geo.CLASS_US),
+    ("US cities with one foreign office are a US posting",
+     "Program Manager", "Chicago, Illinois; New York, New York; Toronto, Ontario, Canada",
+     geo.CLASS_US),
+    ("'us' the pronoun is not the United States",
+     "Join us - Support Engineer, UK", "Remote", geo.CLASS_BLOCKED),
 ]
 
 

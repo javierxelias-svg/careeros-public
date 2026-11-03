@@ -139,7 +139,16 @@ def test_operator_lane_survives():
         "Senior Red Team Engineer": fit.LANE_ADJACENT,
         "Solutions Consultant": fit.LANE_ADJACENT,
         "Developer Advocate": fit.LANE_ADJACENT,
-        "GTM Engineer": fit.LANE_STRETCH,
+        "GTM Engineer": fit.LANE_ADJACENT,  # widened 2026-10-13, was stretch
+        # Three roles that fit the operator and never reached the digest, 2026-10-13: GitLab,
+        # Cresta and ElevenLabs each used a title no pattern knew.
+        "Tech Operations Specialist": fit.LANE_ADJACENT,
+        "Embedded AI Expert": fit.LANE_ADJACENT,
+        "Customer Support Specialist": fit.LANE_ADJACENT,
+        # Hand-coding titles are never core because of a second word, 2026-10-13.
+        "Software Engineer, AI Enablement": fit.LANE_STRETCH,
+        "Fullstack Engineer, AI Implementation": fit.LANE_STRETCH,
+        "Implementation Engineer, Customer Support": fit.LANE_CORE,
     }
     for title, lane in expected.items():
         check(f"lane {title[:38]}", fit.classify(title)[0], lane)

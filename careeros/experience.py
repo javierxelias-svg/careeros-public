@@ -36,7 +36,16 @@ _YEARS = re.compile(
 # vacation days, roadmaps, ages, and "year over year" growth claims.
 _LEAD_NOT_A_WALL = re.compile(
     r"(once|twice|each|every|per|a|the past|the last|last|next|for the|"
-    r"up to \d+ times a)\s*$",
+    r"up to \d+ times a|"
+    # 2026-10-16, when 4+ years became a block and these began hiding roles:
+    # "Paid month off after 4 years" (a perk) and "tenure is 3.6 years" (the
+    # 6 after a decimal point read as six years).
+    r"after|tenure (?:is|of)|tenure is \d+\.|\d\.|"
+    # Company history and soft wording, same run: "competitors for eight years",
+    # "$100M ARR in under four years", "For over 10 years, Andela has",
+    # "roughly 7+ years, but we care more about". When unsure, show the role:
+    # a role wrongly shown costs one look, a role wrongly hidden is lost.
+    r"for|for over|for more than|in under|roughly|about|nearly|almost)\s*$",
     re.IGNORECASE,
 )
 _TAIL_NOT_A_WALL = re.compile(
@@ -348,7 +357,13 @@ def rank_penalty(height, stated_years=None):
 # 2,292 roles a day on the weaker of the two artifacts, including most of the
 # implementation lane, which routinely asks 2 to 5 years. Years now sort via
 # rank_penalty() and the form gets read on a weekly shortlist of five.
-BLOCKED_HEIGHTS = (4, 6)
+#
+# 2026-10-16: height 5 (a stated floor of 4+ years) blocks again, on the
+# operator's written term this time, not on the posting's: a "3-5 years" range
+# counts as 3 (the range floor is the bar), and a 4+ minimum is still a no —
+# only jobs the operator could do on day one are recommended. Floors of 2-3
+# still rank via rank_penalty and the form still decides those.
+BLOCKED_HEIGHTS = (4, 5, 6)
 
 
 def admits(height, stated_years=None):

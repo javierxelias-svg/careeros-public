@@ -35,6 +35,13 @@ ESTIMATE_FLOOR = 85_000
 # title guess alone. Freedom comes first, so those stay down to this lower
 # guess, marked to ask pay first. Below it nothing comes back.
 FREEDOM_ESTIMATE_FLOOR = 65_000
+# EXAMPLE operator setting — set your own hourly floor.
+# Part-time (bridge) lane, added 2026-10-26: a part-time job searched in
+# parallel with the full-time lane, judged by the HOUR. salary.py annualises an
+# hourly rate at 2080 hours, so the full-time floor was silently dropping every
+# part-time role. Compared on that same annualised figure.
+BRIDGE_HOURLY_FLOOR = 30
+BRIDGE_PAY_FLOOR = BRIDGE_HOURLY_FLOOR * salary_mod.HOURS_PER_YEAR
 # Listings at or above these marks score higher and therefore surface first.
 STRONG_PAY = 95_000
 GREAT_PAY = 120_000
@@ -146,8 +153,12 @@ GREEN_FLAGS = [
      r"\bwe (?:value|prioriti[sz]e) (?:health|wellbeing|well-being|rest)\b", "health culture"),
     (r"\bbuild(?:ing)? in public\b|\bside project(?:s)?\b|\bcreator\b|"
      r"\bencourage(?:d)? to (?:write|create|share|post)\b", "creator-friendly"),
-    (r"\bwe(?:'| wi)ll teach you\b|\bno experience necessary\b|\blearn on the job\b|"
-     r"\b(?:learning|growth) (?:budget|stipend)\b", "will train"),
+    (r"\bwe(?:'| wi)ll teach you\b|\bno experience necessary\b|\blearn on the job\b",
+     "will train"),
+    # Its own label since 2026-10-13. Under "will train" a perk made a role a
+    # WILDCARD: Cohere's Applied AI Engineer printed beneath "no experience
+    # required" because the posting offers a learning stipend.
+    (r"\b(?:learning|growth) (?:budget|stipend)\b", "learning budget"),
     (r"\bsabbatical\b|\bgenerous (?:pto|vacation|time off|leave)\b|"
      r"\bminimum (?:pto|vacation)\b", "real time off"),
     (r"\bwork[- ]life balance\b|\bsustainable pace\b|\bno crunch\b|\b40 hours?\b", "sustainable pace"),
@@ -224,7 +235,7 @@ ECOSYSTEM_BONUS = 3
 TRAINING_LABELS = (
     "no experience required", "training provided", "will train",
     "mentorship", "apprenticeship", "hires for potential",
-    "learning culture", "whole-business exposure",
+    "learning culture", "whole-business exposure", "learning budget",
 )
 TRAINING_BONUS = 3
 
@@ -275,6 +286,10 @@ NEGATIVE_SIGNALS = [
 RED_FLAGS = [
     (r"\bsynergy\b|\bstakeholder alignment\b|\bcross-functional stakeholder\b", "corporate jargon"),
     (r"\bfast[- ]paced\b", "fast-paced"),
+    # Allowed since 2026-10-15 (an operator term change) but always printed: the
+    # operator decides per role.
+    (r"travel(?:ling|ing)?[^.\n]{0,60}?\b(?:1\d|2[0-5])\s*%|\b(?:1\d|2[0-5])\s*%[^.\n]{0,24}?travel",
+     "travel 10-25%, operator's call"),
     (r"\bwear(?:s|ing)? many hats\b", "wear many hats"),
     (r"\bhustle\b|\bgrind\b|\bwork hard,? play hard\b", "hustle culture"),
     (r"\bownership mentality\b|\bextreme ownership\b", "ownership-mentality"),
@@ -282,7 +297,7 @@ RED_FLAGS = [
     (r"\b(?:resolve|handle|close)\s+\d+\+?\s*(?:tickets?|calls?|chats?)\b", "ticket quota"),
     (r"\bsla\b|\bservice level agreement\b", "SLA metrics"),
     (r"\bcall volume\b|\bhigh volume of calls\b", "call volume"),
-    (r"\bon-?call\b", "on-call"),
+    (r"(?<!\bno )(?<!\bnot )(?<!\bwithout )\bon-?call\b", "on-call"),
     (r"\bnight shift\b|\brotating (?:shifts?|weekends?)\b", "shift work"),
     # The operator's clearest stated condition, 2026-08-15: when the shift
     # ends, the work ends. Work that follows you home is the thing this search
@@ -329,6 +344,13 @@ RED_FLAGS = [
 
 _GREEN = [(re.compile(p, re.I), label) for p, label in GREEN_FLAGS]
 _RED = [(re.compile(p, re.I), label) for p, label in RED_FLAGS]
+
+# Flags that restate one of the operator's hard terms. An unpriced in-lane role carrying
+# one of these is still dropped; every other flag is tone and gets printed.
+UNPRICED_HARD_RED = frozenset({
+    "quota/commission pressure", "always-on culture", "24/7 coverage",
+    "office pressure", "hustle culture", "surveillance/micromanagement",
+})
 _NEGATIVE = [(re.compile(p, re.I), label) for p, label in NEGATIVE_SIGNALS]
 NEGATIVE_PENALTY = 2
 
@@ -369,6 +391,23 @@ HARD_INCOMPATIBLE = re.compile(
     re.I,
 )
 
+# Operator term change, 2026-10-15: company-sent travel up to about 25% is
+# allowed and flagged per role, for the operator to decide. HARD_INCOMPATIBLE still
+# finds every two-digit travel figure; this decides which ones block.
+TRAVEL_MAX_PCT = 25
+_PCT = re.compile(r"(\d{2,})\s*%")
+
+
+def hard_incompatible(text):
+    """The first match that blocks, or None. Travel blocks only above 25%."""
+    for hit in HARD_INCOMPATIBLE.finditer(text):
+        if "travel" not in hit.group(0).lower():
+            return hit
+        pct = _PCT.search(hit.group(0))
+        if pct and int(pct.group(1)) > TRAVEL_MAX_PCT:
+            return hit
+    return None
+
 
 # Commission pay is on the operator's never list (no quota or commission sales).
 # Ashby writes it into the pay field itself, e.g. "$158.3K – $263.4K • Offers
@@ -376,6 +415,16 @@ HARD_INCOMPATIBLE = re.compile(
 # on 2026-10-05. Read from the pay field only: "commission" in body text is too
 # often a regulator or an unrelated mention.
 COMMISSION_PAY = re.compile(r"\boffers commission\b|\bplus commission\b|\+\s*commission\b", re.I)
+# The same thing stated in the body, 2026-10-13. Greenhouse has no pay field, so
+# Automattic's Partner Manager ("Compensation range (mix of salary and
+# commission)") printed under PROVEN EMPLOYERS and Bretton AI's "salary + equity
+# + commission" reached a shortlist. Two exact phrasings only, because the
+# warning above still holds: Tailscale and Chime say "commission (for
+# quota-based roles)" on every posting, and Carta says "salary + commission if
+# applicable" on its paralegals. Replayed on 8,697 postings: 2 hits, both sales.
+COMMISSION_BODY = re.compile(
+    r"(?:\bmix of (?:base\s+)?salary and commission\b|"
+    r"\bsalary\s*\+\s*(?:equity\s*\+\s*)?commission\b)(?!\s+if applicable)", re.I)
 
 
 class Scored:
@@ -384,13 +433,18 @@ class Scored:
     __slots__ = ("listing", "salary", "geo_class", "geo_reason", "score",
                  "green", "red", "tz_blockers", "tz_friendly", "tier", "notes",
                  "fit_lane", "fit_label", "freedom", "freedom_reasons",
-                 "ecosystem", "company_labels", "level", "wall", "form_tag")
+                 "ecosystem", "company_labels", "level", "wall", "form_tag",
+                 "bridge")
 
     def __init__(self, listing, salary, geo_class, geo_reason, score,
                  green, red, tz_blockers, tz_friendly, tier, notes,
                  fit_lane, fit_label, freedom, freedom_reasons, ecosystem,
-                 company_labels=(), level=None, wall=None, form_tag=None):
+                 company_labels=(), level=None, wall=None, form_tag=None,
+                 bridge=False):
         self.listing = listing
+        # Part-time/contract by its title or job type: the bridge lane, never
+        # a full-time slot (the operator's full-time terms say no 1099).
+        self.bridge = bridge
         # One line from forms.verdict(), set only for roles that reach the digest.
         self.form_tag = form_tag
         self.salary = salary
@@ -513,11 +567,11 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
             rejections[f"shift work / on-call: {tz_hard[0]}"] += 1
             continue
 
-        if HARD_INCOMPATIBLE.search(blob):
+        if hard_incompatible(blob):
             rejections["requires physical presence or travel"] += 1
             continue
 
-        if COMMISSION_PAY.search(listing.salary_raw or ""):
+        if COMMISSION_PAY.search(listing.salary_raw or "") or COMMISSION_BODY.search(blob):
             rejections["commission pay"] += 1
             continue
 
@@ -554,6 +608,11 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
         is_contract = bool(estimate.PART_TIME.search(
             f"{listing.title} {listing.job_type} {listing.description[:500]}"
         ))
+        # Narrower than is_contract on purpose: "contract" in a description's
+        # first 500 characters is often about the customer's contracts, and a
+        # false match here would pull a full-time role out of the main lane.
+        bridge = bool(estimate.PART_TIME.search(
+            f"{listing.title} {listing.job_type}"))
         fit_points, fit_lane, fit_label = fit.score(listing.title)
         _, level_tag = fit.seniority(listing.title)
         ecosystem = find_ecosystem(blob)
@@ -562,6 +621,7 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
             geo_class, tz_friendly, tz_soft, green, text=blob,
             fit_label=fit_label,
             large_employer="large employer" in company_labels,
+            terms_proven=freedom.TERMS_PROVEN_LABEL in company_labels,
         )
 
         estimated_from_title = False
@@ -594,7 +654,16 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
                     len(green) >= MIN_GREEN_FOR_UNPRICED
                     or fit_lane in (fit.LANE_CORE, fit.LANE_ADJACENT)
                 )
-                if worth_a_look and not red:
+                # In the operator's lanes a soft flag is printed, not used as a gate.
+                # Until 2026-10-13 ANY red flag dropped an unpriced role, so a
+                # GitLab posting tagged "enterprise vibe" with pay written only
+                # in its page body vanished before enrich could read that page.
+                # Hard nos (on-call, quota, office) are rejected far above this
+                # line; what reaches here is tone. Outside those lanes the old
+                # rule stands: unknown role, unknown pay and a flag is noise.
+                in_lane = fit_lane in (fit.LANE_CORE, fit.LANE_ADJACENT)
+                if worth_a_look and ((in_lane and not set(red) & UNPRICED_HARD_RED)
+                                     or not red):
                     kept.append(Scored(
                         listing=listing, salary=parsed, geo_class=geo_class,
                         geo_reason=geo_reason,
@@ -613,6 +682,7 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
                         # carry it or the gate has a hole shaped like "unpriced".
                         wall=experience.wall_from_text(
                             listing.title, listing.description),
+                        bridge=bridge,
                     ))
                 else:
                     # Only count it as a rejection when it actually was one.
@@ -621,7 +691,11 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
                     rejections["no salary stated and role family unrecognised"] += 1
                 continue
 
-        if not estimated_from_title and not salary_mod.clears_bar(parsed, pay_floor):
+        if bridge and not estimated_from_title:
+            if not salary_mod.clears_bar(parsed, BRIDGE_PAY_FLOOR):
+                rejections[f"part-time pay below ${BRIDGE_HOURLY_FLOOR}/hr"] += 1
+                continue
+        elif not estimated_from_title and not salary_mod.clears_bar(parsed, pay_floor):
             rejections[f"published salary below ${pay_floor // 1000}k"] += 1
             continue
 
@@ -661,7 +735,14 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
         tier = assign_tier(parsed, green, red, geo_class, fit_lane)
 
         notes = []
-        if is_contract:
+        if bridge and parsed.top and not estimated_from_title:
+            hourly = parsed.top / salary_mod.HOURS_PER_YEAR
+            notes.append(
+                f"part-time: up to ${hourly:,.0f}/hr, about "
+                f"${hourly * 20 * 52 / 12:,.0f}/month at 20 hrs/week; "
+                f"confirm hours, schedule and exclusivity"
+            )
+        elif is_contract:
             # Part-time stopped being a caveat on 2026-09-28: well-paid
             # part-time work became a real option for the operator, judged by
             # monthly income.
@@ -693,8 +774,7 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
         elif level_tag == "entry-friendly":
             notes.append("entry-friendly — takes people without the years")
         if ask_pay_first:
-            notes.append(f"pay guess under ${ESTIMATE_FLOOR // 1000}k, kept for its "
-                         f"freedom: ASK BASE PAY FIRST")
+            notes.append(f"pay guess under ${ESTIMATE_FLOOR // 1000}k, kept for its freedom: ASK BASE PAY FIRST")
         elif estimated_from_title:
             notes.append("salary ESTIMATED from title, not published")
         if geo_class == geo.CLASS_US:
@@ -730,6 +810,7 @@ def run(listings, logger, pay_floor=PAY_FLOOR):
             # listing. enrich.py still overwrites this with the page verdict when
             # it reads one, because a full page beats a feed summary.
             wall=experience.wall_from_text(listing.title, listing.description),
+            bridge=bridge,
         ))
 
     logger.info("prefilter: %d in, %d kept", len(listings), len(kept))
@@ -769,6 +850,60 @@ def is_portable(scored):
     if scored.fit_lane == fit.LANE_STRETCH:
         return fit.looks_like_a_role(scored.listing.title)
     return True
+
+
+# The bridge lane's own relevance test, 2026-10-26. AI-training gigs ("Spanish
+# Tutors", "Generalist Expert", "AI Developer Trace Task Auditor") are not job
+# families fit.py knows, so it calls them stretch or off and is_portable drops
+# them: on the first Mercor pull, 200 of 214 well-paid listings. These are the
+# EXAMPLE skills an operator can honestly bring to that work (language, AI agent
+# and workflow evaluation, customer service, writing, AI-directed coding) —
+# set your own.
+BRIDGE_SKILLS = re.compile(
+    r"spanish|bilingual|latin america|puerto ric|generalist|"
+    r"\bai\b|llm|evaluat|annotat|rater|red team|trainer|tutor|auditor|prompt|"
+    r"ai agent|agentic|customer|support|writer|writing|coding|developer|"
+    # Widened the same night to anything the operator knows how to do, stepping
+    # stones preferred: language and data-anonymization work, insurance, and
+    # creative work.
+    r"language|linguist|anonymi|insurance|audio|voice|music|film|video|"
+    r"photo|design|\b3d\b|psycholog",
+    re.I,
+)
+# Work that needs a license or degree the operator does not hold, or that breaks a term
+# (sales means quota). Checked on the title, where these platforms name it.
+BRIDGE_CREDENTIAL = re.compile(
+    r"physician|\bmd\b|clinician|nurs|attorney|lawyer|\bcpa\b|phd|"
+    r"certified|licensed|pharmac|dentist|therapist|psychiatr|"
+    r"electrical|mechanical|chemical|structural|sales|securities|"
+    # First live Mercor pull, 2026-10-26: deep-specialist and clinical gigs,
+    # and voice work in accents the operator does not have (Spanish voice work stays).
+    r"scientist|mlops|kubernetes|\baws\b|applied engineer|clinical|"
+    r"behavioral health|mental health|voice actor(?!.*spanish)|"
+    # A language the operator does not speak, or Spanish work locked to another country.
+    r"french|german|italian|dutch|portuguese|japanese|korean|chinese|mandarin|"
+    r"vietnamese|arabic|hindi|russian|polish|turkish|swiss|\(spain\)|"
+    r"peninsular|spanish\W+(mexico|peru|argentin|colombi|chile)|"
+    # First Alignerr pull, 2026-11-01: the top-paid gigs were degree work
+    # (formal proofs, physics, finance), languages and English accents the
+    # operator does not have, pentesting, coding in languages the operator does
+    # not write, and senior titles (the no-senior rule holds in the bridge lane too).
+    r"mathematic|formal proof|lean 4|physic|f[ií]sica|chemist|biolog|econom|"
+    r"\bmba\b|postsecondary|lecturer|instructor|financ|accounting|"
+    r"environmental|engineering expert|computer engineering|machine learning|"
+    r"data scien|penetration|\brust\b|c\+\+|c#|golang|\bgo\b|\bjava\b|"
+    r"\bsenior\b|\bprincipal\b|"
+    r"bengali|czech|danish|greek|hebrew|hungarian|indonesian|norwegian|"
+    r"romanian|swedish|tagalog|filipino|tamil|urdu|"
+    r"(australian|irish|south african|uk|indian) english",
+    re.I,
+)
+
+
+def bridge_fits(scored):
+    """True when a part-time role matches the operator's skills and needs no credential."""
+    title = scored.listing.title or ""
+    return bool(BRIDGE_SKILLS.search(title)) and not BRIDGE_CREDENTIAL.search(title)
 
 
 # is_diamond() removed deliberately. It returned True for anything sourced from

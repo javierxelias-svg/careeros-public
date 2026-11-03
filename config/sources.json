@@ -106,6 +106,36 @@
         "error": null
       },
       "notes": "Best published-salary coverage measured: 52% on 2026-08-17 against RemoteOK's 4% the same day. Jobs under the 'jobs' key. salaryPeriod can be monthly or hourly \u2014 sources._period_salary handles it."
+    },
+    {
+      "id": "mercor_experts",
+      "name": "Mercor expert gigs (bridge lane)",
+      "type": "json_api",
+      "url": "https://aws.api.mercor.com/work/listings-explore-page",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-10-26T22:00:00+00:00",
+        "records": 311,
+        "error": null
+      },
+      "notes": "Public JSON, no key. Hourly gigs only; feeds the part-time (bridge) lane. Added 2026-10-26."
+    },
+    {
+      "id": "alignerr",
+      "name": "Alignerr gigs (bridge lane)",
+      "type": "json_api",
+      "url": "https://www.alignerr.com/api/jobs?limit=120&offset=0",
+      "tier": 1,
+      "enabled": true,
+      "verified": {
+        "ok": true,
+        "checked_at": "2026-11-01T23:30:00+00:00",
+        "records": 5640,
+        "error": null
+      },
+      "notes": "Public JSON, no key, pages of 120 (~47 requests). One row per title+pay (city repeats dropped). Hourly freelance gigs; feeds the part-time (bridge) lane. Added 2026-11-01."
     }
   ]
 }

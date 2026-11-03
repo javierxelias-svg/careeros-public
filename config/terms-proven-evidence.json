@@ -1,0 +1,807 @@
+{
+ "_comment": "Audited 2026-10-12: each employer proves >=4 of the operator's 8 terms on its own public pages, quote + URL per term, fetched that day. Term numbers: 1 fully remote, 2 no on-call, 3 no quota, 4 pay published, 5 time-off minimum, 6 async, 7 work from anywhere, 8 health covered. Used by config/companies.json category terms_proven. Re-audit before trusting after ~6 months.",
+ "qualifying": [
+  {
+   "company": "PostHog",
+   "name_variants": [
+    "PostHog",
+    "PostHog Inc."
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "The most transparent company, ever We're open-source and fully remote.",
+     "url": "https://posthog.com/careers"
+    },
+    "4": {
+     "quote": "We have a set system for compensation as part of being transparent. You can use our compensation calculator below to see what your compensation might look like when you're joining PostHog",
+     "url": "https://posthog.com/handbook/people/compensation"
+    },
+    "5": {
+     "quote": "We offer our team unlimited time off, but with an expectation that you take at least 25 days off a year , including national holidays. ... The 25 days is a minimum, not a guide.",
+     "url": "https://posthog.com/handbook/people/time-off"
+    },
+    "6": {
+     "quote": "We're a natively remote company. We default to async communication – PRs > Issues > Slack. Tuesdays and Thursdays are meeting-free days",
+     "url": "https://jobs.ashbyhq.com/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f"
+    },
+    "8": {
+     "quote": "PostHog pays 100% of the premium of the Platinum plan for team members, and 75% for dependents.",
+     "url": "https://posthog.com/handbook/people/benefits"
+    }
+   },
+   "red_flags": [
+    "Some roles include on-call: Product Engineer posting says 'This role will also include some on-call time' (https://jobs.ashbyhq.com/posthog/20ab9628-20ff-4ae3-bd6a-46ae7e9dc6b8); SRE posting includes on-call.",
+    "AI Research Engineer posting is 'a hybrid-remote position based out of our London office' (role-specific).",
+    "Sales roles carry quota/OTE (time-off page references 'quota-carrying Sales roles')."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "posthog",
+    "live": true,
+    "open_jobs": 10,
+    "in_config": true
+   }
+  },
+  {
+   "company": "GitLab",
+   "name_variants": [
+    "GitLab",
+    "GitLab Inc."
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "GitLab is one of the world's largest all-remote companies A world leader in remote work Learn how we've scaled as an asynchronous, no-office company",
+     "url": "https://handbook.gitlab.com/handbook/company/culture/all-remote/"
+    },
+    "4": {
+     "quote": "The base salary range for this role's listed level is currently for residents of the United States only. This range is intended to reflect the role's base salary rate in locations throughout the US.",
+     "url": "https://job-boards.greenhouse.io/gitlab/jobs/8638232002"
+    },
+    "5": {
+     "quote": "We strongly recommend taking at least two consecutive weeks of time off and at minimum 25 days total throughout the year.",
+     "url": "https://handbook.gitlab.com/handbook/people-group/time-off-and-absence/time-off-types/"
+    },
+    "6": {
+     "quote": "We collaborate asynchronously across regions and partner with marketing, sales development, and technical teams.",
+     "url": "https://job-boards.greenhouse.io/gitlab/jobs/8860302002"
+    }
+   },
+   "red_flags": [
+    "Publicly traded, large company; handbook lists on-call rotations (e.g., 'SSCS Tier 2 On-Call Rotation', 'GitLab Support On-Call Guide') for some teams.",
+    "PTO requires 'at least twice as many days of advance notice as the duration of your planned absence' (time-away-philosophy page).",
+    "Compensation-calculator and global-mobility handbook pages returned HTTP 403 today, so not used."
+   ],
+   "board": {
+    "platform": "greenhouse",
+    "slug": "gitlab",
+    "live": true,
+    "open_jobs": 221,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Zapier",
+   "name_variants": [
+    "Zapier",
+    "Zapier Inc."
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Because Zapier is an all-remote company and people can join our workforce from almost any country, we do not sponsor visas.",
+     "url": "https://zapier.com/l/jobs/total-rewards"
+    },
+    "4": {
+     "quote": "All 11 open postings carry a published pay range, e.g. '$158.3K – $237.5K • Offers Equity • Offers Bonus'; Total Rewards: 'Our base pay—also known as salary—market position defines how competitively we pay'",
+     "url": "https://api.ashbyhq.com/posting-api/job-board/zapier?includeCompensation=true"
+    },
+    "5": {
+     "quote": "Flexible time-off policy (most teammates take 4-6 weeks off per year for vacation and holidays)",
+     "url": "https://zapier.com/l/jobs/total-rewards"
+    },
+    "6": {
+     "quote": "Asynchronous communication helps you stay connected to colleagues from around the globe.",
+     "url": "https://zapier.com/jobs"
+    }
+   },
+   "red_flags": [
+    "Company-wide bonus plan ('Total Target Cash ... target bonus payouts'); sales roles are quota-carrying.",
+    "Term 5 is usage evidence ('most teammates take 4-6 weeks'), not a stated minimum."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "zapier",
+    "live": true,
+    "open_jobs": 11,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Doist",
+   "name_variants": [
+    "Doist",
+    "Todoist",
+    "Todoist Inc."
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Work from anywhere Todoisters can work from anywhere in the world. We never place restrictions on locations.",
+     "url": "https://doist.com/careers"
+    },
+    "4": {
+     "quote": "Negotiation-free compensation package Our formula-based salaries are calculated based on industry-benchmarked skills and geographical location – no stressful negotiation",
+     "url": "https://doist.com/careers"
+    },
+    "5": {
+     "quote": "Todoisters get 8 weeks (40 days) of PTO per year to use as they wish on vacations and national holidays.",
+     "url": "https://doist.com/careers"
+    },
+    "6": {
+     "quote": "Design your own schedule Work during the time of day that's best for you. Todoisters are encouraged to work 8-hour days and no more than 40 hours/week.",
+     "url": "https://doist.com/careers"
+    },
+    "7": {
+     "quote": "Todoisters can work from anywhere in the world. We never place restrictions on locations.",
+     "url": "https://doist.com/careers"
+    }
+   },
+   "red_flags": [
+    "Health insurance is not employer-paid as a plan: 'a monthly budget for things like a gym membership, healthy snacks, massages, health insurance, etc.'",
+    "Term 7 is location freedom in general, not a travel-day policy."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "todoist-inc",
+    "live": true,
+    "open_jobs": 2,
+    "in_config": false
+   }
+  },
+  {
+   "company": "Buffer",
+   "name_variants": [
+    "Buffer"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Where will I work? Buffer is a fully remote team, spread across the whole planet.",
+     "url": "https://buffer.com/journey"
+    },
+    "4": {
+     "quote": "Since 2013, we've shared our formula-based approach to compensation, including the complete list of our salaries.",
+     "url": "https://buffer.com/salaries"
+    },
+    "6": {
+     "quote": "4-Day workweeks Our schedule is four workdays, with a flexible, meeting-free fifth day for overflow tasks or personal time as you see fit.",
+     "url": "https://buffer.com/journey"
+    },
+    "7": {
+     "quote": "Work remotely Live and work wherever you are the happiest and most productive!",
+     "url": "https://buffer.com/journey"
+    }
+   },
+   "red_flags": [
+    "Engineering on-call: '(On-call is distributed across all engineers at Buffer, a week-long shift roughly once a quarter.)' (https://jobs.ashbyhq.com/buffer/1ee8b707-48a0-40cc-a319-3fb7c665a1e8)",
+    "Time off is 'Flexible time off No set limits' with no stated minimum (term 5 red flag).",
+    "Health insurance offered, no premium percentage stated.",
+    "Only 1 open job."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "buffer",
+    "live": true,
+    "open_jobs": 1,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Supabase",
+   "name_variants": [
+    "Supabase",
+    "Supabase Inc."
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Fully Remote We hire globally. We believe you can do your best work from anywhere. There are no Supabase offices",
+     "url": "https://supabase.com/careers"
+    },
+    "6": {
+     "quote": "Flexible Work Work remotely from anywhere in the world. We work in teams, but we work asynchronously. You know what you need to do and when it needs to be done.",
+     "url": "https://supabase.com/careers"
+    },
+    "7": {
+     "quote": "Work remotely from anywhere in the world.",
+     "url": "https://supabase.com/careers"
+    },
+    "8": {
+     "quote": "Health Benefits We provide 100% health coverage for employees and 80% for dependants.",
+     "url": "https://supabase.com/careers"
+    }
+   },
+   "red_flags": [
+    "Weekend support roles: 'permanently covering weekends' (Support Engineer AMER - Weekends, https://jobs.ashbyhq.com/supabase/dcf09dfe-55bc-44ba-b5db-1a2de7f33216).",
+    "Several engineering postings require on-call (e.g. 'production support and on-call responsibilities', https://jobs.ashbyhq.com/supabase/c16bd707-29f2-46fb-8409-7270ff00978b).",
+    "No time-off policy found on public pages today."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "supabase",
+    "live": true,
+    "open_jobs": 52,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Automattic",
+   "name_variants": [
+    "Automattic",
+    "WordPress.com",
+    "WordPress VIP",
+    "Tumblr",
+    "Pressable",
+    "Newspack"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "This isn't your typical work-from-home job—we are a fully-remote company with an open vacation policy.",
+     "url": "https://job-boards.greenhouse.io/automatticcareers/jobs/6381135"
+    },
+    "4": {
+     "quote": "Salary range: $95,000-$160,000 USD, plus variable compensation – Please note that salary ranges are global, regardless of location",
+     "url": "https://job-boards.greenhouse.io/automatticcareers/jobs/6381135"
+    },
+    "5": {
+     "quote": "Our open vacation policy (no set number of days per year) is designed to help you to be at your best! There is no minimum or maximum, but we encourage you to take at least 25 days of time off per year.",
+     "url": "https://automattic.com/benefits/"
+    },
+    "6": {
+     "quote": "Everyone works from the location they choose, during the hours they choose.",
+     "url": "https://automattic.com/work-with-us/"
+    },
+    "7": {
+     "quote": "True Flexibility : Work from anywhere with internet access, on your own schedule.",
+     "url": "https://automattic.com/work-with-us/"
+    }
+   },
+   "red_flags": [
+    "'If you join our merry band, expect to travel three to four weeks per year.' (https://automattic.com/work-with-us/)",
+    "Term 5 is an encouraged 25 days, page also says 'There is no minimum'.",
+    "Sales postings include variable compensation."
+   ],
+   "board": {
+    "platform": "greenhouse",
+    "slug": "automatticcareers",
+    "live": true,
+    "open_jobs": 13,
+    "in_config": false
+   }
+  },
+  {
+   "company": "Ghost (Ghost Foundation, ghost.org)",
+   "name_variants": [
+    "Ghost",
+    "Ghost Foundation",
+    "Ghost.org"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Work from anywhere From a home office, or travel continuously if that's your thing. Everything we do is online.",
+     "url": "https://ghost.org/careers/"
+    },
+    "5": {
+     "quote": "Generous paid vacation We close the office for 2 weeks each December, and encourage everyone to take regular time off from work to relax.",
+     "url": "https://ghost.org/careers/"
+    },
+    "6": {
+     "quote": "Meeting-free focus Most people at Ghost only have 1 or 2 zoom calls a week. We like to keep calendars empty & leave plenty of space for focusing",
+     "url": "https://ghost.org/careers/"
+    },
+    "7": {
+     "quote": "Work from anywhere From a home office, or travel continuously if that's your thing.",
+     "url": "https://ghost.org/careers/"
+    }
+   },
+   "red_flags": [
+    "No open roles today: page says 'Join our careers mailing list to be notified whenever we start hiring'.",
+    "Salary 'Based on role, skill, experience and location' - no published bands."
+   ],
+   "board": {
+    "platform": "other",
+    "slug": "",
+    "live": true,
+    "open_jobs": 0,
+    "in_config": false
+   }
+  },
+  {
+   "company": "Oyster",
+   "name_variants": [
+    "Oyster",
+    "Oyster HR",
+    "OysterHR"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Fully remote When we say work from anywhere, we mean it. Oysters have the freedom to work when and wherever they'd like",
+     "url": "https://www.oysterhr.com/careers"
+    },
+    "5": {
+     "quote": "40 days PTO inclusive of regional holidays",
+     "url": "https://www.oysterhr.com/careers"
+    },
+    "6": {
+     "quote": "Oysters have the freedom to work when and wherever they'd like – at home, at a coworking space, or on the beach (as long as there's wifi).",
+     "url": "https://www.oysterhr.com/careers"
+    },
+    "7": {
+     "quote": "When we say work from anywhere, we mean it. Oysters have the freedom to work when and wherever they'd like",
+     "url": "https://www.oysterhr.com/careers"
+    }
+   },
+   "red_flags": [
+    "Health: 'private health insurance' with no premium share stated.",
+    "Some customer-facing roles list 'quota-carrying role' experience as a requirement."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "oyster",
+    "live": true,
+    "open_jobs": 23,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Close",
+   "name_variants": [
+    "Close",
+    "Close.com"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "We're proud of our 120-person, 100% remote team",
+     "url": "https://jobs.ashbyhq.com/close/01fc4ad7-4d33-4f64-919f-502bb2c20efc"
+    },
+    "5": {
+     "quote": "Close provides 5 weeks of PTO that increases with l[ongevity]",
+     "url": "https://www.close.com/careers"
+    },
+    "6": {
+     "quote": "Flexible working hours Our team is autonomous and empowered. We encourage and prioritize asynchronous work. This means flexible working hours without micromanagement and possible 4-day workweeks.",
+     "url": "https://www.close.com/careers"
+    },
+    "8": {
+     "quote": "Medical, dental, and vision coverage Close pays 99% of all monthly premiums for employees, plus significant dependent stipends",
+     "url": "https://www.close.com/careers"
+    }
+   },
+   "red_flags": [
+    "Inconsistency: posting says 'Two medical plans with Close covering the majority of your premium' vs careers page '99%'.",
+    "Engineering posting asks for experience having 'carried a pager'.",
+    "Company goal-based bonus after year one (not quota)."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "close",
+    "live": true,
+    "open_jobs": 6,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Railway",
+   "name_variants": [
+    "Railway",
+    "Railway Corp"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "This is a remote position available anywhere in the world!",
+     "url": "https://jobs.ashbyhq.com/railway/6ddcfe47-6cce-469b-ba6d-4f0e83440c9d"
+    },
+    "5": {
+     "quote": "Unlimited PTO We value your space. Some companies tout unlimited PTO, pff. With us, you NEED to take minimum 2 weeks and 1 full week at a time.",
+     "url": "https://railway.com/careers"
+    },
+    "6": {
+     "quote": "Work from anywhere We're autonomous, async heavy, and hire globally.",
+     "url": "https://railway.com/careers"
+    },
+    "7": {
+     "quote": "Pick a place, a base, or any space. We're happy wherever you are.",
+     "url": "https://railway.com/careers"
+    },
+    "8": {
+     "quote": "Dental and medical Universal Healthcare wherever you are. 99% coverage. United Platinum.",
+     "url": "https://railway.com/careers"
+    }
+   },
+   "red_flags": [
+    "Infra roles: 'Been oncall and know that you will be 1-2 weeks per quarter' (https://jobs.ashbyhq.com/railway/541836a1-6d3f-47bf-845f-5f48fe547568).",
+    "No posted pay ranges (0 of 8 postings)."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "railway",
+    "live": true,
+    "open_jobs": 8,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Kit",
+   "name_variants": [
+    "Kit",
+    "ConvertKit"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "We have always been 100% independent and 100% remote.",
+     "url": "https://jobs.ashbyhq.com/kit/5a4c9008-9362-4223-a1e0-8a50ef2096cd"
+    },
+    "4": {
+     "quote": "Standardized salaries based on role and experience. (postings show fixed pay, e.g. '$173K • $50K Equity • Profit Sharing')",
+     "url": "https://kit.com/careers"
+    },
+    "5": {
+     "quote": "Paid vacation 20 paid vacation days per year. Paid vacation bonus $1,000 bonus when taking 5+ consecutive days off",
+     "url": "https://kit.com/careers"
+    },
+    "6": {
+     "quote": "We're remote, distributed, and often async. That means more autonomy, but occasional meetings at weird times.",
+     "url": "https://kit.com/careers"
+    },
+    "7": {
+     "quote": "Remote-friendly & flexible work policies. Work from anywhere in the world.",
+     "url": "https://kit.com/careers"
+    }
+   },
+   "red_flags": [
+    "Medical: 'We cover up to $2,100 per month toward medical premiums' - capped, not stated as 100%.",
+    "Careers page says 'Remote-friendly' in one line (elsewhere '100% remote')."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "kit",
+    "live": true,
+    "open_jobs": 9,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Customer.io",
+   "name_variants": [
+    "Customer.io"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "We're a global, remote-first, private company",
+     "url": "https://job-boards.greenhouse.io/customerio/jobs/8171856"
+    },
+    "4": {
+     "quote": "Compensation & Benefits We believe in transparency. The salary for this role is $80,000 USD",
+     "url": "https://job-boards.greenhouse.io/customerio/jobs/8242239"
+    },
+    "5": {
+     "quote": "We offer unlimited PTO and recommend using at least 20 vacation days (in addition to holidays and sick days)",
+     "url": "https://customer.io/careers"
+    },
+    "6": {
+     "quote": "Async operating model We prioritize thoughtful communication and reducing unnecessary meetings to focus on meaningful work.",
+     "url": "https://customer.io/careers"
+    },
+    "8": {
+     "quote": "We pay 100% medical, dental, vision, mental health, and supplemental insurance premiums for you AND your family.",
+     "url": "https://customer.io/careers"
+    }
+   },
+   "red_flags": [
+    "Term 1 wording is 'remote-first' / 'Distributed by design', not 'fully remote'.",
+    "Engineering Manager posting: 'Participate in an on-call rotation as required'.",
+    "Term 5 is a recommended minimum on top of unlimited PTO."
+   ],
+   "board": {
+    "platform": "greenhouse",
+    "slug": "customerio",
+    "live": true,
+    "open_jobs": 30,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Sourcegraph",
+   "name_variants": [
+    "Sourcegraph"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Join a global team We're a global, all-remote team",
+     "url": "https://sourcegraph.com/jobs"
+    },
+    "4": {
+     "quote": "As an open and transparent company that values competitive compensation , our compensation ranges are visible to every single Sourcegraph teammate.",
+     "url": "https://job-boards.greenhouse.io/sourcegraph91/jobs/6212118004"
+    },
+    "5": {
+     "quote": "Unlimited PTO ....with a 30 day minimum",
+     "url": "https://sourcegraph.com/jobs"
+    },
+    "8": {
+     "quote": "Medical, dental, and vision 100% company-paid (US, UK, Canada)",
+     "url": "https://sourcegraph.com/jobs"
+    }
+   },
+   "red_flags": [
+    "Ranges are visible internally to teammates, not published publicly.",
+    "handbook.sourcegraph.com returned an empty page today; not used."
+   ],
+   "board": {
+    "platform": "greenhouse",
+    "slug": "sourcegraph91",
+    "live": true,
+    "open_jobs": 11,
+    "in_config": false
+   }
+  },
+  {
+   "company": "DuckDuckGo",
+   "name_variants": [
+    "DuckDuckGo",
+    "Duck Duck Go, Inc."
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Join our fully distributed team ... DuckDuckGo is a remote company of 335 + passionate people from over 15 countries.",
+     "url": "https://duckduckgo.com/hiring"
+    },
+    "4": {
+     "quote": "Compensation is transparent across the organization, and all team members within the same professional level and global region receive the same compensation",
+     "url": "https://jobs.ashbyhq.com/duck-duck-go/53022b02-da3d-4fda-8273-c897d27ed50d"
+    },
+    "6": {
+     "quote": "Take Back Your Schedule No core hours means working when you're most productive, and taking time off when you need it.",
+     "url": "https://duckduckgo.com/hiring"
+    },
+    "8": {
+     "quote": "Independence Blue Cross HDHP 2000 - (100% Company Paid) $0.00 $0.00 $0.00 $0.00",
+     "url": "https://duckduckgo.com/assets/hiring/team_support_guide.pdf"
+    }
+   },
+   "red_flags": [
+    "Term 8 is only the high-deductible plan at 100%; PPO 1500 is '81% Company Paid' with employee premiums.",
+    "Postings: 'Expect to travel at least two times a year' and 'required to attend meetings on camera'.",
+    "Time off is 'Flexible Time Off' with no stated minimum."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "duck-duck-go",
+    "live": true,
+    "open_jobs": 9,
+    "in_config": false
+   }
+  },
+  {
+   "company": "37signals",
+   "name_variants": [
+    "37signals",
+    "Basecamp",
+    "HEY"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "37signals is a fully distributed company. Our team works from all over the world, across 5 continents.",
+     "url": "https://basecamp.com/handbook/how-we-work"
+    },
+    "4": {
+     "quote": "37signals pays at the top 10% for our industry at San Francisco salary levels, regardless of where you live.",
+     "url": "https://basecamp.com/handbook/making-a-career"
+    },
+    "5": {
+     "quote": "37signals offers 20 days of vacation and personal days plus 11 local holidays every year. ... Your vacation time rolls over year to year with a maximum bank of 27 days",
+     "url": "https://basecamp.com/handbook/benefits-and-perks"
+    },
+    "6": {
+     "quote": "Most of the work you do at 37signals shouldn't require you to be in constant communication throughout the entire day with someone.",
+     "url": "https://basecamp.com/handbook/how-we-work"
+    },
+    "7": {
+     "quote": "You can work from anywhere, but please be sure to inform your People Ops team when you move – especially across state or country borders.",
+     "url": "https://basecamp.com/handbook/how-we-work"
+    }
+   },
+   "red_flags": [
+    "Medical: 'The company pays 75% of the premium and the employee pays the other 25%.' (term 8 not met)",
+    "Up-or-out leveling: 'When people aren't able to level up within the above timeframes, after ample opportunities to do so, we usually determine that to be a bad long-term fit and we'll decide to part ways.'",
+    "Handbook mentions working 'off-hours for on-call, maintenance, or emergencies'.",
+    "No openings today: 'Sorry, we don't have any job openings right now.' (https://37signals.com/jobs)"
+   ],
+   "board": {
+    "platform": "other",
+    "slug": "",
+    "live": true,
+    "open_jobs": 0,
+    "in_config": false
+   }
+  },
+  {
+   "company": "Ashby",
+   "name_variants": [
+    "Ashby",
+    "Ashby HQ",
+    "AshbyHQ"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "You prefer an in-person role over remote (Ashby operates remotely). [listed under 'might not be a great fit'; all 67 postings are workplaceType Remote]",
+     "url": "https://api.ashbyhq.com/posting-api/job-board/ashby"
+    },
+    "5": {
+     "quote": "We offer unlimited PTO, and you actually get to use it. Some of our most exceptional engineers take almost 30 days of vacation per year. ... Unlimited PTO, and we will encourage you to take it.",
+     "url": "https://jobs.ashbyhq.com/ashby/7458d4e9-da2e-47bd-98cb-adfda43d42b2"
+    },
+    "6": {
+     "quote": "Our remote, low-meeting, high-ownership culture gives you a lot of flexibility in how you structure your days and weeks. In practice, that means you keep your own hours",
+     "url": "https://jobs.ashbyhq.com/ashby/7458d4e9-da2e-47bd-98cb-adfda43d42b2"
+    },
+    "8": {
+     "quote": "If you're in the US, we offer top-tier health insurance for you and your dependents, with 100% of premiums covered by Ashby.",
+     "url": "https://jobs.ashbyhq.com/ashby/7458d4e9-da2e-47bd-98cb-adfda43d42b2"
+    }
+   },
+   "red_flags": [
+    "'there will be moments of intensity, like launching your feature at our annual user conference'",
+    "Term 5 is unlimited PTO with encouragement + usage evidence, no stated minimum."
+   ],
+   "board": {
+    "platform": "ashby",
+    "slug": "ashby",
+    "live": true,
+    "open_jobs": 67,
+    "in_config": true
+   }
+  },
+  {
+   "company": "Mozilla",
+   "name_variants": [
+    "Mozilla",
+    "Mozilla Corporation",
+    "Mozilla Foundation",
+    "Mozilla.ai"
+   ],
+   "terms_proven": {
+    "1": {
+     "quote": "Mozilla is a remote-first company. [all 96 open postings are located 'Remote ...']",
+     "url": "https://www.mozilla.org/en-US/careers/"
+    },
+    "4": {
+     "quote": "The Target Annual Base Salary and Pay Range for this role is between $240,000-$280,000 USD .",
+     "url": "https://job-boards.greenhouse.io/mozilla/jobs/8167254"
+    },
+    "5": {
+     "quote": "In addition to country-specific holidays (12 in the U.S.), employees start accruing vacation and sick leave on day one (specifics vary by country).",
+     "url": "https://www.mozilla.org/en-US/careers/"
+    },
+    "6": {
+     "quote": "Relying on our years of experience in working asynchronously around the world, we're reimaging what work can look like",
+     "url": "https://www.mozilla.org/en-US/careers/"
+    }
+   },
+   "red_flags": [
+    "Term 1 wording is 'remote-first', not 'fully remote'.",
+    "20 of 96 postings mention on-call.",
+    "Some postings carry an annual bonus."
+   ],
+   "board": {
+    "platform": "greenhouse",
+    "slug": "mozilla",
+    "live": true,
+    "open_jobs": 96,
+    "in_config": false
+   }
+  }
+ ],
+ "rejected": [
+  {
+   "company": "Help Scout",
+   "why": "Only terms 1 and 4 proven ('All roles at Help Scout are fully remote'; 'internal, transparent salary formula'). Time off is 'Flexible time off' with no minimum; health 'top tier' with no premium %. Board ashby:helpscout already in config."
+  },
+  {
+   "company": "Linear",
+   "why": "Only 3 proven: 1 ('Remote-first with no required commute'), 5 ('5 weeks paid vacation'), 6 ('deep focus and async collaboration'). No posted pay (0/31 postings). Has optional offices SF/NY/London."
+  },
+  {
+   "company": "Netlify",
+   "why": "Only 3 proven (1 remote-first fully distributed, 4 posted ranges, 6 async); 'unlimited vacation' with no minimum; a Denver CSM role has commission and in-person meetings."
+  },
+  {
+   "company": "ReadMe",
+   "why": "Fails term 1: postings list 'San Francisco (Hybrid), New York (Hybrid), Columbus (Hybrid), or Remote (US)'. (Notable: 'Unlimited PTO with a three-week minimum' and fully covered medical.)"
+  },
+  {
+   "company": "Vercel",
+   "why": "Fails term 1: postings are mostly 'Hybrid - San Francisco' etc.; AE posting: 'in-office anchor days on Monday, Tuesday, and Friday'."
+  },
+  {
+   "company": "Hotjar (Contentsquare)",
+   "why": "Fails term 1: 'You can enjoy a hybrid working environment... Fully remote options may be available for some roles.'"
+  },
+  {
+   "company": "Remote.com",
+   "why": "Term 3 red flag: 'Intensity' is a listed core value and careers page asks for 'high-performing contributor'. Also: config greenhouse:remotecom now returns 0 jobs and greenhouse:remote is a different employer (SEI Instructor Lead)."
+  },
+  {
+   "company": "Coinbase",
+   "why": "Term 3 fail: posting says 'The bar is high, the environment is intense, and we like it that way.' Also 21 'Hybrid - New York' roles."
+  },
+  {
+   "company": "Clipboard Health",
+   "why": "Not fully remote: 'Remote First with offices in LA, NYC, SF, and Seattle'; fewer than 4 terms proven."
+  },
+  {
+   "company": "Canonical",
+   "why": "Only 1 (globally distributed) and 6 (asynchronous) proven; travel to in-person sprints; benefits not on public pages fetched."
+  },
+  {
+   "company": "Elastic",
+   "why": "Not proven fully remote: 'working remotely in over 40 countries as well as on-site in 25 global offices'; fewer than 4 terms proven."
+  },
+  {
+   "company": "Shopify",
+   "why": "Not proven: 'Digital by Design' with optional Port offices; no time-off, pay-band or health details on careers page; fewer than 4 terms."
+  },
+  {
+   "company": "Toggl",
+   "why": "Only term 1 proven ('Fully remote since 2014'); 'Flexible paid time off' with no minimum; Ashby slug in page (jobs.ashbyhq.com/toggl) returns 404 from the API."
+  },
+  {
+   "company": "Articulate",
+   "why": "Only term 1 proven ('We're 100% remote—and always have been'); 'Flexible PTO' with no minimum; medical premium share not stated; US-only."
+  },
+  {
+   "company": "Cal.com",
+   "why": "Only 1 and 4 (posted ranges) on jobs page; cal.com/handbook returned an empty page; no ATS API board found."
+  },
+  {
+   "company": "Plausible",
+   "why": "No careers or jobs page (plausible.io/jobs 404); nothing to prove."
+  },
+  {
+   "company": "Wildbit/Postmark",
+   "why": "Not checked today (no page fetched)."
+  },
+  {
+   "company": "Loom",
+   "why": "Ashby board 'loom' returns 0 jobs; no benefits page fetched today."
+  },
+  {
+   "company": "Hims & Hers",
+   "why": "Not checked today."
+  },
+  {
+   "company": "Mintlify",
+   "why": "2026-10-13, from PostHog's cool-tech-jobs list: customer/support roles are in person (Head of Technical Support, San Francisco; Solutions Engineer roles 'SF/NYC In-Person')."
+  },
+  {
+   "company": "Antithesis",
+   "why": "2026-10-13, from PostHog's cool-tech-jobs list: US roles OnSite (Vienna VA, San Francisco)."
+  },
+  {
+   "company": "Nango",
+   "why": "2026-10-13: only 1, 4, 6 proven ('Fully remote'; ranges on postings; 'valuing outcomes over hours'). Founding CSM 'Own renewals and expansion conversations, from planning through close' = sales-target risk. Closest to qualifying; re-check if it publishes time-off minimum or health coverage."
+  },
+  {
+   "company": "Sanity",
+   "why": "2026-10-13: Support NORAM has 'a paid on-call rotation for high-severity production incidents'; Bay Area hires 2 days/week in office; 'high-expectation environment'. Only term 1 proven."
+  },
+  {
+   "company": "SigNoz",
+   "why": "2026-10-13: only term 1 ('completely remote. No offices.'); no pay published; postings tagged India-Remote; 'relentless focus, fast execution'."
+  },
+  {
+   "company": "Converge",
+   "why": "2026-10-13: in-office NYC ('come join us in-office in NYC')."
+  },
+  {
+   "company": "Isometric",
+   "why": "2026-10-13: 'We value in-person collaboration and spend three days a week in the office'; 'relentlessly high standards'."
+  }
+ ]
+}
