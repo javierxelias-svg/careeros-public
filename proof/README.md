@@ -6,12 +6,16 @@ Only counts are published here. No job titles, companies, links or pay.
 
 | | |
 |---|---|
-| **Status** | FAILED: timed out after 25 minutes |
-| **When** | 2026-11-03 15:57:59 UTC |
-| **Took** | 25 min 0 s |
+| **Status** | Ran clean |
+| **When** | 2026-11-03 16:47:12 UTC |
+| **Took** | 18 min 41 s |
+| **Sources answering** | 10 of 10 |
+| **Employer job boards read** | 401 (plus 9 with nothing posted) |
+| **Listings fetched** | 20,543 |
+| **Kept after the hard rules** | 5,225 |
 | **Test files passing** | 28 of 28 |
 | **Checks passing** | 960 |
-| **Python** | 3.12.15 |
-| **Run log** | [https://github.com/javierxelias-svg/careeros-public/actions/runs/41669242967](https://github.com/javierxelias-svg/careeros-public/actions/runs/41669242967) |
+| **Python** | 3.12.16 |
+| **Run log** | [https://github.com/javierxelias-svg/careeros-public/actions/runs/41677709083](https://github.com/javierxelias-svg/careeros-public/actions/runs/41677709083) |
 
 Machine-readable copy: [latest.json](latest.json).
