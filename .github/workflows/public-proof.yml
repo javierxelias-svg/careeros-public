@@ -27,7 +27,7 @@ permissions:
 jobs:
   proof:
     runs-on: ubuntu-latest
-    timeout-minutes: 40   # a normal run takes about 10 minutes
+    timeout-minutes: 60   # a normal run takes about 20-25 minutes (453 boards)
     steps:
       # Get a copy of the code onto GitHub's machine.
       - uses: actions/checkout@v4
