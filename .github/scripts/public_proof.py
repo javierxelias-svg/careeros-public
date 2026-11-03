@@ -29,7 +29,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 TESTS_DIR = ROOT / "careeros" / "tests"
 PROOF_DIR = ROOT / "proof"
-DRY_RUN_TIMEOUT = 25 * 60  # seconds; a normal run takes about 10 minutes
+DRY_RUN_TIMEOUT = 45 * 60  # seconds; a normal run takes about 20-25 minutes (453 boards)
 
 # The engine's own log lines, read as written by careeros/ats.py,
 # careeros/run_daily.py and careeros/prefilter.py.
