@@ -7,11 +7,11 @@ Only counts are published here. No job titles, companies, links or pay.
 | | |
 |---|---|
 | **Status** | FAILED: timed out after 45 minutes |
-| **When** | 2026-11-08 17:04:08 UTC |
+| **When** | 2026-11-09 21:26:41 UTC |
 | **Took** | 45 min 0 s |
 | **Test files passing** | 28 of 28 |
 | **Checks passing** | 960 |
 | **Python** | 3.12.16 |
-| **Run log** | [https://github.com/javierxelias-svg/careeros-public/actions/runs/42503055353](https://github.com/javierxelias-svg/careeros-public/actions/runs/42503055353) |
+| **Run log** | [https://github.com/javierxelias-svg/careeros-public/actions/runs/42702529117](https://github.com/javierxelias-svg/careeros-public/actions/runs/42702529117) |
 
 Machine-readable copy: [latest.json](latest.json).
