@@ -178,6 +178,14 @@ row = ats._lever([{"text": "Partner", "description": "<p>" + "We help clients. "
 if len(row["description"]) < 400:
     failures.append("Lever HTML description dropped when descriptionPlain is empty")
 
+# 2026-11-10: a long posting with few periods made the boilerplate regex
+# quadratic and stalled the run past its time limit (11-07..11-09).
+import time  # noqa: E402
+_t = time.time()
+terms_gate.check("word " * 40000, title="Support Engineer")
+if time.time() - _t > 10:
+    failures.append(f"long posting took {time.time() - _t:.0f}s (quadratic regex is back)")
+
 print(f"  terms gate: {len(FAILS)} fail cases, {len(CLEAN)} clean cases")
 if failures:
     for f in failures:

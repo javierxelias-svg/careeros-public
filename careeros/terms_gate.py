@@ -210,8 +210,8 @@ _BOILERPLATE = re.compile(
     r"(?:\+|plus|and)?\s*commission\s*\((?:for )?quota[- ]based roles\)|"
     r"\((?:for )?quota[- ]based roles\)|commission if applicable|"
     r"commission for (?:sales|eligible) roles|where applicable|"
-    r"[^.]*variable comp\w* where (?:appropriate|applicable)[^.]*|"
-    r"for sales roles,[^.]*|[^.]*\bnon-commission(?:able|[- ]based)? roles[^.]*|employment or an? (?:independent )?contractor (?:role|position)|[^.]*office-based team members[^.]*", re.I)
+    r"[^.]{0,400}variable comp\w* where (?:appropriate|applicable)[^.]{0,400}|"
+    r"for sales roles,[^.]{0,400}|[^.]{0,400}\bnon-commission(?:able|[- ]based)? roles[^.]{0,400}|employment or an? (?:independent )?contractor (?:role|position)|[^.]{0,400}office-based team members[^.]{0,400}", re.I)
 
 
 # Companies whose customers are mainly big pharma, an operator exclusion since
@@ -266,7 +266,7 @@ def check(text, title="", pay_top=None, pay_published=False, bridge=False,
     text = (text or "").replace("\xa0", " ")
     # Unfilled pay template lines ("OTE (all other U.S. states): $X - $X", Affirm
     # 2026-10-31) say nothing about this role.
-    text = re.sub(r"[^\n]*\$X\s*-\s*\$X[^\n]*", " ", text)
+    text = re.sub(r"[^\n]{0,400}\$X\s*-\s*\$X[^\n]{0,400}", " ", text)
     # "Tuesday - Saturday" is a day range, not a list bullet; keep it whole.
     text = re.sub(r"(day)\s+-\s+(?=(?:mon|tues|wednes|thurs|fri|satur|sun)day)", r"\1–",
                   text, flags=re.I)
