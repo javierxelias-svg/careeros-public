@@ -2,9 +2,12 @@
 
 [![tests](https://github.com/javierxelias-svg/careeros-public/actions/workflows/tests.yml/badge.svg)](https://github.com/javierxelias-svg/careeros-public/actions/workflows/tests.yml)
 
-A job-search engine that runs by itself every morning. It reads job postings
-straight from employers' own job boards, throws out the ones that don't fit,
-ranks the rest, and sends a short daily list to my phone.
+A job-search engine that runs by itself. It reads job postings straight from
+employers' own job boards, throws out the ones that don't fit and ranks the
+rest. From August 14 to November 10, 2026 it also sent a short daily list to my
+phone by Telegram (59 lists). That feature is retired: CareerOS now brings me
+its shortlist as summaries in my working sessions with Claude Code, after a
+second check that reads each full posting.
 
 Designed, directed and operated by [Javier Elías Crespo](https://javierxelias-svg.github.io); built with Claude Code;
 every change verified by running it.
@@ -17,7 +20,7 @@ is there, and show the tests that prove it.
 
 ---
 
-## Proof it's real (measured Oct 24, 2026)
+## Proof it's real (measured Nov 10, 2026)
 
 [![public-proof](https://github.com/javierxelias-svg/careeros-public/actions/workflows/public-proof.yml/badge.svg)](https://github.com/javierxelias-svg/careeros-public/actions/workflows/public-proof.yml)
 
@@ -25,9 +28,9 @@ This public copy runs itself every day; see the latest run: **[proof/README.md](
 
 | | |
 |---|---|
-| **Runs by itself** | Every morning on GitHub Actions. 161 of 162 cloud runs since Sep 28 passed. The one failure was a break I caused on purpose, to prove the failure alert reaches my phone. |
-| **Built over** | 125 commits I directed from July 6 to Oct 17, 2026, plus 57 the system made itself (its daily records). |
-| **Reads** | 341 employer job boards in the live engine, 16,129 listings in its Oct 21 scan (this public copy reads 188, plus 6 with no openings; see [proof/](proof/README.md)). |
+| **Runs by itself** | The daily digest ran every morning on GitHub Actions from Sep 28 to Nov 10, 2026: 239 of 255 cloud runs passed, 727,237 listings scanned across 59 digests. Of the 16 that didn't pass, one was a break I caused on purpose to prove the failure alert reaches my phone. The other 14 were Nov 7–10 timeouts: one text-matching rule went slow on a very long posting. I traced it from the run logs and bounded the rule (a 200,000-character posting went from over 2 minutes to about 1 second). I added a test and made timeouts alert too. This public copy still runs its proof every day. |
+| **Built over** | 305 commits I directed from July 6 to Nov 10, 2026, plus 41 the system made itself (its daily records). |
+| **Reads** | 453 employer job boards in the live engine, 19,780 listings in its Nov 10 scan (this public copy's Nov 10 proof run fetched 20,360; see [proof/](proof/README.md)). |
 | **Tested** | 28 test files, 960 checks, all passing (Nov 2): run `python3 careeros/tests/run_all.py`. |
 | **Size** | 15,043 lines of Python (Nov 2), standard library only, no third-party packages. |
 
@@ -93,6 +96,8 @@ Every day it:
 
 ## How it runs
 
+The private copy's Telegram digest was switched off on Nov 10, 2026; the
+setup below is how it ran, and the public proof run still uses it daily.
 It runs on GitHub Actions (GitHub's servers run it on a schedule, so it does
 not depend on my own computer being on). The setup is in
 `.github/workflows/daily.yml`:
