@@ -7,15 +7,15 @@ Only counts are published here. No job titles, companies, links or pay.
 | | |
 |---|---|
 | **Status** | Ran clean |
-| **When** | 2026-11-18 19:24:38 UTC |
-| **Took** | 20 min 9 s |
+| **When** | 2026-11-19 19:29:25 UTC |
+| **Took** | 19 min 42 s |
 | **Sources answering** | 10 of 10 |
-| **Employer job boards read** | 392 (plus 18 with nothing posted) |
-| **Listings fetched** | 20,063 |
-| **Kept after the hard rules** | 5,126 |
+| **Employer job boards read** | 391 (plus 19 with nothing posted) |
+| **Listings fetched** | 19,970 |
+| **Kept after the hard rules** | 5,114 |
 | **Test files passing** | 28 of 28 |
 | **Checks passing** | 960 |
 | **Python** | 3.12.16 |
-| **Run log** | [https://github.com/javierxelias-svg/careeros-public/actions/runs/44380188921](https://github.com/javierxelias-svg/careeros-public/actions/runs/44380188921) |
+| **Run log** | [https://github.com/javierxelias-svg/careeros-public/actions/runs/44598792999](https://github.com/javierxelias-svg/careeros-public/actions/runs/44598792999) |
 
 Machine-readable copy: [latest.json](latest.json).
